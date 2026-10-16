@@ -84,6 +84,8 @@ h2{font-size:18px;margin:0;text-wrap:balance}
 .choice .c-title{font-weight:700}
 .choice .c-meta{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
 .choice .meter{grid-column:1/-1;height:5px}
+.ghead{font-size:14px;color:var(--muted);margin:10px 0 0;letter-spacing:.04em}
+.ghead:first-child{margin-top:0}
 
 /* 1問ずつ解く画面 */
 .bar{height:4px;background:var(--line);border-radius:2px;overflow:hidden}
@@ -151,8 +153,9 @@ function save() { try { localStorage.setItem(KEY, JSON.stringify(marks)); } catc
 
 const items = [];
 DRILL.sections.forEach((s, si) => s.items.forEach(([q, a, imp]) =>
-  items.push({ n: items.length + 1, si, q, a, star: !!imp, jiji: !!s.jiji })));
-const jijiItems = items.filter(it => it.jiji);
+  items.push({ n: items.length + 1, si, q, a, star: !!imp, group: s.group || "" })));
+const groups = [...new Set(DRILL.sections.map(s => s.group).filter(Boolean))];
+const groupNote = g => (DRILL.group_notes || {})[g] || "";
 
 function el(tag, attrs, ...kids) {
   const e = document.createElement(tag);
@@ -217,7 +220,10 @@ function home() {
       mode("未回答だけ", todo ? `残り ${todo}問` : "全部解きました",
         () => start("まだ解いていない問題", items.filter(it => !marks[it.n])), { disabled: !todo }),
       mode("まとめ一覧", "答えつきで見直す", sheet),
-      jijiItems.length ? mode("時事問題", `${jijiItems.length}問・${DRILL.jiji_range || ""}`, () => start("時事問題", jijiItems), { wide: true }) : null),
+      groups.map(g => {
+        const list = items.filter(it => it.group === g);
+        return mode(g, `${list.length}問${groupNote(g) ? "・" + groupNote(g) : ""}`, () => start(g, list), { wide: true });
+      })),
     el("div", { class: "under" },
       el("details", null, el("summary", null, "使い方"),
         el("p", null, "1問ずつ問題が出ます。答えを考えてから「答えを見る」を押し、合っていたら ○、まちがえたら × を押すと次へ進みます。×をつけた問題は「間違えた問題」でまとめて解き直せます。○×の記録はこの端末のブラウザにだけ残ります。")),
@@ -234,10 +240,12 @@ function units() {
   show(backBar(), el("h2", null, "単元を選ぶ"),
     el("div", { class: "choices" }, DRILL.sections.map((s, si) => {
       const list = items.filter(it => it.si === si);
-      return el("button", { class: "choice", type: "button", onclick: () => start(s.title, list) },
+      const head = s.group && s.group !== (DRILL.sections[si - 1] || {}).group
+        ? el("h3", { class: "ghead" }, s.group) : null;
+      return [head, el("button", { class: "choice", type: "button", onclick: () => start(s.title, list) },
         el("span", { class: "c-title" }, s.title),
         el("span", { class: "c-meta" }, `○ ${count(list, "ok")} / ${list.length}問`),
-        meter(list));
+        meter(list))];
     })));
 }
 

@@ -7,6 +7,7 @@ share/<教科フォルダ名>.html を出力する。複数の JSON がある教
 使い方:  python3 tools/build_share.py
 
 JSON に "kind": "jiji" があるものは時事問題として扱い、教科ドリルの後ろに単元として足す。
+section に "group" があると、ページのメニューにグループごとのボタンが出る（時事は「時事問題」グループ）。
 共有ページには個人名や家庭の学習計画を入れない（ドリルの問題と試験日程だけ）。
 公開先 URL は CLAUDE.md の「クラス共有ページ」に記録する。
 """
@@ -59,11 +60,14 @@ def main():
             continue
         drills = [json.loads(f.read_text(encoding="utf-8")) for f in files]
         exam, exam_date, course = exam_info(plan, subject)
-        # 時事（kind: "jiji"）は教科のドリルのあとに並べ、ページに「時事問題」ボタンを出す
+        # 時事（kind: "jiji"）は教科のドリルのあとに「時事問題」グループとして並べる
         main = [d for d in drills if d.get("kind") != "jiji"] or drills
         jiji = [d for d in drills if d.get("kind") == "jiji"]
         sections = [s for d in main for s in d["sections"]]
-        sections += [{**s, "jiji": True} for d in jiji for s in d["sections"]]
+        sections += [{**s, "group": "時事問題"} for d in jiji for s in d["sections"]]
+        group_notes = {k: v for d in main for k, v in d.get("group_notes", {}).items()}
+        if jiji:
+            group_notes["時事問題"] = jiji[0].get("range", "")
         data = {
             "id": folder,
             "course": f"二学期中間テスト（高1）・{course}",
@@ -72,7 +76,7 @@ def main():
             "exam_date": exam_date,
             "source": "、".join(d.get("share_source", "授業ノート") for d in drills),
             "updated": max(d["date"] for d in drills),
-            "jiji_range": jiji[0].get("range", "") if jiji else "",
+            "group_notes": group_notes,
             "sections": sections,
         }
         light, dark = ACCENTS[folder]

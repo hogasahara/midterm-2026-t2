@@ -1,0 +1,367 @@
+<title>古文 中間ドリル</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Shippori+Mincho+B1:wght@700;800&display=swap">
+<style>
+/* Layout: 開くとメニュー（進み具合＋6つの学習ボタン）だけ。ボタンから「1問ずつ解く画面」か「一覧」に入る。教科ごとにアクセント色だけ変える */
+:root{
+  --accent:#8a3b5c;
+  --accent-ink:#ffffff;
+  --accent-soft:#f1e7eb;
+  --bg:#f6f7f5;
+  --paper:#ffffff;
+  --ink:#1c211f;
+  --muted:#5f6864;
+  --line:#dde2df;
+  --ok:#1f7a4d;
+  --ok-bg:#e3f3ea;
+  --ng:#b3361f;
+  --ng-bg:#fbe7e2;
+  --star:#9a6a00;
+  --f-display:"Shippori Mincho B1","Hiragino Mincho ProN","Yu Mincho",serif;
+  --f-body:"BIZ UDPGothic","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --accent:#e3a0bd;--accent-ink:#0f1412;--accent-soft:#3a3437;--bg:#121614;--paper:#1a201d;--ink:#e6ebe8;--muted:#9aa49f;--line:#2c3430;
+  --ok:#6fd19c;--ok-bg:#183326;--ng:#ff9a85;--ng-bg:#3a1f19;--star:#f2c14e;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --accent:#e3a0bd;--accent-ink:#0f1412;--accent-soft:#3a3437;--bg:#121614;--paper:#1a201d;--ink:#e6ebe8;--muted:#9aa49f;--line:#2c3430;
+  --ok:#6fd19c;--ok-bg:#183326;--ng:#ff9a85;--ng-bg:#3a1f19;--star:#f2c14e;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6}
+.wrap{max-width:720px;margin:0 auto;padding-block:20px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:18px}
+button{font:inherit;color:inherit}
+button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ヘッダー */
+header{display:grid;gap:6px}
+.eyebrow{font-size:13px;letter-spacing:.08em;color:var(--muted)}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(26px,6.4vw,36px);line-height:1.25;margin:0;text-wrap:balance}
+h1 .seg{display:inline-block}
+.exam{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:14px;color:var(--muted)}
+.exam strong{color:var(--ink)}
+.days{background:var(--accent);color:var(--accent-ink);font-weight:700;border-radius:4px;padding:1px 8px;font-size:13px}
+
+/* 進み具合 */
+.progress{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:grid;gap:8px}
+.stats{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:14px;font-variant-numeric:tabular-nums;align-items:baseline}
+.stats b{font-size:20px}
+.s-ok{color:var(--ok)}.s-ng{color:var(--ng)}.s-todo{color:var(--muted)}
+.meter{height:8px;border-radius:4px;background:var(--line);overflow:hidden;display:flex}
+.meter i{display:block;height:100%}
+.m-ok{background:var(--ok)}.m-ng{background:var(--ng)}
+
+/* メニューのボタン */
+.modes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.mode{display:grid;gap:2px;text-align:left;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px;cursor:pointer;min-height:84px;align-content:start}
+.mode:hover{border-color:var(--accent)}
+.mode .label{font-weight:700;font-size:17px}
+.mode .sub{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.mode.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.mode.primary .sub{color:inherit;opacity:.85}
+.mode:disabled{cursor:default;opacity:.5}
+.mode.wide{grid-column:1/-1;min-height:0}
+.mode:disabled:hover{border-color:var(--line)}
+.under{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:8px;font-size:13px;color:var(--muted)}
+details summary{cursor:pointer}
+details p{margin:6px 0 0;max-width:36em}
+.link{background:none;border:0;padding:0;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:13px}
+.link:disabled{opacity:.4;cursor:default}
+.confirm{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:14px}
+
+/* 画面上部（戻る） */
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.back{border:1px solid var(--line);border-radius:999px;padding:4px 12px;cursor:pointer;font-size:14px;background:var(--paper)}
+.where{font-weight:700}
+.count{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+h2{font-size:18px;margin:0;text-wrap:balance}
+
+/* 単元・問題数の選択 */
+.choices{display:grid;gap:8px}
+.choice{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;align-items:center;text-align:left;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 14px;cursor:pointer}
+.choice:hover{border-color:var(--accent)}
+.choice .c-title{font-weight:700}
+.choice .c-meta{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.choice .meter{grid-column:1/-1;height:5px}
+.ghead{font-size:14px;color:var(--muted);margin:10px 0 0;letter-spacing:.04em}
+.ghead:first-child{margin-top:0}
+
+/* 1問ずつ解く画面 */
+.bar{height:4px;background:var(--line);border-radius:2px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent)}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px 16px;display:grid;gap:14px;min-height:240px;align-content:start}
+.card .meta{display:flex;flex-wrap:wrap;gap:6px 10px;font-size:13px;color:var(--muted);align-items:center}
+.badge{border-radius:4px;padding:0 6px;font-size:12px;font-weight:700}
+.b-star{color:var(--star);border:1px solid var(--star)}
+.b-ng{color:var(--ng);border:1px solid var(--ng)}
+.b-ok{color:var(--ok);border:1px solid var(--ok)}
+.qtext{font-size:19px;line-height:1.65;overflow-wrap:anywhere}
+.reveal{border:2px dashed var(--accent);color:var(--accent);background:var(--accent-soft);border-radius:10px;padding:14px;font-weight:700;cursor:pointer;font-size:16px}
+.answer{font-size:19px;font-weight:700;background:var(--accent-soft);border-radius:10px;padding:12px 14px;overflow-wrap:anywhere}
+.judge{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.judge button{border-radius:10px;padding:14px 8px;font-weight:700;font-size:16px;cursor:pointer;border:2px solid}
+.j-ok{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+.j-ng{background:var(--ng-bg);border-color:var(--ng);color:var(--ng)}
+.nav{display:flex;justify-content:space-between;gap:8px}
+.nav button{background:none;border:0;color:var(--muted);cursor:pointer;font-size:14px;padding:4px 0}
+.nav button:disabled{opacity:.35;cursor:default}
+.keys{font-size:12px;color:var(--muted);text-align:center}
+@media (hover:none){.keys{display:none}}
+
+/* 結果 */
+.result{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:20px 16px;display:grid;gap:12px;text-align:center}
+.result .big{font-family:var(--f-display);font-size:40px;font-weight:800;font-variant-numeric:tabular-nums}
+.result .stats{justify-content:center}
+.actions{display:grid;gap:8px}
+.btn{border-radius:10px;padding:12px;font-weight:700;cursor:pointer;border:1px solid var(--line);background:var(--paper)}
+.btn.main{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+
+/* まとめ一覧 */
+.filters{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:13px;border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:4px 11px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.sheet{display:grid;gap:16px}
+.sheet h3{font-size:15px;margin:0 0 6px;color:var(--muted);text-wrap:balance}
+.rows{list-style:none;margin:0;padding:0;background:var(--paper);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.rows li{display:grid;grid-template-columns:3.2em minmax(0,1fr);gap:2px 8px;padding:9px 12px;border-top:1px solid var(--line)}
+.rows li:first-child{border-top:0}
+.rows .no{font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.rows .st{color:var(--star)}
+.rows .qa{display:grid;gap:2px}
+.rows .q{overflow-wrap:anywhere}
+.rows .a{font-weight:700;overflow-wrap:anywhere}
+.rows .a.hide{color:transparent;background:var(--line);border-radius:4px;cursor:pointer;user-select:none}
+.rows li.ok{box-shadow:inset 3px 0 0 var(--ok)}
+.rows li.ng{box-shadow:inset 3px 0 0 var(--ng)}
+.empty{color:var(--muted);text-align:center;padding:24px 0}
+footer{font-size:12px;color:var(--muted);display:grid;gap:2px}
+@media (max-width:340px){.modes{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:no-preference){.answer{animation:fade .18s ease-out}@keyframes fade{from{opacity:.5}to{opacity:1}}}
+</style>
+
+<div class="wrap" id="app"></div>
+
+<script>
+const DRILL = {"id": "kobun", "course": "二学期中間テスト（高1）・古文", "title": "古文ドリル　徒然草・方丈記", "exam": "10/22（木）②10:00", "exam_date": "2026-10-22", "source": "授業プリント（徒然草 第七十三段・方丈記「仮の庵」）", "updated": "2026-10-16", "group_notes": {"単語・文学的知識": "重要語・作品と作者・内容", "文法": "助動詞・識別・品詞分解"}, "sections": [{"title": "1. 重要単語（徒然草）", "group": "単語・文学的知識", "items": [["「虚言」の読みと意味は。", "そらごと：うそ", 1], ["「まことはあいなきにや」の「あいなし」の意味は。", "つまらない・おもしろくない", 1], ["「あるにも過ぎて人は物を言ひなす」の「言ひなす」の意味は。", "（事実以上に）ことさらに言いつくろう"], ["「筆にも書きとどめぬれば、やがて定まりぬ」の「やがて」の意味は。", "そのまま", 1], ["「道々のものの上手」の意味は。", "それぞれの専門の道の名人"], ["「いみじき事」の「いみじ」の、ここでの意味は。", "すばらしい", 1], ["「かたくななる人」の「かたくななり」の意味は。", "教養がない・ものの道理がわからない", 1], ["「そぞろに神のごとくに言へども」の「そぞろに」の意味は。", "むやみに・わけもなく", 1], ["「さらに信も起こさず」の「さらに〜ず」の意味は。", "まったく〜ない", 1], ["「音に聞くと見る時とは」の「音に聞く」の意味は。", "うわさに聞く"], ["「かつあらはるるをも顧みず」の「かつ」の意味は。", "すぐに・一方では（すぐにばれるのも気にしないで）"], ["「浮きたること」の意味は。", "根拠のないこと"], ["「我もまことしからずは思ひながら」の「まことし」の意味は。", "本当らしい"], ["「鼻のほどおごめきて」の意味は。", "得意そうに小鼻をうごめかして"], ["「げにげにしく」の「げにげにし」の意味は。", "いかにももっともらしい", 1], ["「所々うちおぼめき」の「うちおぼめく」の意味は。", "よく知らないふりをする"], ["「つまづま合はせて」の意味は。", "つじつまを合わせて"], ["「人いたくあらがはず」の「あらがふ」の意味は。", "反論する・否定する", 1], ["「皆人の興ずる虚言」の「興ず」の意味は。", "おもしろがる"], ["「言はんも詮なくて」の「詮なし」の意味は。", "しかたがない・無益だ", 1], ["「いとど定まりぬべし」の「いとど」の意味は。", "いっそう・ますます"], ["「下ざまの人」の意味は。", "身分や教養の低い人"], ["「よき人は怪しき事を語らず」の「よき人」の意味は。", "教養のある人・身分の高い人", 1], ["「仏神の奇特」の「奇特」の意味は。", "霊験（仏や神の不思議なしるし）"], ["「権者」とは何か。", "仏や神が人間の姿をして現れた人"], ["「ねんごろに信じたる」の「ねんごろなり」の意味は。", "熱心だ・心をこめて"], ["「をこがましく」の「をこがまし」の意味は。", "ばかげている・みっともない", 1], ["「大方はまことしくあひしらひて」の「あひしらふ」の意味は。", "応対する・調子を合わせる"], ["「偏に信ぜず」の「偏に」の読みと意味は。", "ひとへに：ひたすら・いちずに"]]}, {"title": "2. 重要単語（方丈記）", "group": "単語・文学的知識", "items": [["「あからさまと思ひしかども」の「あからさまなり」の意味は。", "ほんのしばらく・一時的", 1], ["「仮の庵もややふるさととなりて」の「やや」の意味は。", "しだいに・だんだん", 1], ["「土居」とは何か。", "建物の土台"], ["「おのづから事の便りに都を聞けば」の「おのづから」の意味は。", "たまたま・偶然", 1], ["「事の便り」の意味は。", "何かのついで"], ["「やむごとなき人」の「やむごとなし」の意味は。", "高貴だ・身分が高い", 1], ["「かくれ給へる」の「かくる」の、ここでの意味は。", "亡くなる", 1], ["「あまた聞こゆ」の「あまた」の意味は。", "たくさん"], ["「数ならぬたぐひ」の意味は（問三Ⅰ）。", "取るに足りない（身分の低い）人々", 1], ["「いくそばくぞ」の「いくそばく」の意味は。", "どれほど多く", 1], ["「のどけくして恐れなし」の「のどけし」の意味は。", "穏やかだ・のどかだ"], ["「ほど狭しといへども」の「ほど」の、ここでの意味は。", "広さ"], ["「夜臥す床」の「臥す」の意味は。", "寝る・横になる"], ["「昼居る座」の「居る」の意味は（問三Ⅱ）。", "座る", 1], ["「一身」の意味は。", "自分一人"], ["「寄居（がうな）」とは何か。", "やどかり"], ["「みさご」とは何か。", "鷹の一種（水辺にすむ鳥）"], ["「憂へ無きを楽しみとす」の「憂へ」の意味は。", "心配・悩み"], ["「住みかを作るならひ」の「ならひ」の意味は。", "ならわし・習慣", 1], ["「妻子・眷属」の「眷属」の意味は。", "一族・身内"], ["「親昵・朋友」の「親昵」の意味は。", "親しい人"], ["「頼むべき奴もなし」の「奴」の意味は。", "下人・召使い"], ["「身のために結べり」の「結ぶ」の、ここでの意味は。", "（庵を）作る"], ["「誰をか据ゑん」の「据う」の、ここでの意味は。", "住まわせる"]]}, {"title": "3. 作品・作者と内容", "group": "単語・文学的知識", "items": [["『徒然草』の作者は。", "兼好法師（吉田兼好）", 1], ["『徒然草』が成立した時代は。", "鎌倉時代末期", 1], ["『徒然草』『方丈記』のジャンルは。", "随筆", 1], ["『徒然草』の書き出しは。", "つれづれなるままに"], ["『方丈記』の作者は。", "鴨長明", 1], ["『方丈記』が成立した時代は。", "鎌倉時代初期（1212年）", 1], ["『方丈記』の書き出しは。", "ゆく河の流れは絶えずして、しかももとの水にあらず"], ["『方丈記』全体を貫く、仏教にもとづく考え方は。", "無常観", 1], ["『方丈記』の題名の「方丈」とは何か。", "一丈（約3m）四方の小さな庵"], ["日本の三大随筆を作者とともに答えよ。", "枕草子（清少納言）・方丈記（鴨長明）・徒然草（兼好法師）", 1], ["『方丈記』のように漢語や漢文調の表現を和文にまじえた文体を何というか。", "和漢混交文"], ["徒然草第七十三段で、筆者は世に語り伝えることの多くを何だと述べているか。", "虚言（うそ）", 1], ["徒然草第七十三段で、「道知れる人」は名人のいみじき話をどう受け止めるか。", "まったく信じない（さらに信も起こさず）"], ["徒然草第七十三段で、筆者が「恐ろしき事なり」と言うのはどんな虚言か。", "もっともらしく、よく知らないふりをしながら、つじつまを合わせて語る虚言", 1], ["徒然草第七十三段で、仏神の奇特などについて筆者が勧める態度は。", "大体は本当らしく応対して、ひたすら信じることもせず、疑いあざけることもしない", 1], ["「仮の庵」で、作者がこの所に住みはじめてから何年たったか。", "五年"], ["「仮の庵」で、寄居が小さな貝を好むのはなぜか。", "身の程（自分のこと）をわきまえているから"], ["「仮の庵」で、みさごが荒磯にいるのはなぜか。", "人を恐れるから"], ["寄居・みさごと作者の共通点は（問四）。", "身の程をわきまえて小さな住まいに満足し、世間を避けて人里離れた所で静かに暮らしている点", 1], ["「仮の庵」で、作者は何を望みとし、何を楽しみとしているか。", "静かなることを望みとし、憂いのないことを楽しみとする", 1], ["世の人は人のために家を作るが、作者は何のために庵を作ったか。", "自分の身のため", 1]]}, {"title": "4. 助動詞（徒然草）", "group": "文法", "items": [["「多くはみな虚言なり」の「なり」の文法的説明は。", "断定の助動詞「なり」の終止形", 1], ["「まことはあいなきにや」の「に」の文法的説明は。", "断定の助動詞「なり」の連用形", 1], ["「境も隔たりぬれば」の「ぬれ」の文法的説明は。", "完了の助動詞「ぬ」の已然形", 1], ["「言ひたきままに」の「たき」の文法的説明は。", "希望の助動詞「たし」の連体形"], ["「やがて定まりぬ」の「ぬ」の文法的説明は。", "完了の助動詞「ぬ」の終止形", 1], ["「その道知らぬは」の「ぬ」の文法的説明は。", "打消の助動詞「ず」の連体形", 1], ["「神のごとくに言へども」の「ごとく」の文法的説明は。", "比況の助動詞「ごとし」の連用形"], ["「道知れる人は」の「る」の文法的説明は。", "存続の助動詞「り」の連体形", 1], ["「さらに信も起こさず」の「ず」の文法的説明は。", "打消の助動詞「ず」の終止形"], ["「浮きたること」の「たる」の文法的説明は。", "存続の助動詞「たり」の連体形"], ["「人の言ひしままに」の「し」の文法的説明は。", "過去の助動詞「き」の連体形", 1], ["「言はれぬる虚言」の「れ」の文法的説明は。", "受身の助動詞「る」の連用形", 1], ["「言はれぬる虚言」の「ぬる」の文法的説明は。", "完了の助動詞「ぬ」の連体形", 1], ["「さもなかりしものを」の「し」の文法的説明は。", "過去の助動詞「き」の連体形"], ["「言はんも詮なくて」の「ん」の文法的説明は。", "婉曲の助動詞「む（ん）」の連体形", 1], ["「証人にさへなされて」の「れ」の文法的説明は。", "受身の助動詞「る」の連用形"], ["「いとど定まりぬべし」の「ぬ」の文法的説明は。", "強意（確述）の助動詞「ぬ」の終止形", 1], ["「いとど定まりぬべし」の「べし」の文法的説明は。", "推量の助動詞「べし」の終止形"], ["「さのみ信ぜざるべきにもあらず」の「ざる」の文法的説明は。", "打消の助動詞「ず」の連体形"], ["「さのみ信ぜざるべきにもあらず」の「べき」の文法的説明は。", "当然の助動詞「べし」の連体形"], ["「よもあらじ」の「じ」の文法的説明は。", "打消推量の助動詞「じ」の終止形", 1], ["「疑ひ嘲るべからず」の「べからず」の意味は。", "〜してはならない（禁止）"]]}, {"title": "5. 助動詞（方丈記）", "group": "文法", "items": [["「住みはじめし時は」の「し」の文法的説明は。", "過去の助動詞「き」の連体形", 1], ["「あからさまと思ひしかども」の「しか」の文法的説明は。", "過去の助動詞「き」の已然形", 1], ["「今すでに、五年を経たり」の「たり」の文法的説明は。", "完了の助動詞「たり」の終止形", 1], ["「土居に苔むせり」の「り」の文法的説明は。", "存続の助動詞「り」の終止形", 1], ["「かくれ給へる」の「る」の文法的説明は。", "完了の助動詞「り」の連体形", 1], ["「数ならぬたぐひ」の「な」の文法的説明は。", "断定の助動詞「なり」の未然形", 1], ["「数ならぬたぐひ」の「ぬ」の文法的説明は。", "打消の助動詞「ず」の連体形", 1], ["「尽くしてこれを知るべからず」の「べから」の文法的説明は。", "可能の助動詞「べし」の未然形（知ることができない）", 1], ["「炎上に滅びたる家」の「たる」の文法的説明は。", "完了の助動詞「たり」の連体形"], ["「これ事知れるによりてなり」の「る」の文法的説明は。", "存続の助動詞「り」の連体形"], ["「これ事知れるによりてなり」の文末「なり」の文法的説明は。", "断定の助動詞「なり」の終止形"], ["「我またかくのごとし」の「ごとし」の文法的説明は。", "比況の助動詞「ごとし」の終止形"], ["「世を知れれば」の「れ」の文法的説明は。", "存続の助動詞「り」の已然形", 1], ["「たとひ広く作れりとも」の「り」の文法的説明は。", "完了の助動詞「り」の終止形（たとえ広く作ったとしても）"], ["「我今、身のために結べり」の「り」の文法的説明は。", "完了の助動詞「り」の終止形"], ["「誰をか据ゑん」の「ん」の文法的説明は。", "意志の助動詞「む（ん）」の連体形（係助詞「か」の結び）"]]}, {"title": "6. 識別・活用・敬語・係り結び", "group": "文法", "items": [["「やがて定まりぬ」と「その道知らぬは」の「ぬ」を識別せよ。", "定まりぬ＝完了「ぬ」の終止形（連用形に接続）／知らぬ＝打消「ず」の連体形（未然形に接続）", 1], ["「かたくななる人」の「なる」は助動詞か。", "助動詞ではない。形容動詞「かたくななり」の連体形の活用語尾", 1], ["「かつあらはるるをも」の「るる」は助動詞か。", "助動詞ではない。動詞「あらはる」（ラ行下二段）の連体形の一部", 1], ["「道知れる人」の「る」と「言はれぬる」の「れ」を識別せよ。", "知れる＝存続「り」の連体形（四段の已然形に接続）／言はれ＝受身「る」の連用形（四段の未然形に接続）", 1], ["完了・存続の助動詞「り」は、どんな活用形に接続するか。", "サ変動詞の未然形・四段動詞の已然形（サ未四已）", 1], ["過去の助動詞「き」の活用を答えよ（未然形から）。", "せ・○・き・し・しか・○", 1], ["完了の助動詞「ぬ」の活用を答えよ（未然形から）。", "な・に・ぬ・ぬる・ぬれ・ね"], ["打消の助動詞「ず」の連体形を2つ答えよ。", "ぬ・ざる"], ["「まことはあいなきにや」で、「や」の後に省略されている結びの語は。", "あらむ（あらん）", 1], ["「よもあらじ」の「よも〜じ」の意味は。", "まさか〜ないだろう", 1], ["「誰をか据ゑん」は、係助詞「か」と何の関係か。また、ここでの「か」の意味は。", "係り結び（「ん」が連体形）。反語", 1], ["「かくれ給へる」の「給へ」の敬語の種類は。", "尊敬語（尊敬の補助動詞「給ふ」）", 1], ["「かくれ給へる」の「給へ」は、誰から誰への敬意か。", "作者から「やむごとなき人」への敬意", 1], ["「五年を経たり」の「経」の動詞の行と活用の種類は。", "ハ行下二段活用（「経（ふ）」は1字の動詞）", 1], ["「土居に苔むせり」の「むせ」の動詞の基本形と活用の種類は。", "「むす」・サ行四段活用（已然形）"]]}, {"title": "7. 品詞分解", "group": "文法", "items": [["「思ひしかども」を品詞分解せよ。", "思ひ（動詞・ハ行四段・連用形）／しか（助動詞・過去「き」・已然形）／ども（接続助詞）", 1], ["「経たり」を品詞分解せよ。", "経（動詞・ハ行下二段・連用形）／たり（助動詞・完了「たり」・終止形）", 1], ["「かくれ給へる」を品詞分解せよ。", "かくれ（動詞・ラ行下二段・連用形）／給へ（補助動詞・ハ行四段・已然形・尊敬）／る（助動詞・完了「り」・連体形）", 1], ["「知るべからず」を品詞分解せよ。", "知る（動詞・ラ行四段・終止形）／べから（助動詞・可能「べし」・未然形）／ず（助動詞・打消「ず」・終止形）", 1], ["「数ならぬ」を品詞分解せよ。", "数（名詞）／な（助動詞・断定「なり」・未然形）／ぬ（助動詞・打消「ず」・連体形）", 1], ["「世を知れれば」の「知れれば」を品詞分解せよ。", "知れ（動詞・ラ行四段・已然形）／れ（助動詞・存続「り」・已然形）／ば（接続助詞）", 1], ["「書きとどめぬれば」を品詞分解せよ。", "書きとどめ（動詞・マ行下二段・連用形）／ぬれ（助動詞・完了「ぬ」・已然形）／ば（接続助詞）"], ["「道知れる人」の「知れる」を品詞分解せよ。", "知れ（動詞・ラ行四段・已然形）／る（助動詞・存続「り」・連体形）"], ["「言はれぬる」を品詞分解せよ。", "言は（動詞・ハ行四段・未然形）／れ（助動詞・受身「る」・連用形）／ぬる（助動詞・完了「ぬ」・連体形）", 1], ["「言はんも」を品詞分解せよ。", "言は（動詞・ハ行四段・未然形）／ん（助動詞・婉曲「む」・連体形）／も（係助詞）"], ["「定まりぬべし」を品詞分解せよ。", "定まり（動詞・ラ行四段・連用形）／ぬ（助動詞・強意「ぬ」・終止形）／べし（助動詞・推量「べし」・終止形）", 1], ["「信ぜざるべきにもあらず」を品詞分解せよ。", "信ぜ（動詞・サ変・未然形）／ざる（助動詞・打消「ず」・連体形）／べき（助動詞・当然「べし」・連体形）／に（助動詞・断定「なり」・連用形）／も（係助詞）／あら（動詞・ラ変・未然形）／ず（助動詞・打消「ず」・終止形）"], ["「誰をか据ゑん」を品詞分解せよ。", "誰（代名詞）／を（格助詞）／か（係助詞）／据ゑ（動詞・ワ行下二段・未然形）／ん（助動詞・意志「む」・連体形）"]]}]};
+const KEY = "drill:" + DRILL.id;
+const app = document.getElementById("app");
+
+let marks = {};
+try { marks = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { marks = {}; }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(marks)); } catch (e) {} }
+
+const items = [];
+DRILL.sections.forEach((s, si) => s.items.forEach(([q, a, imp]) =>
+  items.push({ n: items.length + 1, si, q, a, star: !!imp, group: s.group || "" })));
+const groups = [...new Set(DRILL.sections.map(s => s.group).filter(Boolean))];
+const groupNote = g => (DRILL.group_notes || {})[g] || "";
+
+function el(tag, attrs, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (k === "class") e.className = v;
+    else if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
+    else if (v === true) e.setAttribute(k, "");
+    else if (v !== false && v != null) e.setAttribute(k, v);
+  }
+  for (const c of kids.flat()) if (c != null && c !== false) e.append(c);
+  return e;
+}
+const count = (list, v) => list.filter(it => v === "todo" ? !marks[it.n] : marks[it.n] === v).length;
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function meter(list) {
+  const ok = count(list, "ok") / list.length * 100, ng = count(list, "ng") / list.length * 100;
+  return el("div", { class: "meter", "aria-hidden": "true" },
+    el("i", { class: "m-ok", style: `width:${ok}%` }), el("i", { class: "m-ng", style: `width:${ng}%` }));
+}
+function daysLeft() {
+  const now = new Date(Date.now() + 9 * 3600e3);              // 日本時間
+  const today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+  const [y, m, d] = DRILL.exam_date.split("-").map(Number);
+  return Math.round((Date.UTC(y, m - 1, d) - today) / 864e5);
+}
+const backBar = extra => el("div", { class: "top" },
+  el("button", { class: "back", type: "button", onclick: home }, "← メニュー"), extra || null);
+function show(...nodes) { app.replaceChildren(...nodes); window.scrollTo(0, 0); }
+
+/* ── メニュー ───────────────────────────── */
+let confirmReset = false;
+function home() {
+  quiz = null;
+  const ok = count(items, "ok"), ng = count(items, "ng"), todo = count(items, "todo");
+  const stars = items.filter(it => it.star);
+  const dl = daysLeft();
+  const title = el("h1", null);
+  DRILL.title.split(/\s+/).forEach((p, i) => { if (i) title.append(" "); title.append(el("span", { class: "seg" }, p)); });
+  const mode = (label, sub, onclick, opts = {}) =>
+    el("button", { class: "mode" + (opts.primary ? " primary" : "") + (opts.wide ? " wide" : ""), type: "button", disabled: !!opts.disabled, onclick },
+      el("span", { class: "label" }, label), el("span", { class: "sub" }, sub));
+
+  show(
+    el("header", null,
+      el("div", { class: "eyebrow" }, DRILL.course), title,
+      el("div", { class: "exam" },
+        el("span", null, "試験 ", el("strong", null, DRILL.exam)),
+        el("span", { class: "days" }, dl > 0 ? `あと${dl}日` : dl === 0 ? "今日が試験" : "試験は終了"),
+        el("span", null, `全${items.length}問`))),
+    el("div", { class: "progress" },
+      el("div", { class: "stats" },
+        el("span", { class: "s-ok" }, "○ ", el("b", null, ok)),
+        el("span", { class: "s-ng" }, "× ", el("b", null, ng)),
+        el("span", { class: "s-todo" }, "未回答 ", el("b", null, todo))),
+      meter(items)),
+    el("div", { class: "modes" },
+      mode("単元別", `${DRILL.sections.length}単元から選ぶ`, units, { primary: true }),
+      mode("ランダム", "10問・20問・全部", randomPick),
+      mode("間違えた問題", ng ? `× が ${ng}問` : "まだありません",
+        () => start("間違えた問題の復習", shuffle(items.filter(it => marks[it.n] === "ng"))), { disabled: !ng }),
+      mode("★ 重要問題", `${stars.length}問`, () => start("★ 重要問題", stars)),
+      mode("未回答だけ", todo ? `残り ${todo}問` : "全部解きました",
+        () => start("まだ解いていない問題", items.filter(it => !marks[it.n])), { disabled: !todo }),
+      mode("まとめ一覧", "答えつきで見直す", sheet),
+      groups.map(g => {
+        const list = items.filter(it => it.group === g);
+        return mode(g, `${list.length}問${groupNote(g) ? "・" + groupNote(g) : ""}`, () => start(g, list), { wide: true });
+      })),
+    el("div", { class: "under" },
+      el("details", null, el("summary", null, "使い方"),
+        el("p", null, "1問ずつ問題が出ます。答えを考えてから「答えを見る」を押し、合っていたら ○、まちがえたら × を押すと次へ進みます。×をつけた問題は「間違えた問題」でまとめて解き直せます。○×の記録はこの端末のブラウザにだけ残ります。")),
+      confirmReset
+        ? el("div", { class: "confirm" }, "○×の記録をすべて消しますか？",
+            el("button", { class: "chip", type: "button", onclick: () => { marks = {}; save(); confirmReset = false; home(); } }, "消す"),
+            el("button", { class: "chip", type: "button", onclick: () => { confirmReset = false; home(); } }, "やめる"))
+        : el("button", { class: "link", type: "button", disabled: ok + ng === 0, onclick: () => { confirmReset = true; home(); } }, "記録を消す")),
+    el("footer", null, el("div", null, `出典: ${DRILL.source}`), el("div", null, `更新: ${DRILL.updated}`)));
+}
+
+/* ── 単元を選ぶ ─────────────────────────── */
+function units() {
+  show(backBar(), el("h2", null, "単元を選ぶ"),
+    el("div", { class: "choices" }, DRILL.sections.map((s, si) => {
+      const list = items.filter(it => it.si === si);
+      const head = s.group && s.group !== (DRILL.sections[si - 1] || {}).group
+        ? el("h3", { class: "ghead" }, s.group) : null;
+      return [head, el("button", { class: "choice", type: "button", onclick: () => start(s.title, list) },
+        el("span", { class: "c-title" }, s.title),
+        el("span", { class: "c-meta" }, `○ ${count(list, "ok")} / ${list.length}問`),
+        meter(list))];
+    })));
+}
+
+/* ── ランダムの問題数 ───────────────────── */
+function randomPick() {
+  const opts = [[10, "10問"], [20, "20問"], [items.length, `全部（${items.length}問）`]];
+  show(backBar(), el("h2", null, "ランダムで何問？"),
+    el("div", { class: "choices" }, opts.map(([n, label]) =>
+      el("button", { class: "choice", type: "button", onclick: () => start(`ランダム ${label}`, shuffle(items).slice(0, n)) },
+        el("span", { class: "c-title" }, label),
+        el("span", { class: "c-meta" }, "全単元からまぜて出題")))));
+}
+
+/* ── 1問ずつ解く ────────────────────────── */
+let quiz = null;
+function start(name, list) {
+  if (!list.length) return home();
+  quiz = { name, list, i: 0, open: false, got: {} };
+  card();
+}
+function card() {
+  const { name, list, i } = quiz, it = list[i], mk = marks[it.n];
+  const body = [
+    el("div", { class: "meta" },
+      el("span", null, `No.${it.n}`),
+      it.star ? el("span", { class: "badge b-star" }, "★重要") : null,
+      mk === "ng" ? el("span", { class: "badge b-ng" }, "前回 ×") : mk === "ok" ? el("span", { class: "badge b-ok" }, "前回 ○") : null,
+      el("span", null, DRILL.sections[it.si].title)),
+    el("div", { class: "qtext" }, it.q),
+  ];
+  if (quiz.open) {
+    body.push(el("div", { class: "answer" }, it.a),
+      el("div", { class: "judge" },
+        el("button", { class: "j-ok", type: "button", onclick: () => judge("ok") }, "○ 合ってた"),
+        el("button", { class: "j-ng", type: "button", onclick: () => judge("ng") }, "× まちがえた")));
+  } else {
+    body.push(el("button", { class: "reveal", type: "button", id: "reveal", onclick: () => { quiz.open = true; card(); } }, "答えを見る"));
+  }
+  show(
+    backBar(el("span", { class: "count" }, `${i + 1} / ${list.length}`)),
+    el("div", { class: "bar", "aria-hidden": "true" }, el("i", { style: `width:${(i / list.length) * 100}%` })),
+    el("div", { class: "where" }, name),
+    el("div", { class: "card" }, body),
+    el("div", { class: "nav" },
+      el("button", { type: "button", disabled: i === 0, onclick: () => go(-1) }, "← 前の問題"),
+      el("button", { type: "button", onclick: () => go(1) }, i + 1 < list.length ? "とばす →" : "おわる →")),
+    el("div", { class: "keys" }, "キーボード: スペース＝答えを見る　1＝○　2＝×"));
+}
+function judge(v) {
+  const it = quiz.list[quiz.i];
+  marks[it.n] = v; quiz.got[it.n] = v; save();
+  go(1);
+}
+function go(d) {
+  quiz.i = Math.max(0, quiz.i + d); quiz.open = false;
+  if (quiz.i >= quiz.list.length) return result();
+  card();
+}
+document.addEventListener("keydown", e => {
+  if (!quiz || e.altKey || e.ctrlKey || e.metaKey) return;
+  if (e.key === " " && !quiz.open) { e.preventDefault(); quiz.open = true; card(); }
+  else if (quiz.open && e.key === "1") judge("ok");
+  else if (quiz.open && e.key === "2") judge("ng");
+});
+
+/* ── 結果 ──────────────────────────────── */
+function result() {
+  const { name, list, got } = quiz;
+  quiz = null;
+  const ok = list.filter(it => got[it.n] === "ok").length;
+  const wrong = list.filter(it => got[it.n] === "ng");
+  const skipped = list.length - ok - wrong.length;
+  show(backBar(),
+    el("div", { class: "result" },
+      el("div", null, name),
+      el("div", { class: "big" }, `${ok} / ${list.length}`),
+      el("div", { class: "stats" },
+        el("span", { class: "s-ok" }, "○ ", el("b", null, ok)),
+        el("span", { class: "s-ng" }, "× ", el("b", null, wrong.length)),
+        skipped ? el("span", { class: "s-todo" }, "とばした ", el("b", null, skipped)) : null),
+      el("div", { class: "actions" },
+        wrong.length ? el("button", { class: "btn main", type: "button", onclick: () => start(`${name}（×の解き直し）`, wrong) }, `× の ${wrong.length}問をもう一度`) : null,
+        el("button", { class: wrong.length ? "btn" : "btn main", type: "button", onclick: () => start(name, list) }, "同じ問題をもう一度"),
+        el("button", { class: "btn", type: "button", onclick: home }, "メニューに戻る"))));
+}
+
+/* ── まとめ一覧 ─────────────────────────── */
+const view = { unit: -1, hide: false, star: false, ng: false };
+function sheet() {
+  const chip = (label, on, fn) => el("button", { class: "chip", type: "button", "aria-pressed": String(on), onclick: () => { fn(); sheet(); } }, label);
+  const groups = DRILL.sections.map((s, si) => {
+    if (view.unit !== -1 && view.unit !== si) return null;
+    const list = items.filter(it => it.si === si && (!view.star || it.star) && (!view.ng || marks[it.n] === "ng"));
+    if (!list.length) return null;
+    return el("section", null, el("h3", null, s.title),
+      el("ol", { class: "rows" }, list.map(it => {
+        const a = el("div", { class: "a" + (view.hide ? " hide" : "") }, it.a);
+        if (view.hide) a.addEventListener("click", () => a.classList.toggle("hide"));
+        return el("li", { class: marks[it.n] || "" },
+          el("span", { class: "no" }, it.star ? el("span", { class: "st" }, "★") : null, it.n),
+          el("div", { class: "qa" }, el("div", { class: "q" }, it.q), a));
+      })));
+  }).filter(Boolean);
+  const y = window.scrollY;
+  show(backBar(), el("h2", null, "まとめ一覧"),
+    el("div", { class: "filters" },
+      chip("全単元", view.unit === -1, () => view.unit = -1),
+      DRILL.sections.map((s, si) => chip(`単元${si + 1}`, view.unit === si, () => view.unit = si))),
+    el("div", { class: "filters" },
+      chip("★だけ", view.star, () => view.star = !view.star),
+      chip("×だけ", view.ng, () => view.ng = !view.ng),
+      chip("答えをかくす", view.hide, () => view.hide = !view.hide)),
+    view.hide ? el("p", { class: "count", style: "margin:0" }, "かくした答えは、タップすると表示されます。") : null,
+    groups.length ? el("div", { class: "sheet" }, groups) : el("p", { class: "empty" }, "あてはまる問題はありません。"));
+  window.scrollTo(0, y);
+}
+
+home();
+</script>

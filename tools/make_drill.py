@@ -30,6 +30,7 @@ h1 { font-size: 14pt; margin: 0; white-space: nowrap; }
 .meta { font-size: 8.5pt; color: #333; text-align: right; line-height: 1.6; white-space: nowrap; }
 .howto { font-size: 8.5pt; color: #333; margin: 0 0 6px; }
 .fill { display: inline-block; border-bottom: 1px solid #111; width: 16mm; }
+.group { font-size: 12.5pt; font-weight: bold; margin: 14px 0 2px; padding-bottom: 2px; border-bottom: 1.5px solid #111; break-after: avoid; }
 h2 { font-size: 11pt; margin: 10px 0 3px; padding: 2px 6px; background: #e8e8e8;
      break-after: avoid; }
 table { width: 100%; border-collapse: collapse; table-layout: fixed; }
@@ -62,7 +63,11 @@ def render(data, answers):
         out.append("<p class='howto'>□□ は 1周目／2周目 のチェック欄。間違えた問題に印をつけ、"
                    "2周目は印のある問題だけ解く。★は重要問題。</p>")
     n = 0
+    group = None
     for sec in data["sections"]:
+        if sec.get("group") and sec["group"] != group:
+            group = sec["group"]
+            out.append(f"<div class='group'>{html.escape(group)}</div>")
         out.append(f"<h2>{html.escape(sec['title'])}</h2><table>")
         for q, a, *flag in sec["items"]:
             n += 1

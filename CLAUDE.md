@@ -61,6 +61,7 @@
 - 生成: `python3 tools/build_share.py` → `drills/<教科>/*.json` を `share/template.html` に埋め込み `share/<教科フォルダ名>.html` を出力（ドリルがある教科だけ）
 - ドリルを作ったら build_share.py を実行し、その教科の URL に Artifact ツールで再公開する（未公開の教科は新規公開して下の表に URL を追記）
 - ○×の記録は閲覧者ごとのブラウザ（localStorage）に保存。共有DBは使わない
+- section に "group" を付けるとメニューにグループのボタンが出る（古文は「単語・文学的知識」「文法」、時事は自動で「時事問題」）。補足は JSON の group_notes
 - ★（重要問題）は items の3番目を 1 にする。地理はノートで強調された所と頻出の仕組み、歴史はプリントの穴埋め空欄を★にした
 - 公開はデフォルト非公開。クラスに見せるには、ページの共有メニューからリンク共有をオンにしてもらう
 
@@ -68,6 +69,7 @@
 |---|---|
 | 地理 | https://claude.ai/artifact/SXzgdvqiZy2tuwDJq553zB |
 | 歴史 | https://claude.ai/artifact/2PTLYU9jtFmew82J7Zg7XY |
+| 古文 | https://claude.ai/artifact/1s6zmcm1JivHFLvxzV1Fzj |
 
 ## 教材の受け取り
 
