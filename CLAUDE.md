@@ -41,6 +41,7 @@
 - `tools/build_board.py` … `python tools/build_board.py` で `board/index.html`（ローカル／Pages用）と `board/artifact.html`（claude.ai アーティファクト用）を生成
 - `materials/<教科>/` … 共有された教材（写真・PDF・テキスト）の置き場
 - `drills/<教科>/` … 作成したドリル・100本ノックの出力先（PDF）
+- `tools/make_drill.py` … 一問一答ドリルの JSON（`drills/<教科>/*.json`）から問題編・解答編の PDF を作る（`python3 tools/make_drill.py <json>`。Chromium と Noto Sans CJK JP が必要）
 - `TODO.md` … 残作業
 
 教科フォルダ名: ea / kobun / chiri / math-beta / chem / gendaibun / eb / rekishi / math-alpha / kanbun
