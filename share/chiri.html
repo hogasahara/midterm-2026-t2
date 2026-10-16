@@ -1,0 +1,221 @@
+<title>地理総合 中間ドリル</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Shippori+Mincho+B1:wght@700;800&display=swap">
+<style>
+/* Layout: 単語帳のように1列に積む問題リスト。上に試験日と進み具合、教科ごとにアクセント色だけ変える */
+:root{
+  --accent:#2f6f5e;
+  --accent-ink:#ffffff;
+  --bg:#f6f7f5;
+  --paper:#ffffff;
+  --ink:#1c211f;
+  --muted:#5f6864;
+  --line:#dde2df;
+  --ok:#1f7a4d;
+  --ok-bg:#e3f3ea;
+  --ng:#b3361f;
+  --ng-bg:#fbe7e2;
+  --f-display:"Shippori Mincho B1","Hiragino Mincho ProN","Yu Mincho",serif;
+  --f-body:"BIZ UDPGothic","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --accent:#6cc2a6;--accent-ink:#0f1412;--bg:#121614;--paper:#1a201d;--ink:#e6ebe8;--muted:#9aa49f;--line:#2c3430;
+  --ok:#6fd19c;--ok-bg:#183326;--ng:#ff9a85;--ng-bg:#3a1f19;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --accent:#6cc2a6;--accent-ink:#0f1412;--bg:#121614;--paper:#1a201d;--ink:#e6ebe8;--muted:#9aa49f;--line:#2c3430;
+  --ok:#6fd19c;--ok-bg:#183326;--ng:#ff9a85;--ng-bg:#3a1f19;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6}
+.wrap{max-width:760px;margin:0 auto;padding-block:20px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{display:grid;gap:6px;padding-bottom:14px;border-bottom:3px solid var(--accent)}
+.eyebrow{font-size:13px;letter-spacing:.08em;color:var(--muted)}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(26px,6vw,36px);line-height:1.25;margin:0;text-wrap:balance}
+h1 .seg{display:inline-block}
+.exam{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:baseline;font-size:14px;color:var(--muted)}
+.exam strong{color:var(--ink)}
+.days{display:inline-block;background:var(--accent);color:var(--accent-ink);font-weight:700;border-radius:4px;padding:1px 8px;font-size:13px}
+.howto{font-size:14px;color:var(--muted);margin:12px 0 0}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:10px;display:grid;gap:8px;border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.stats{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px;font-variant-numeric:tabular-nums}
+.stats b{font-size:16px}
+.s-ok{color:var(--ok)}.s-ng{color:var(--ng)}
+.meter{height:6px;border-radius:3px;background:var(--line);overflow:hidden;display:flex}
+.meter i{display:block;height:100%}
+.meter .m-ok{background:var(--ok)}.meter .m-ng{background:var(--ng)}
+.controls{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:5px 12px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.chip:focus-visible,.btn:focus-visible,.reveal:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chip.ghost{background:transparent;color:var(--muted)}
+.reset-confirm{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:14px}
+section{margin-top:22px}
+h2{font-size:17px;margin:0 0 8px;display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap;text-wrap:balance}
+h2 small{font-weight:400;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+ol{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.q{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:grid;grid-template-columns:2.2em 1fr;gap:4px 8px}
+.q.is-ok{border-left:4px solid var(--ok)}
+.q.is-ng{border-left:4px solid var(--ng)}
+.no{font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right}
+.body{min-width:0;display:grid;gap:8px}
+.text{overflow-wrap:anywhere}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.reveal{font:inherit;font-size:14px;border:1px dashed var(--accent);color:var(--accent);background:transparent;border-radius:6px;padding:4px 12px;cursor:pointer}
+.answer{font-weight:700;background:var(--bg);border-radius:6px;padding:6px 10px;overflow-wrap:anywhere}
+.btn{font:inherit;font-size:14px;font-weight:700;border-radius:6px;padding:4px 14px;cursor:pointer;border:1px solid var(--line);background:var(--paper);color:var(--ink)}
+.btn.ok[aria-pressed="true"]{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+.btn.ng[aria-pressed="true"]{background:var(--ng-bg);border-color:var(--ng);color:var(--ng)}
+.empty{color:var(--muted);font-size:14px;padding:20px 0;text-align:center}
+footer{margin-top:36px;font-size:13px;color:var(--muted);display:grid;gap:4px}
+@media (prefers-reduced-motion:no-preference){.answer{animation:fade .18s ease-out}@keyframes fade{from{opacity:.4}to{opacity:1}}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow" id="eyebrow"></div>
+    <h1 id="title"></h1>
+    <div class="exam" id="exam"></div>
+    <p class="howto">問題を読んで答えを考えたら「答えを見る」。合っていたら ○、まちがえたら × を押す。2周目は「×だけ」で、まちがえた問題だけ解き直せる。記録はこの端末のブラウザにだけ残る。</p>
+  </header>
+
+  <div class="bar">
+    <div class="stats" id="stats"></div>
+    <div class="meter" aria-hidden="true"><i class="m-ok" id="m-ok"></i><i class="m-ng" id="m-ng"></i></div>
+    <div class="controls" role="group" aria-label="表示する問題">
+      <button class="chip" id="f-all" data-filter="all" aria-pressed="true">全部</button>
+      <button class="chip" id="f-todo" data-filter="todo" aria-pressed="false">未回答</button>
+      <button class="chip" id="f-ng" data-filter="ng" aria-pressed="false">×だけ</button>
+      <button class="chip" id="t-show" aria-pressed="false">答えを全部表示</button>
+      <button class="chip ghost" id="reset">記録を消す</button>
+    </div>
+    <div class="reset-confirm" id="reset-confirm" hidden>
+      ○×の記録をすべて消します。
+      <button class="chip" id="reset-yes">消す</button>
+      <button class="chip ghost" id="reset-no">やめる</button>
+    </div>
+  </div>
+
+  <main id="list"></main>
+
+  <footer id="footer"></footer>
+</div>
+
+<script>
+const DRILL = {"id": "chiri", "course": "二学期中間テスト（高1）・地理総合", "title": "地理ドリル　気候区分と植生・土壌", "exam": "10/22（木）③11:15", "exam_date": "2026-10-22", "source": "授業ノート", "updated": "2026-10-16", "sections": [{"title": "1. ケッペンの気候区分・熱帯A・乾燥帯B", "items": [["ケッペンは気候区分をするとき、何に注目したか。", "植生"], ["ケッペンが区分に使った2つの指標は何か。", "気温と降水量"], ["樹林気候にふくまれる気候帯を3つ答えよ（記号も）。", "熱帯A・温帯C・亜寒帯D"], ["無樹林気候にふくまれる気候帯を2つ答えよ（記号も）。", "乾燥帯B・寒帯E"], ["気候記号の小文字 s は何を表すか。", "夏に少雨"], ["気候記号の小文字 w は何を表すか。", "冬に少雨"], ["気候記号の小文字 f は何を表すか。", "年中降雨"], ["熱帯雨林気候の記号は何か。", "Af"], ["熱帯雨林気候が年中降雨になるのは、何の影響か。", "熱帯収束帯"], ["熱帯雨林気候の気温が高いのはなぜか。", "低緯度で、太陽からの受熱量が大きいから"], ["熱帯雨林気候の都市としてノートにある都市は。", "シンガポール"], ["サバナ気候の記号は何か。", "Aw"], ["サバナ気候で、夏に雨季になるのは何の影響か。", "熱帯収束帯"], ["サバナ気候で、冬に乾季になるのは何の影響か。", "亜熱帯高圧帯"], ["サバナ気候の都市としてノートにある都市は。", "バンコク"], ["砂漠気候の記号は何か。", "BW"], ["砂漠気候で気温の日較差が大きいのはなぜか（「比熱」を使って）。", "比熱が小さいから"], ["砂漠気候の年降水量はいくら未満か。", "250mm未満"], ["降水量が蒸発量を下回るかどうかで決まる、乾燥帯の境目を何というか。", "乾燥限界"], ["砂漠気候の都市としてノートにある都市は。", "カイロ"], ["ステップ気候の記号は何か。", "BS"], ["ステップ気候はどこの周辺に分布するか。", "砂漠の周辺"], ["ステップ気候の年降水量の範囲は。", "250mm以上 500mm未満"], ["1年中、亜熱帯高圧帯の影響で上昇気流が起きないためにできる砂漠を何というか。", "回帰線砂漠"], ["回帰線砂漠の例を2つ答えよ。", "サハラ砂漠・グレートサンディー砂漠"], ["隔海度が大きく、海から湿った風が来ないためにできる砂漠を何というか。", "内陸砂漠"], ["内陸砂漠の例を2つ答えよ。", "ゴビ砂漠・タクラマカン砂漠"], ["亜熱帯高圧帯からの下降気流があり、寒流が流れていて重く冷たい風が吹くため、上昇気流が起きずにできる砂漠を何というか。", "海岸砂漠"], ["海岸砂漠の例を2つ答えよ。", "アタカマ砂漠・ナミブ砂漠"], ["湿った風が山を越えるとき、風上側で雨を降らせつくしてしまうためにできる砂漠を何というか。", "雨陰砂漠"], ["雨陰砂漠の例としてノートにある地域は。", "パタゴニア"]]}, {"title": "2. 温帯C", "items": [["ノートの緯度の図で、0°（赤道）付近に分布する気候帯は。", "熱帯A"], ["ノートの緯度の図で、北緯・南緯23.4°付近に分布する気候帯は。", "乾燥帯B"], ["ノートの緯度の図で、北緯・南緯40°付近に分布する気候帯は。", "温帯C"], ["ノートの緯度の図で、北緯・南緯60°付近に分布する気候帯は。", "亜寒帯D"], ["地中海性気候の記号は何か。", "Cs"], ["地中海性気候で、夏が高温乾燥になるのは何の影響か。", "亜熱帯高圧帯"], ["地中海性気候で、冬が温暖湿潤になるのは何の影響か。", "亜寒帯低圧帯"], ["地中海性気候の都市を2つ答えよ。", "ローマ・アテネ・ケープタウン・パース・サンティアゴ から2つ"], ["西岸海洋性気候の記号は何か。", "Cfb"], ["西岸海洋性気候は、1年中、何と何の影響を受けるか。", "偏西風と暖流"], ["西岸海洋性気候の都市を2つ答えよ。", "ロンドン・パリ・メルボルン から2つ"], ["温暖冬季少雨気候の記号は何か。", "Cw"], ["温暖冬季少雨気候の夏は、何の影響でどんな天候になるか。", "高温多湿なモンスーンの影響で、高温・多雨"], ["温暖冬季少雨気候の冬は、何の影響でどんな天候になるか。", "冷涼乾燥なモンスーンの影響で、冷涼・少雨"], ["温暖冬季少雨気候の都市としてノートにある都市は。", "香港"], ["温暖湿潤気候の記号は何か。", "Cfa"], ["温暖湿潤気候の都市を2つ答えよ。", "東京・上海・ニューヨーク から2つ"], ["ノートで「多雨」をもたらすと書かれている日本近海の暖流は。", "対馬海流"]]}, {"title": "3. 亜寒帯D・寒帯E・高山気候H", "items": [["亜寒帯Dが北半球にしか分布しないのはなぜか。", "南半球には南緯60°付近に大陸がないから"], ["亜寒帯湿潤気候の記号は何か。", "Df"], ["亜寒帯湿潤気候が年中湿潤なのは何の影響か。", "亜寒帯低圧帯"], ["亜寒帯湿潤気候の都市を2つ答えよ。", "モスクワ・シカゴ"], ["亜寒帯冬季少雨気候の記号は何か。", "Dw"], ["亜寒帯冬季少雨気候は、どこにのみ分布するか。", "ユーラシア大陸の東岸"], ["Df と Dw で、気温の年較差がより大きいのはどちらか。", "Dw"], ["亜寒帯冬季少雨気候の冬が少雨なのは、何の影響か。", "シベリアからの冷涼・乾燥した風"], ["亜寒帯冬季少雨気候の都市を2つ答えよ。", "北京・ハバロフスク"], ["寒帯Eは、緯度何度より極側（極圏）に分布するか。", "66°33′"], ["ツンドラ気候の記号は何か。", "ET"], ["ツンドラ気候はどこの沿岸に分布するか。", "北極海沿岸"], ["ツンドラ気候では、真夏でも気温は何℃を超えないか。", "10℃"], ["ツンドラ気候の都市としてノートにある都市は。", "バロー"], ["氷雪気候の記号は何か。", "EF"], ["氷雪気候が分布する地域を2つ答えよ。", "南極大陸・グリーンランドの内陸部"], ["氷雪気候では、真夏でも気温は何℃を超えないか。", "0℃"], ["氷雪気候の地点としてノートにある日本の観測基地は。", "昭和基地"], ["高山気候の記号は何か。", "H"], ["高山気候が低温になるのは、気温の何によるか。", "気温の逓減率（高いところほど気温が下がる）"], ["高山気候の特徴を漢字2字で表すと。", "常春"], ["熱帯Aの高山では、標高何m以上が居住に最適か。", "3000m以上"], ["温帯Cの高山では、標高何m以上が居住に最適か。", "2000m以上"], ["高山気候の気温の年較差と日較差は、それぞれ大きいか小さいか。", "年較差は小さい・日較差は大きい"], ["高山気候の都市を2つ答えよ。", "ラパス・キト"]]}, {"title": "4. 植生・土壌・生活（熱帯A・乾燥帯B）", "items": [["熱帯雨林気候（Af）の植生は。", "熱帯雨林"], ["熱帯雨林気候の土壌は。", "ラトソル"], ["ラトソルの色と性質（酸性かアルカリ性か）は。", "赤色・酸性"], ["ラトソルが赤色になるのはなぜか。", "雨で土壌中の鉄分がさびるから"], ["焼畑農業で草木灰が役立つのはなぜか。", "灰はアルカリ性で、酸性の土壌を中和するから"], ["セルバで一度大規模に伐採すると再生できないのはなぜか。", "葉が落ちないので土壌が形成されにくいから"], ["熱帯のプランテーションでつくられる作物を2つ答えよ。", "天然ゴム・油やし"], ["サバナ気候（Aw）の、疎林と丈の長い草からなる植生を何というか。", "サバナ"], ["熱帯草原リャノがあるのはどこの国か。", "ベネズエラ"], ["熱帯草原カンポセラードがあるのはどこの国か。", "ブラジル"], ["熱帯草原グランチャコがあるのはどこの国か。", "パラグアイ"], ["リャノ・カンポセラード・グランチャコなどの熱帯草原で行われているのは。", "肉牛の放牧"], ["サバナ気候の土壌は。", "ラトソル"], ["サバナ気候の雨季・乾季を利用してつくられる作物を2つ答えよ。", "コーヒー豆・綿花"], ["砂漠気候（BW）の土壌は。", "砂漠土"], ["オアシスの水源を3つ答えよ。", "地下水・外来河川・地下水路"], ["オアシス農業の代表的な作物は（別名も）。", "デーツ（なつめやし）"], ["イランの地下水路を何というか。", "カナート"], ["アフガニスタンの地下水路を何というか。", "カレーズ"], ["北アフリカの地下水路を何というか。", "フォガラ"], ["ステップ気候（BS）の植生は（短い草の草原）。", "短草草原（ステップ）"], ["ステップ気候の土壌は。", "栗色土"], ["降水量の多いステップに分布する、肥沃な土は。", "肥沃な黒色土"], ["ウクライナに分布する肥沃な黒色土を何というか。", "チェルノーゼム"], ["北アメリカに分布する肥沃な黒色土を何というか。", "プレーリー土"], ["アルゼンチンに分布する肥沃な黒色土を何というか。", "パンパ土"], ["肥沃な黒色土の地域でさかんな農業は。", "小麦の栽培"], ["雨の少ないステップで行われている牧畜は。", "遊牧"], ["モンゴルの移動式住居を何というか。", "ゲル"], ["内モンゴル自治区での移動式住居の呼び名は。", "包（パオ）"]]}, {"title": "5. 植生・土壌・生活（温帯C・亜寒帯D・寒帯E・高山H）", "items": [["地中海性気候（Cs）の植生は。", "耐乾性広葉樹林"], ["地中海性気候の土壌は。", "テラロッサ"], ["テラロッサのもとになる岩石（母岩）は。", "石灰岩"], ["地中海性気候で行われる農業は。", "地中海式農業"], ["地中海式農業で、夏につくる作物を3つ答えよ。", "オリーブ・ぶどう・柑橘類"], ["地中海式農業で、冬につくる作物は。", "小麦"], ["地中海式農業で飼育する家畜は。", "羊"], ["温暖冬季少雨気候（Cw）の植生は。", "照葉樹林"], ["温暖冬季少雨気候でつくられる、アッサム・ダージリンで有名な作物は。", "茶"], ["温暖湿潤気候（Cfa）の植生を3つ答えよ。", "常緑広葉樹・落葉広葉樹・針葉樹"], ["温暖湿潤気候と西岸海洋性気候の土壌は。", "褐色森林土"], ["温暖湿潤気候でつくられる作物を3つ答えよ。", "米・小麦・大豆"], ["西岸海洋性気候（Cfb）の植生を2つ答えよ。", "落葉広葉樹・針葉樹"], ["西岸海洋性気候で行われる農業は。", "混合農業"], ["亜寒帯湿潤気候（Df）の植生は。", "針葉樹林"], ["亜寒帯の針葉樹林を何というか。", "タイガ"], ["亜寒帯の土壌は。", "ポドゾル"], ["ポドゾルの色と性質は。", "灰白色・酸性"], ["亜寒帯でさかんな産業は。", "林業"], ["ツンドラ気候（ET）で、夏に見られる植生を2つ答えよ。", "蘚苔類・地衣類"], ["ツンドラ土の下にある、一年中凍った土を何というか。", "永久凍土"], ["ツンドラ気候の地域の住居の特徴は。", "高床式の住居"], ["北アメリカのツンドラ地域に住む人々と、その生業は。", "イヌイット・アザラシの狩猟"], ["北ヨーロッパのツンドラ地域に住む人々と、その生業は。", "サーミ人・トナカイの遊牧"], ["氷雪気候（EF）の植生と、地表をおおうものは。", "植生なし・氷河"], ["アンデスの高山に住む先住民は。", "インディオ"], ["アンデスでの土地利用を、標高の高い順に3つ答えよ。", "リャマ・アルパカ（の放牧）→ じゃがいも → とうもろこし"], ["チベット（中国）で放牧される家畜は。", "ヤク"]]}, {"title": "6. 成帯土壌と間帯土壌", "items": [["気候の影響で形成される土壌を何というか。", "成帯土壌"], ["母岩の影響で形成される土壌を何というか。", "間帯土壌"], ["熱帯Aの成帯土壌は。", "ラトソル"], ["砂漠気候BWの成帯土壌は。", "砂漠土"], ["温帯Cfの成帯土壌は。", "褐色森林土"], ["褐色森林土が腐植土になるのはなぜか。", "冬があるので落ち葉がたまるから"], ["亜寒帯Dの成帯土壌は。", "ポドゾル"], ["ポドゾルができるのは、寒いために何がすすまないからか。", "生物の死体の分解・腐敗"], ["寒帯ETの成帯土壌は。", "ツンドラ土"], ["間帯土壌テラロッサの分布地域は。", "地中海沿岸"], ["テラロッサの母岩は。", "石灰岩"], ["テラロッサの地域で行われる農業は。", "果樹栽培"], ["ブラジル高原に分布する間帯土壌は。", "テラローシャ"], ["テラローシャの母岩は。", "玄武岩"], ["テラローシャでつくられる作物は。", "コーヒー豆"], ["テラローシャの色は。", "赤紫色"], ["デカン高原に分布する間帯土壌は。", "レグール土"], ["レグール土の母岩は。", "玄武岩"], ["レグール土でつくられる作物と、土の色は。", "綿花・黒色"], ["レグール土の別名は。", "黒色綿花土"], ["氷河のモレーンが、乾燥した風で飛ばされてできた細かい土を何というか。", "レス"], ["ノートで、レスが分布する地域としてあげられている国を3つ答えよ。", "アメリカ・ウクライナ・中国"], ["レスからできた土として、ノートにある土を3つ答えよ。", "プレーリー土・チェルノーゼム・プスタ"], ["中国のレスを何というか。", "黄土"], ["黄土は、どこからの風と、どの川が運んで堆積したものか。", "ゴビ砂漠からの風と黄河"], ["黄土はどんな農業に適するか。", "畑作"]]}]};
+const KEY = "drill:" + DRILL.id;
+let marks = {}, shown = {}, filter = "all", showAll = false;
+try { marks = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { marks = {}; }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(marks)); } catch (e) {} }
+
+const items = [];
+DRILL.sections.forEach((s, si) => s.items.forEach(([q, a]) => items.push({ n: items.length + 1, si, q, a })));
+
+function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+
+function daysLeft() {
+  const now = new Date(Date.now() + 9 * 3600e3);              // 日本時間
+  const today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+  const [y, m, d] = DRILL.exam_date.split("-").map(Number);
+  return Math.round((Date.UTC(y, m - 1, d) - today) / 864e5);
+}
+
+function header() {
+  document.getElementById("eyebrow").textContent = DRILL.course;
+  const h = document.getElementById("title"); h.replaceChildren();
+  DRILL.title.split(/\s+/).forEach((part, i) => { if (i) h.append(" "); h.append(el("span", "seg", part)); });
+  const ex = document.getElementById("exam"); ex.replaceChildren();
+  const t = el("span"); t.append("試験 ", el("strong", null, DRILL.exam));
+  ex.append(t);
+  const dl = daysLeft();
+  ex.append(el("span", "days", dl > 0 ? `あと${dl}日` : dl === 0 ? "今日が試験" : "試験は終了"));
+  ex.append(el("span", null, `全${items.length}問`));
+  const f = document.getElementById("footer"); f.replaceChildren();
+  f.append(el("div", null, `出典: ${DRILL.source}`), el("div", null, `更新: ${DRILL.updated}`));
+}
+
+function stats() {
+  let ok = 0, ng = 0;
+  items.forEach(it => { if (marks[it.n] === "ok") ok++; else if (marks[it.n] === "ng") ng++; });
+  const todo = items.length - ok - ng;
+  const s = document.getElementById("stats"); s.replaceChildren();
+  const a = el("span", "s-ok"); a.append("○ ", el("b", null, ok));
+  const b = el("span", "s-ng"); b.append("× ", el("b", null, ng));
+  const c = el("span"); c.append("未回答 ", el("b", null, todo));
+  s.append(a, b, c);
+  document.getElementById("m-ok").style.width = (ok / items.length * 100) + "%";
+  document.getElementById("m-ng").style.width = (ng / items.length * 100) + "%";
+}
+
+function visible(it) {
+  if (filter === "todo") return !marks[it.n];
+  if (filter === "ng") return marks[it.n] === "ng";
+  return true;
+}
+
+function card(it) {
+  const li = el("li", "q" + (marks[it.n] === "ok" ? " is-ok" : marks[it.n] === "ng" ? " is-ng" : ""));
+  li.id = "q" + it.n;
+  li.append(el("span", "no", it.n));
+  const body = el("div", "body");
+  body.append(el("div", "text", it.q));
+  if (showAll || shown[it.n]) {
+    body.append(el("div", "answer", it.a));
+  } else {
+    const r = el("button", "reveal", "答えを見る"); r.type = "button";
+    r.addEventListener("click", () => { shown[it.n] = true; render(); });
+    const rr = el("div", "row"); rr.append(r); body.append(rr);
+  }
+  const row = el("div", "row");
+  [["ok", "○"], ["ng", "×"]].forEach(([v, label]) => {
+    const btn = el("button", "btn " + v, label); btn.type = "button";
+    btn.setAttribute("aria-label", `${it.n}番を${v === "ok" ? "正解" : "不正解"}にする`);
+    btn.setAttribute("aria-pressed", String(marks[it.n] === v));
+    btn.addEventListener("click", () => {
+      if (marks[it.n] === v) delete marks[it.n]; else marks[it.n] = v;
+      save(); render();
+    });
+    row.append(btn);
+  });
+  body.append(row);
+  li.append(body);
+  return li;
+}
+
+function render() {
+  stats();
+  const list = document.getElementById("list"); list.replaceChildren();
+  let any = false;
+  DRILL.sections.forEach((s, si) => {
+    const its = items.filter(it => it.si === si);
+    const vis = its.filter(visible);
+    if (!vis.length) return;
+    any = true;
+    const sec = el("section");
+    const ok = its.filter(it => marks[it.n] === "ok").length;
+    const h = el("h2", null, s.title); h.append(el("small", null, `○ ${ok} / ${its.length}`));
+    const ol = el("ol");
+    vis.forEach(it => ol.append(card(it)));
+    sec.append(h, ol);
+    list.append(sec);
+  });
+  if (!any) list.append(el("p", "empty", filter === "ng" ? "×をつけた問題はありません。" : "未回答の問題はありません。"));
+}
+
+document.querySelectorAll("[data-filter]").forEach(b => b.addEventListener("click", () => {
+  filter = b.dataset.filter;
+  document.querySelectorAll("[data-filter]").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+  render();
+}));
+document.getElementById("t-show").addEventListener("click", e => {
+  showAll = !showAll; e.currentTarget.setAttribute("aria-pressed", String(showAll)); render();
+});
+const rc = document.getElementById("reset-confirm");
+document.getElementById("reset").addEventListener("click", () => { rc.hidden = false; });
+document.getElementById("reset-no").addEventListener("click", () => { rc.hidden = true; });
+document.getElementById("reset-yes").addEventListener("click", () => { marks = {}; shown = {}; save(); rc.hidden = true; render(); });
+
+header();
+render();
+</script>

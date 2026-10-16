@@ -1,0 +1,221 @@
+<title>__TITLE__</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Shippori+Mincho+B1:wght@700;800&display=swap">
+<style>
+/* Layout: 単語帳のように1列に積む問題リスト。上に試験日と進み具合、教科ごとにアクセント色だけ変える */
+:root{
+  --accent:__ACCENT_LIGHT__;
+  --accent-ink:#ffffff;
+  --bg:#f6f7f5;
+  --paper:#ffffff;
+  --ink:#1c211f;
+  --muted:#5f6864;
+  --line:#dde2df;
+  --ok:#1f7a4d;
+  --ok-bg:#e3f3ea;
+  --ng:#b3361f;
+  --ng-bg:#fbe7e2;
+  --f-display:"Shippori Mincho B1","Hiragino Mincho ProN","Yu Mincho",serif;
+  --f-body:"BIZ UDPGothic","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --accent:__ACCENT_DARK__;--accent-ink:#0f1412;--bg:#121614;--paper:#1a201d;--ink:#e6ebe8;--muted:#9aa49f;--line:#2c3430;
+  --ok:#6fd19c;--ok-bg:#183326;--ng:#ff9a85;--ng-bg:#3a1f19;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --accent:__ACCENT_DARK__;--accent-ink:#0f1412;--bg:#121614;--paper:#1a201d;--ink:#e6ebe8;--muted:#9aa49f;--line:#2c3430;
+  --ok:#6fd19c;--ok-bg:#183326;--ng:#ff9a85;--ng-bg:#3a1f19;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6}
+.wrap{max-width:760px;margin:0 auto;padding-block:20px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{display:grid;gap:6px;padding-bottom:14px;border-bottom:3px solid var(--accent)}
+.eyebrow{font-size:13px;letter-spacing:.08em;color:var(--muted)}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(26px,6vw,36px);line-height:1.25;margin:0;text-wrap:balance}
+h1 .seg{display:inline-block}
+.exam{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:baseline;font-size:14px;color:var(--muted)}
+.exam strong{color:var(--ink)}
+.days{display:inline-block;background:var(--accent);color:var(--accent-ink);font-weight:700;border-radius:4px;padding:1px 8px;font-size:13px}
+.howto{font-size:14px;color:var(--muted);margin:12px 0 0}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:10px;display:grid;gap:8px;border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.stats{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px;font-variant-numeric:tabular-nums}
+.stats b{font-size:16px}
+.s-ok{color:var(--ok)}.s-ng{color:var(--ng)}
+.meter{height:6px;border-radius:3px;background:var(--line);overflow:hidden;display:flex}
+.meter i{display:block;height:100%}
+.meter .m-ok{background:var(--ok)}.meter .m-ng{background:var(--ng)}
+.controls{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:5px 12px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.chip:focus-visible,.btn:focus-visible,.reveal:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chip.ghost{background:transparent;color:var(--muted)}
+.reset-confirm{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:14px}
+section{margin-top:22px}
+h2{font-size:17px;margin:0 0 8px;display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap;text-wrap:balance}
+h2 small{font-weight:400;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+ol{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.q{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:grid;grid-template-columns:2.2em 1fr;gap:4px 8px}
+.q.is-ok{border-left:4px solid var(--ok)}
+.q.is-ng{border-left:4px solid var(--ng)}
+.no{font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right}
+.body{min-width:0;display:grid;gap:8px}
+.text{overflow-wrap:anywhere}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.reveal{font:inherit;font-size:14px;border:1px dashed var(--accent);color:var(--accent);background:transparent;border-radius:6px;padding:4px 12px;cursor:pointer}
+.answer{font-weight:700;background:var(--bg);border-radius:6px;padding:6px 10px;overflow-wrap:anywhere}
+.btn{font:inherit;font-size:14px;font-weight:700;border-radius:6px;padding:4px 14px;cursor:pointer;border:1px solid var(--line);background:var(--paper);color:var(--ink)}
+.btn.ok[aria-pressed="true"]{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+.btn.ng[aria-pressed="true"]{background:var(--ng-bg);border-color:var(--ng);color:var(--ng)}
+.empty{color:var(--muted);font-size:14px;padding:20px 0;text-align:center}
+footer{margin-top:36px;font-size:13px;color:var(--muted);display:grid;gap:4px}
+@media (prefers-reduced-motion:no-preference){.answer{animation:fade .18s ease-out}@keyframes fade{from{opacity:.4}to{opacity:1}}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow" id="eyebrow"></div>
+    <h1 id="title"></h1>
+    <div class="exam" id="exam"></div>
+    <p class="howto">問題を読んで答えを考えたら「答えを見る」。合っていたら ○、まちがえたら × を押す。2周目は「×だけ」で、まちがえた問題だけ解き直せる。記録はこの端末のブラウザにだけ残る。</p>
+  </header>
+
+  <div class="bar">
+    <div class="stats" id="stats"></div>
+    <div class="meter" aria-hidden="true"><i class="m-ok" id="m-ok"></i><i class="m-ng" id="m-ng"></i></div>
+    <div class="controls" role="group" aria-label="表示する問題">
+      <button class="chip" id="f-all" data-filter="all" aria-pressed="true">全部</button>
+      <button class="chip" id="f-todo" data-filter="todo" aria-pressed="false">未回答</button>
+      <button class="chip" id="f-ng" data-filter="ng" aria-pressed="false">×だけ</button>
+      <button class="chip" id="t-show" aria-pressed="false">答えを全部表示</button>
+      <button class="chip ghost" id="reset">記録を消す</button>
+    </div>
+    <div class="reset-confirm" id="reset-confirm" hidden>
+      ○×の記録をすべて消します。
+      <button class="chip" id="reset-yes">消す</button>
+      <button class="chip ghost" id="reset-no">やめる</button>
+    </div>
+  </div>
+
+  <main id="list"></main>
+
+  <footer id="footer"></footer>
+</div>
+
+<script>
+const DRILL = /*__DRILL__*/null;
+const KEY = "drill:" + DRILL.id;
+let marks = {}, shown = {}, filter = "all", showAll = false;
+try { marks = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { marks = {}; }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(marks)); } catch (e) {} }
+
+const items = [];
+DRILL.sections.forEach((s, si) => s.items.forEach(([q, a]) => items.push({ n: items.length + 1, si, q, a })));
+
+function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+
+function daysLeft() {
+  const now = new Date(Date.now() + 9 * 3600e3);              // 日本時間
+  const today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+  const [y, m, d] = DRILL.exam_date.split("-").map(Number);
+  return Math.round((Date.UTC(y, m - 1, d) - today) / 864e5);
+}
+
+function header() {
+  document.getElementById("eyebrow").textContent = DRILL.course;
+  const h = document.getElementById("title"); h.replaceChildren();
+  DRILL.title.split(/\s+/).forEach((part, i) => { if (i) h.append(" "); h.append(el("span", "seg", part)); });
+  const ex = document.getElementById("exam"); ex.replaceChildren();
+  const t = el("span"); t.append("試験 ", el("strong", null, DRILL.exam));
+  ex.append(t);
+  const dl = daysLeft();
+  ex.append(el("span", "days", dl > 0 ? `あと${dl}日` : dl === 0 ? "今日が試験" : "試験は終了"));
+  ex.append(el("span", null, `全${items.length}問`));
+  const f = document.getElementById("footer"); f.replaceChildren();
+  f.append(el("div", null, `出典: ${DRILL.source}`), el("div", null, `更新: ${DRILL.updated}`));
+}
+
+function stats() {
+  let ok = 0, ng = 0;
+  items.forEach(it => { if (marks[it.n] === "ok") ok++; else if (marks[it.n] === "ng") ng++; });
+  const todo = items.length - ok - ng;
+  const s = document.getElementById("stats"); s.replaceChildren();
+  const a = el("span", "s-ok"); a.append("○ ", el("b", null, ok));
+  const b = el("span", "s-ng"); b.append("× ", el("b", null, ng));
+  const c = el("span"); c.append("未回答 ", el("b", null, todo));
+  s.append(a, b, c);
+  document.getElementById("m-ok").style.width = (ok / items.length * 100) + "%";
+  document.getElementById("m-ng").style.width = (ng / items.length * 100) + "%";
+}
+
+function visible(it) {
+  if (filter === "todo") return !marks[it.n];
+  if (filter === "ng") return marks[it.n] === "ng";
+  return true;
+}
+
+function card(it) {
+  const li = el("li", "q" + (marks[it.n] === "ok" ? " is-ok" : marks[it.n] === "ng" ? " is-ng" : ""));
+  li.id = "q" + it.n;
+  li.append(el("span", "no", it.n));
+  const body = el("div", "body");
+  body.append(el("div", "text", it.q));
+  if (showAll || shown[it.n]) {
+    body.append(el("div", "answer", it.a));
+  } else {
+    const r = el("button", "reveal", "答えを見る"); r.type = "button";
+    r.addEventListener("click", () => { shown[it.n] = true; render(); });
+    const rr = el("div", "row"); rr.append(r); body.append(rr);
+  }
+  const row = el("div", "row");
+  [["ok", "○"], ["ng", "×"]].forEach(([v, label]) => {
+    const btn = el("button", "btn " + v, label); btn.type = "button";
+    btn.setAttribute("aria-label", `${it.n}番を${v === "ok" ? "正解" : "不正解"}にする`);
+    btn.setAttribute("aria-pressed", String(marks[it.n] === v));
+    btn.addEventListener("click", () => {
+      if (marks[it.n] === v) delete marks[it.n]; else marks[it.n] = v;
+      save(); render();
+    });
+    row.append(btn);
+  });
+  body.append(row);
+  li.append(body);
+  return li;
+}
+
+function render() {
+  stats();
+  const list = document.getElementById("list"); list.replaceChildren();
+  let any = false;
+  DRILL.sections.forEach((s, si) => {
+    const its = items.filter(it => it.si === si);
+    const vis = its.filter(visible);
+    if (!vis.length) return;
+    any = true;
+    const sec = el("section");
+    const ok = its.filter(it => marks[it.n] === "ok").length;
+    const h = el("h2", null, s.title); h.append(el("small", null, `○ ${ok} / ${its.length}`));
+    const ol = el("ol");
+    vis.forEach(it => ol.append(card(it)));
+    sec.append(h, ol);
+    list.append(sec);
+  });
+  if (!any) list.append(el("p", "empty", filter === "ng" ? "×をつけた問題はありません。" : "未回答の問題はありません。"));
+}
+
+document.querySelectorAll("[data-filter]").forEach(b => b.addEventListener("click", () => {
+  filter = b.dataset.filter;
+  document.querySelectorAll("[data-filter]").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+  render();
+}));
+document.getElementById("t-show").addEventListener("click", e => {
+  showAll = !showAll; e.currentTarget.setAttribute("aria-pressed", String(showAll)); render();
+});
+const rc = document.getElementById("reset-confirm");
+document.getElementById("reset").addEventListener("click", () => { rc.hidden = false; });
+document.getElementById("reset-no").addEventListener("click", () => { rc.hidden = true; });
+document.getElementById("reset-yes").addEventListener("click", () => { marks = {}; shown = {}; save(); rc.hidden = true; render(); });
+
+header();
+render();
+</script>
