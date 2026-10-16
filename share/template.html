@@ -61,6 +61,7 @@ h1 .seg{display:inline-block}
 .mode.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .mode.primary .sub{color:inherit;opacity:.85}
 .mode:disabled{cursor:default;opacity:.5}
+.mode.wide{grid-column:1/-1;min-height:0}
 .mode:disabled:hover{border-color:var(--line)}
 .under{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:8px;font-size:13px;color:var(--muted)}
 details summary{cursor:pointer}
@@ -150,7 +151,8 @@ function save() { try { localStorage.setItem(KEY, JSON.stringify(marks)); } catc
 
 const items = [];
 DRILL.sections.forEach((s, si) => s.items.forEach(([q, a, imp]) =>
-  items.push({ n: items.length + 1, si, q, a, star: !!imp })));
+  items.push({ n: items.length + 1, si, q, a, star: !!imp, jiji: !!s.jiji })));
+const jijiItems = items.filter(it => it.jiji);
 
 function el(tag, attrs, ...kids) {
   const e = document.createElement(tag);
@@ -190,7 +192,7 @@ function home() {
   const title = el("h1", null);
   DRILL.title.split(/\s+/).forEach((p, i) => { if (i) title.append(" "); title.append(el("span", { class: "seg" }, p)); });
   const mode = (label, sub, onclick, opts = {}) =>
-    el("button", { class: "mode" + (opts.primary ? " primary" : ""), type: "button", disabled: !!opts.disabled, onclick },
+    el("button", { class: "mode" + (opts.primary ? " primary" : "") + (opts.wide ? " wide" : ""), type: "button", disabled: !!opts.disabled, onclick },
       el("span", { class: "label" }, label), el("span", { class: "sub" }, sub));
 
   show(
@@ -214,7 +216,8 @@ function home() {
       mode("★ 重要問題", `${stars.length}問`, () => start("★ 重要問題", stars)),
       mode("未回答だけ", todo ? `残り ${todo}問` : "全部解きました",
         () => start("まだ解いていない問題", items.filter(it => !marks[it.n])), { disabled: !todo }),
-      mode("まとめ一覧", "答えつきで見直す", sheet)),
+      mode("まとめ一覧", "答えつきで見直す", sheet),
+      jijiItems.length ? mode("時事問題", `${jijiItems.length}問・${DRILL.jiji_range || ""}`, () => start("時事問題", jijiItems), { wide: true }) : null),
     el("div", { class: "under" },
       el("details", null, el("summary", null, "使い方"),
         el("p", null, "1問ずつ問題が出ます。答えを考えてから「答えを見る」を押し、合っていたら ○、まちがえたら × を押すと次へ進みます。×をつけた問題は「間違えた問題」でまとめて解き直せます。○×の記録はこの端末のブラウザにだけ残ります。")),

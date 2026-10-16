@@ -6,6 +6,7 @@ share/<教科フォルダ名>.html を出力する。複数の JSON がある教
 
 使い方:  python3 tools/build_share.py
 
+JSON に "kind": "jiji" があるものは時事問題として扱い、教科ドリルの後ろに単元として足す。
 共有ページには個人名や家庭の学習計画を入れない（ドリルの問題と試験日程だけ）。
 公開先 URL は CLAUDE.md の「クラス共有ページ」に記録する。
 """
@@ -58,15 +59,20 @@ def main():
             continue
         drills = [json.loads(f.read_text(encoding="utf-8")) for f in files]
         exam, exam_date, course = exam_info(plan, subject)
-        sections = [s for d in drills for s in d["sections"]]
+        # 時事（kind: "jiji"）は教科のドリルのあとに並べ、ページに「時事問題」ボタンを出す
+        main = [d for d in drills if d.get("kind") != "jiji"] or drills
+        jiji = [d for d in drills if d.get("kind") == "jiji"]
+        sections = [s for d in main for s in d["sections"]]
+        sections += [{**s, "jiji": True} for d in jiji for s in d["sections"]]
         data = {
             "id": folder,
             "course": f"二学期中間テスト（高1）・{course}",
-            "title": " ／ ".join(d["title"] for d in drills),
+            "title": " ／ ".join(d["title"] for d in main),
             "exam": exam,
             "exam_date": exam_date,
             "source": "、".join(d.get("share_source", "授業ノート") for d in drills),
             "updated": max(d["date"] for d in drills),
+            "jiji_range": jiji[0].get("range", "") if jiji else "",
             "sections": sections,
         }
         light, dark = ACCENTS[folder]
