@@ -1,0 +1,356 @@
+<title>歴史総合 中間ドリル</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Shippori+Mincho+B1:wght@700;800&display=swap">
+<style>
+/* Layout: 開くとメニュー（進み具合＋6つの学習ボタン）だけ。ボタンから「1問ずつ解く画面」か「一覧」に入る。教科ごとにアクセント色だけ変える */
+:root{
+  --accent:#7d3c2a;
+  --accent-ink:#ffffff;
+  --accent-soft:#efe8e5;
+  --bg:#f6f7f5;
+  --paper:#ffffff;
+  --ink:#1c211f;
+  --muted:#5f6864;
+  --line:#dde2df;
+  --ok:#1f7a4d;
+  --ok-bg:#e3f3ea;
+  --ng:#b3361f;
+  --ng-bg:#fbe7e2;
+  --star:#9a6a00;
+  --f-display:"Shippori Mincho B1","Hiragino Mincho ProN","Yu Mincho",serif;
+  --f-body:"BIZ UDPGothic","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --accent:#e3a590;--accent-ink:#0f1412;--accent-soft:#3a352f;--bg:#121614;--paper:#1a201d;--ink:#e6ebe8;--muted:#9aa49f;--line:#2c3430;
+  --ok:#6fd19c;--ok-bg:#183326;--ng:#ff9a85;--ng-bg:#3a1f19;--star:#f2c14e;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --accent:#e3a590;--accent-ink:#0f1412;--accent-soft:#3a352f;--bg:#121614;--paper:#1a201d;--ink:#e6ebe8;--muted:#9aa49f;--line:#2c3430;
+  --ok:#6fd19c;--ok-bg:#183326;--ng:#ff9a85;--ng-bg:#3a1f19;--star:#f2c14e;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6}
+.wrap{max-width:720px;margin:0 auto;padding-block:20px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:18px}
+button{font:inherit;color:inherit}
+button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ヘッダー */
+header{display:grid;gap:6px}
+.eyebrow{font-size:13px;letter-spacing:.08em;color:var(--muted)}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(26px,6.4vw,36px);line-height:1.25;margin:0;text-wrap:balance}
+h1 .seg{display:inline-block}
+.exam{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:14px;color:var(--muted)}
+.exam strong{color:var(--ink)}
+.days{background:var(--accent);color:var(--accent-ink);font-weight:700;border-radius:4px;padding:1px 8px;font-size:13px}
+
+/* 進み具合 */
+.progress{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:grid;gap:8px}
+.stats{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:14px;font-variant-numeric:tabular-nums;align-items:baseline}
+.stats b{font-size:20px}
+.s-ok{color:var(--ok)}.s-ng{color:var(--ng)}.s-todo{color:var(--muted)}
+.meter{height:8px;border-radius:4px;background:var(--line);overflow:hidden;display:flex}
+.meter i{display:block;height:100%}
+.m-ok{background:var(--ok)}.m-ng{background:var(--ng)}
+
+/* メニューのボタン */
+.modes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.mode{display:grid;gap:2px;text-align:left;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px;cursor:pointer;min-height:84px;align-content:start}
+.mode:hover{border-color:var(--accent)}
+.mode .label{font-weight:700;font-size:17px}
+.mode .sub{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.mode.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.mode.primary .sub{color:inherit;opacity:.85}
+.mode:disabled{cursor:default;opacity:.5}
+.mode:disabled:hover{border-color:var(--line)}
+.under{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:8px;font-size:13px;color:var(--muted)}
+details summary{cursor:pointer}
+details p{margin:6px 0 0;max-width:36em}
+.link{background:none;border:0;padding:0;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:13px}
+.link:disabled{opacity:.4;cursor:default}
+.confirm{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:14px}
+
+/* 画面上部（戻る） */
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.back{border:1px solid var(--line);border-radius:999px;padding:4px 12px;cursor:pointer;font-size:14px;background:var(--paper)}
+.where{font-weight:700}
+.count{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+h2{font-size:18px;margin:0;text-wrap:balance}
+
+/* 単元・問題数の選択 */
+.choices{display:grid;gap:8px}
+.choice{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;align-items:center;text-align:left;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 14px;cursor:pointer}
+.choice:hover{border-color:var(--accent)}
+.choice .c-title{font-weight:700}
+.choice .c-meta{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.choice .meter{grid-column:1/-1;height:5px}
+
+/* 1問ずつ解く画面 */
+.bar{height:4px;background:var(--line);border-radius:2px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent)}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px 16px;display:grid;gap:14px;min-height:240px;align-content:start}
+.card .meta{display:flex;flex-wrap:wrap;gap:6px 10px;font-size:13px;color:var(--muted);align-items:center}
+.badge{border-radius:4px;padding:0 6px;font-size:12px;font-weight:700}
+.b-star{color:var(--star);border:1px solid var(--star)}
+.b-ng{color:var(--ng);border:1px solid var(--ng)}
+.b-ok{color:var(--ok);border:1px solid var(--ok)}
+.qtext{font-size:19px;line-height:1.65;overflow-wrap:anywhere}
+.reveal{border:2px dashed var(--accent);color:var(--accent);background:var(--accent-soft);border-radius:10px;padding:14px;font-weight:700;cursor:pointer;font-size:16px}
+.answer{font-size:19px;font-weight:700;background:var(--accent-soft);border-radius:10px;padding:12px 14px;overflow-wrap:anywhere}
+.judge{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.judge button{border-radius:10px;padding:14px 8px;font-weight:700;font-size:16px;cursor:pointer;border:2px solid}
+.j-ok{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+.j-ng{background:var(--ng-bg);border-color:var(--ng);color:var(--ng)}
+.nav{display:flex;justify-content:space-between;gap:8px}
+.nav button{background:none;border:0;color:var(--muted);cursor:pointer;font-size:14px;padding:4px 0}
+.nav button:disabled{opacity:.35;cursor:default}
+.keys{font-size:12px;color:var(--muted);text-align:center}
+@media (hover:none){.keys{display:none}}
+
+/* 結果 */
+.result{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:20px 16px;display:grid;gap:12px;text-align:center}
+.result .big{font-family:var(--f-display);font-size:40px;font-weight:800;font-variant-numeric:tabular-nums}
+.result .stats{justify-content:center}
+.actions{display:grid;gap:8px}
+.btn{border-radius:10px;padding:12px;font-weight:700;cursor:pointer;border:1px solid var(--line);background:var(--paper)}
+.btn.main{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+
+/* まとめ一覧 */
+.filters{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:13px;border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:4px 11px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.sheet{display:grid;gap:16px}
+.sheet h3{font-size:15px;margin:0 0 6px;color:var(--muted);text-wrap:balance}
+.rows{list-style:none;margin:0;padding:0;background:var(--paper);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.rows li{display:grid;grid-template-columns:3.2em minmax(0,1fr);gap:2px 8px;padding:9px 12px;border-top:1px solid var(--line)}
+.rows li:first-child{border-top:0}
+.rows .no{font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.rows .st{color:var(--star)}
+.rows .qa{display:grid;gap:2px}
+.rows .q{overflow-wrap:anywhere}
+.rows .a{font-weight:700;overflow-wrap:anywhere}
+.rows .a.hide{color:transparent;background:var(--line);border-radius:4px;cursor:pointer;user-select:none}
+.rows li.ok{box-shadow:inset 3px 0 0 var(--ok)}
+.rows li.ng{box-shadow:inset 3px 0 0 var(--ng)}
+.empty{color:var(--muted);text-align:center;padding:24px 0}
+footer{font-size:12px;color:var(--muted);display:grid;gap:2px}
+@media (max-width:340px){.modes{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:no-preference){.answer{animation:fade .18s ease-out}@keyframes fade{from{opacity:.5}to{opacity:1}}}
+</style>
+
+<div class="wrap" id="app"></div>
+
+<script>
+const DRILL = {"id": "rekishi", "course": "二学期中間テスト（高1）・歴史総合", "title": "歴史ドリル　幕末から明治の国家形成", "exam": "10/26（月）③11:15", "exam_date": "2026-10-26", "source": "授業プリント No.14〜19", "updated": "2026-10-16", "sections": [{"title": "1. 外国船の来航と幕府の対応（No.14）", "items": [["18世紀末、ロシアを発展させ東方へ進出させたロシア皇帝は。", "エカチェリーナ2世", 1], ["プリントのメモで、ロシアが東方へ進出して求めたものとして書かれている動物は。", "ラッコ"], ["1792年に根室に来航し、幕府に通商を求めたロシアの使節は。", "ラクスマン", 1], ["1804年に長崎に来航し、幕府に通商を求めたロシアの使節は。", "レザノフ", 1], ["通商を断られて反発したロシアが、樺太と択捉島を襲撃したのは何年か。", "1806年"], ["日露の関係改善のきっかけになった1811年の事件は。", "ゴローウニン事件"], ["1808年、イギリス船が長崎に侵入した事件は。", "フェートン号事件"], ["フェートン号事件のあと、日本近海で確認されるようになったイギリスの船は。", "捕鯨船"], ["1825年、外国船を見つけしだい打ち払うよう命じた法令は（別名も）。", "異国船打払令（無二念打払令）", 1], ["1837年、アメリカ船が打ち払われた事件は。", "モリソン号事件", 1], ["モリソン号事件をめぐって幕府を批判した人々を、厳しく処罰した事件は。", "蛮社の獄", 1], ["1842年、異国船打払令をやめて出された法令は。", "天保の薪水給与令", 1], ["天保の薪水給与令が出された背景として、プリントにメモされている戦争は。", "アヘン戦争"], ["天保の薪水給与令（史料2）では、食料や薪水に困った外国船をどうするとしたか。", "望みの品を与えて帰らせる（上陸はさせない）"], ["外国船の来航で国防意識が高まり、海防が強化された代表的な場所は。", "江戸湾"], ["幕府が蝦夷地を直轄化し、「日本」への同化を企てた（失敗した）人々は。", "アイヌ", 1]]}, {"title": "2. 19世紀前半の政治と社会（No.14）", "items": [["1830年代に起こり、百姓一揆や打ちこわしが頻発するきっかけになった飢饉は。", "天保の飢饉", 1], ["天保の改革を始めた老中は。", "水野忠邦"], ["天保の改革の政策を2つ答えよ（プリントにある例から）。", "奢侈抑制（倹約）・株仲間解散・人返し令 から2つ"], ["水野忠邦が失脚する原因になった、2つの政策の失敗は。", "三方領地替え・上知令", 1], ["経済の立て直しに成功し、幕末政局の主導権を握った西南の藩を2つ答えよ。", "長州藩・薩摩藩"], ["朱子学の官学化で整えられた幕府の学問所は。", "昌平坂学問所"], ["19世紀に発展した学問を2つ答えよ。", "蘭学・国学"], ["幕末の倒幕運動の思想基盤になった、水戸藩の思想は。", "尊王攘夷論"]]}, {"title": "3. 日本の開国（No.15）", "items": [["1853年に浦賀に来航した、アメリカ東インド艦隊司令長官は。", "ペリー"], ["ペリー来航後、大名や旗本に米大統領の国書を公開し、意見を求めた老中は。", "阿部正弘", 1], ["1854年にアメリカと結んだ条約は。", "日米和親条約"], ["日米和親条約で開港した2つの港は。", "下田・箱館"], ["日米和親条約で認めた、アメリカだけに有利な待遇を何というか。", "片務的最恵国待遇", 1], ["通商を求めて着任したアメリカの総領事は。", "ハリス"], ["条約の勅許を得るために上洛した老中は。", "堀田正睦"], ["通商条約の勅許を出さなかった天皇は。", "孝明天皇", 1], ["1858年、勅許を得ないまま日米修好通商条約に調印した大老は。", "井伊直弼", 1], ["日米修好通商条約で開港した4つの港は。", "神奈川・長崎・新潟・兵庫"], ["日米修好通商条約の不平等な点を2つ答えよ。", "領事裁判権（を認めた）・関税自主権の欠如"], ["無勅許調印への批判と将軍継嗣問題に対して、大老が行った弾圧は。", "安政の大獄"], ["1860年、大老が殺害された事件は。", "桜田門外の変"], ["開国後の最大の貿易相手国は。", "イギリス"], ["開国後の貿易は、輸出と輸入のどちらが大幅に超過したか。", "輸出", 1], ["開国後の主な輸出品と輸入品は、それぞれどんな種類のものか。", "輸出品＝原料・輸入品＝工業製品", 1], ["金銀の交換比率の違いから、どんなことが起きたか。", "金が海外に流出した"], ["幕府が貨幣の改鋳を行った結果、どうなったか。", "物価上昇に拍車がかかった"], ["貿易への批判が強まり、幕府批判とともに広がった考えは。", "尊王攘夷", 1]]}, {"title": "4. 幕末政局と王政復古（No.15）", "items": [["朝廷と幕府が協力して政局を安定させようとする政策を何というか。", "公武合体", 1], ["公武合体を進めた老中は。", "安藤信正"], ["14代将軍徳川家茂に降嫁した皇女は。", "和宮"], ["安藤信正が襲撃された事件は。", "坂下門外の変"], ["島津久光の上京など、公武合体を主導した藩は。", "薩摩藩", 1], ["薩摩藩の要求を受けて行われた幕政改革を何というか。", "文久の改革"], ["攘夷政策をうち出し、急進派公家と結んで京都政局の主導権を握った藩は。", "長州藩", 1], ["1863年、会津藩・薩摩藩が尊攘派公家と長州藩を京都から追放した事件は。", "八月十八日の政変"], ["1864年、長州藩が京都に攻め上り、薩摩藩に敗れた事件は。", "禁門の変"], ["薩摩藩・長州藩が外国の脅威を知るきっかけになった戦いを、それぞれ答えよ。", "薩摩藩＝薩英戦争・長州藩＝四国艦隊下関砲撃事件"], ["1866年に結ばれた薩摩藩と長州藩の同盟は。", "薩長同盟"], ["薩長同盟を仲介した土佐藩の人物は。", "坂本龍馬"], ["1867年1月に亡くなった、徳川慶喜の後ろ盾だった天皇は。", "孝明天皇"], ["1867年頃、雄藩や知識人の間で高まった、諸藩の合議による政治をめざす考えは。", "公議政体論", 1], ["徳川慶喜に政権返上を献言した土佐藩の人物は。", "山内容堂"], ["1867年10月、徳川慶喜が朝廷に政権を返上したことを何というか。", "大政奉還", 1], ["1867年12月、幕府と旧来の朝廷制度を廃止し、天皇中心の新政府の発足を示したものは。", "王政復古の大号令", 1]]}, {"title": "5. 明治維新と諸改革（No.16）", "items": [["1868年1月、鳥羽・伏見で始まった旧幕府軍と新政府の戦いは。", "戊辰戦争", 1], ["戊辰戦争で、江戸はどのように明け渡されたか。", "無血開城"], ["1868年3月、大名・公家が参加する政策決定の原則を示したものは。", "五箇条の御誓文", 1], ["1868年3月、民衆に向けて新政府の統治の方針を示したものは。", "五榜の掲示", 1], ["五箇条の御誓文などを実現するための政府組織を定めたものは。", "政体書", 1], ["政体書で、アメリカのしくみを参考に取り入れた原則は（太政官制と並ぶもの）。", "三権分立", 1], ["1869年、藩主が版（土地）と籍（人民）を朝廷に返したことを何というか。", "版籍奉還", 1], ["1871年、藩を廃止して県を置いたことを何というか。", "廃藩置県", 1], ["明治政府の初めの主な財源は、どのような納め方だったか。", "米納（米で納める）"], ["1872年、土地所有者をはっきりさせるため、すべての土地所有者に発行したものは。", "地券", 1], ["1873年に発布された、租税制度を改めた法令は。", "地租改正条例", 1], ["地租改正に対して、民衆の間に広がった一揆は。", "地租改正反対一揆"], ["1869年の身分制廃止で、公家や大名は何とされたか。", "華族", 1], ["1869年の身分制廃止で、武士は何とされたか。", "士族", 1], ["1869年の身分制廃止で、公家・大名・武士以外の人々は何とされたか。", "平民", 1], ["1871年、差別的な呼称を廃止し、職業を平民同様とした法令は（別名も）。", "解放令（賤民廃止令）", 1]]}, {"title": "6. 富国強兵・殖産興業・文明開化（No.17）", "items": [["徴兵制度のもとになった、身分によらない原則は。", "四民平等", 1], ["1872年に出された、徴兵の趣旨を示したものは。", "徴兵告諭", 1], ["1873年に出された、兵役を義務とした法令は。", "徴兵令", 1], ["徴兵令に反対して起きた一揆は。", "血税一揆"], ["政府が産業を育てるために進めた政策は。", "殖産興業", 1], ["殖産興業で重視された、造船などの工業は。", "重工業", 1], ["官営で設立された製糸場は。", "富岡製糸場"], ["富岡製糸場で、全国から集めた工女を指導したのは。", "お雇い外国人"], ["プリントのメモで、富岡製糸場の工女として書かれているのはどんな人たちか。", "士族の娘"], ["1871年、円・銭・厘の単位を定めた法令は。", "新貨条例", 1], ["1872年、兌換銀行券を発行するために定めた法令は。", "国立銀行条例", 1], ["前島密の建議で1871年に発足した制度は。", "郵便制度"], ["1872年に開通した通信手段は。", "電信"], ["西洋の政治制度や自由・平等の思想を紹介した民間の団体は。", "明六社", 1], ["鉄道が開通した区間は。", "新橋―横浜"], ["鉄道開通のとき、資金や設計を支援した国は。", "イギリス"], ["煉瓦街がつくられた場所は。", "銀座"], ["太陰太陽暦から改められた、西洋にならった暦は。", "太陽暦"], ["日常の軽い犯罪を取り締まった、西洋の習俗にならった法令は。", "違式詿違条例"], ["1872年に公布された、国民皆学をめざした制度は。", "学制", 1], ["学制に反対して起きた一揆は。", "学制反対一揆"], ["史料1『日本奥地紀行』を書いた人物は。", "イザベラ・バード"]]}, {"title": "7. 近代的な国際関係（No.18）", "items": [["岩倉使節団の目的は。", "不平等条約改正の予備交渉", 1], ["岩倉使節団の全権大使は。", "岩倉具視"], ["岩倉使節団の副使を4人答えよ。", "木戸孝允・大久保利通・伊藤博文・山口尚芳"], ["岩倉使節団に同行した留学生として、プリントに名前があるのは。", "津田梅子"], ["清を中心とする東アジアの国際秩序を何というか。", "冊封体制", 1], ["1871年に清と結んだ条約と、その性格は。", "日清修好条規・対等条約", 1], ["朝鮮開国をめぐる政府内の対立から起きた、1873年の政変は。", "明治六年の政変"], ["征韓論を主張した人物を3人答えよ。", "西郷隆盛・板垣退助・江藤新平", 1], ["内治優先論を主張した人物を3人答えよ。", "岩倉具視・大久保利通・木戸孝允", 1], ["朝鮮国王高宗の妃は。", "閔妃", 1], ["閔妃の一族に追放された、国王の父は。", "大院君"], ["1875年に日本と朝鮮の間で起きた武力衝突は。", "江華島事件", 1], ["1876年に朝鮮と結んだ条約と、その性格は。", "日朝修好条規・不平等条約（清の宗主権を否定）", 1], ["1882年、大院君を擁する軍が閔妃政権に対して起こした反乱は。", "壬午軍乱", 1], ["1884年、親日開化派が日本軍の協力でクーデターを起こした事件は。", "甲申政変", 1], ["甲申政変を起こした親日開化派の中心人物は。", "金玉均"], ["1885年に日本と清の間で結ばれた条約は。", "天津条約", 1], ["1872年、琉球に置かれたものは。", "琉球藩"], ["1874年、琉球漂流民殺害事件をきっかけに行われた出兵は。", "台湾出兵", 1], ["1879年に琉球藩を廃止して設置されたものは。", "沖縄県"], ["1876年に日本が領有を宣言し、承認された南方の島々は。", "小笠原諸島"], ["1854年、ロシアと国境を定めた条約は。", "日露和親条約"], ["日露和親条約で、千島列島の国境はどこに引かれたか。", "得撫島と択捉島の間"], ["日露和親条約で、両国人の雑居地とされたのは。", "樺太", 1], ["1869年、蝦夷地を北海道と改めて設置した役所は。", "開拓使", 1], ["1875年、千島列島を日本領、樺太をロシア領とした条約は。", "樺太・千島交換条約", 1]]}, {"title": "8. 自由民権運動（No.19）", "items": [["政府への対抗運動のきっかけになった、1873年の出来事は。", "明治六年の政変"], ["下野した西郷隆盛・江藤新平・板垣退助が、それぞれ向かった先は。", "西郷＝鹿児島・江藤＝佐賀・板垣＝高知"], ["政府に不満を持つ士族が武力で起こした反乱を何というか。", "士族反乱", 1], ["最後にして最大の士族反乱と、その年は。", "西南戦争・1877年"], ["士族反乱を鎮圧したのは、何に基づく政府軍か。", "徴兵制"], ["言論による政府への対抗運動を何というか。", "自由民権運動"], ["1874年、板垣退助らが提出したものは。", "民撰議院設立の建白書", 1], ["自由民権運動と結びついた思想は。", "天賦人権思想"], ["1874年に高知で結成された団体は。", "立志社"], ["1875年に大阪で結成された全国組織は。", "愛国社"], ["1870年代後半の豊作で潤い、民権運動の担い手の中心になった人々は。", "豪農（地主を中心とする農民）"], ["1875年に政府が民権運動を弾圧するために出した法令を2つ答えよ。", "讒謗律・新聞紙条例"], ["1880年に政府が民権運動を弾圧するために出した法令は。", "集会条例"], ["1880年、愛国社が改組してできた団体は。", "国会期成同盟", 1], ["急進論で、イギリス流の議会制民主主義をめざした政府首脳は。", "大隈重信"], ["漸進論で、ドイツ流の君主中心主義をめざした政府首脳は。", "伊藤博文"], ["1881年、政府批判が高まるきっかけになった事件は。", "開拓使官有物払下げ事件"], ["1881年、10年後の国会開設を約束したものは。", "国会開設の勅諭"], ["1881年、官有物払下げの中止とともに大隈重信が政府から追放された出来事は。", "明治十四年の政変", 1], ["国会開設の勅諭のあとに結成された政党を2つ答えよ。", "自由党・立憲改進党"], ["1881年から始まった、デフレ政策を中心とする財政を何というか。", "松方財政", 1], ["1882年、財政の信用・安定のために設立された銀行は。", "日本銀行", 1], ["松方財政で行われたのは、インフレ政策とデフレ政策のどちらか。", "デフレ政策"], ["1882年に福島で起きた激化事件は。", "福島事件"], ["1884年、困民党が起こした激化事件は。", "秩父事件", 1]]}]};
+const KEY = "drill:" + DRILL.id;
+const app = document.getElementById("app");
+
+let marks = {};
+try { marks = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { marks = {}; }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(marks)); } catch (e) {} }
+
+const items = [];
+DRILL.sections.forEach((s, si) => s.items.forEach(([q, a, imp]) =>
+  items.push({ n: items.length + 1, si, q, a, star: !!imp })));
+
+function el(tag, attrs, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (k === "class") e.className = v;
+    else if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
+    else if (v === true) e.setAttribute(k, "");
+    else if (v !== false && v != null) e.setAttribute(k, v);
+  }
+  for (const c of kids.flat()) if (c != null && c !== false) e.append(c);
+  return e;
+}
+const count = (list, v) => list.filter(it => v === "todo" ? !marks[it.n] : marks[it.n] === v).length;
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function meter(list) {
+  const ok = count(list, "ok") / list.length * 100, ng = count(list, "ng") / list.length * 100;
+  return el("div", { class: "meter", "aria-hidden": "true" },
+    el("i", { class: "m-ok", style: `width:${ok}%` }), el("i", { class: "m-ng", style: `width:${ng}%` }));
+}
+function daysLeft() {
+  const now = new Date(Date.now() + 9 * 3600e3);              // 日本時間
+  const today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+  const [y, m, d] = DRILL.exam_date.split("-").map(Number);
+  return Math.round((Date.UTC(y, m - 1, d) - today) / 864e5);
+}
+const backBar = extra => el("div", { class: "top" },
+  el("button", { class: "back", type: "button", onclick: home }, "← メニュー"), extra || null);
+function show(...nodes) { app.replaceChildren(...nodes); window.scrollTo(0, 0); }
+
+/* ── メニュー ───────────────────────────── */
+let confirmReset = false;
+function home() {
+  quiz = null;
+  const ok = count(items, "ok"), ng = count(items, "ng"), todo = count(items, "todo");
+  const stars = items.filter(it => it.star);
+  const dl = daysLeft();
+  const title = el("h1", null);
+  DRILL.title.split(/\s+/).forEach((p, i) => { if (i) title.append(" "); title.append(el("span", { class: "seg" }, p)); });
+  const mode = (label, sub, onclick, opts = {}) =>
+    el("button", { class: "mode" + (opts.primary ? " primary" : ""), type: "button", disabled: !!opts.disabled, onclick },
+      el("span", { class: "label" }, label), el("span", { class: "sub" }, sub));
+
+  show(
+    el("header", null,
+      el("div", { class: "eyebrow" }, DRILL.course), title,
+      el("div", { class: "exam" },
+        el("span", null, "試験 ", el("strong", null, DRILL.exam)),
+        el("span", { class: "days" }, dl > 0 ? `あと${dl}日` : dl === 0 ? "今日が試験" : "試験は終了"),
+        el("span", null, `全${items.length}問`))),
+    el("div", { class: "progress" },
+      el("div", { class: "stats" },
+        el("span", { class: "s-ok" }, "○ ", el("b", null, ok)),
+        el("span", { class: "s-ng" }, "× ", el("b", null, ng)),
+        el("span", { class: "s-todo" }, "未回答 ", el("b", null, todo))),
+      meter(items)),
+    el("div", { class: "modes" },
+      mode("単元別", `${DRILL.sections.length}単元から選ぶ`, units, { primary: true }),
+      mode("ランダム", "10問・20問・全部", randomPick),
+      mode("間違えた問題", ng ? `× が ${ng}問` : "まだありません",
+        () => start("間違えた問題の復習", shuffle(items.filter(it => marks[it.n] === "ng"))), { disabled: !ng }),
+      mode("★ 重要問題", `${stars.length}問`, () => start("★ 重要問題", stars)),
+      mode("未回答だけ", todo ? `残り ${todo}問` : "全部解きました",
+        () => start("まだ解いていない問題", items.filter(it => !marks[it.n])), { disabled: !todo }),
+      mode("まとめ一覧", "答えつきで見直す", sheet)),
+    el("div", { class: "under" },
+      el("details", null, el("summary", null, "使い方"),
+        el("p", null, "1問ずつ問題が出ます。答えを考えてから「答えを見る」を押し、合っていたら ○、まちがえたら × を押すと次へ進みます。×をつけた問題は「間違えた問題」でまとめて解き直せます。○×の記録はこの端末のブラウザにだけ残ります。")),
+      confirmReset
+        ? el("div", { class: "confirm" }, "○×の記録をすべて消しますか？",
+            el("button", { class: "chip", type: "button", onclick: () => { marks = {}; save(); confirmReset = false; home(); } }, "消す"),
+            el("button", { class: "chip", type: "button", onclick: () => { confirmReset = false; home(); } }, "やめる"))
+        : el("button", { class: "link", type: "button", disabled: ok + ng === 0, onclick: () => { confirmReset = true; home(); } }, "記録を消す")),
+    el("footer", null, el("div", null, `出典: ${DRILL.source}`), el("div", null, `更新: ${DRILL.updated}`)));
+}
+
+/* ── 単元を選ぶ ─────────────────────────── */
+function units() {
+  show(backBar(), el("h2", null, "単元を選ぶ"),
+    el("div", { class: "choices" }, DRILL.sections.map((s, si) => {
+      const list = items.filter(it => it.si === si);
+      return el("button", { class: "choice", type: "button", onclick: () => start(s.title, list) },
+        el("span", { class: "c-title" }, s.title),
+        el("span", { class: "c-meta" }, `○ ${count(list, "ok")} / ${list.length}問`),
+        meter(list));
+    })));
+}
+
+/* ── ランダムの問題数 ───────────────────── */
+function randomPick() {
+  const opts = [[10, "10問"], [20, "20問"], [items.length, `全部（${items.length}問）`]];
+  show(backBar(), el("h2", null, "ランダムで何問？"),
+    el("div", { class: "choices" }, opts.map(([n, label]) =>
+      el("button", { class: "choice", type: "button", onclick: () => start(`ランダム ${label}`, shuffle(items).slice(0, n)) },
+        el("span", { class: "c-title" }, label),
+        el("span", { class: "c-meta" }, "全単元からまぜて出題")))));
+}
+
+/* ── 1問ずつ解く ────────────────────────── */
+let quiz = null;
+function start(name, list) {
+  if (!list.length) return home();
+  quiz = { name, list, i: 0, open: false, got: {} };
+  card();
+}
+function card() {
+  const { name, list, i } = quiz, it = list[i], mk = marks[it.n];
+  const body = [
+    el("div", { class: "meta" },
+      el("span", null, `No.${it.n}`),
+      it.star ? el("span", { class: "badge b-star" }, "★重要") : null,
+      mk === "ng" ? el("span", { class: "badge b-ng" }, "前回 ×") : mk === "ok" ? el("span", { class: "badge b-ok" }, "前回 ○") : null,
+      el("span", null, DRILL.sections[it.si].title)),
+    el("div", { class: "qtext" }, it.q),
+  ];
+  if (quiz.open) {
+    body.push(el("div", { class: "answer" }, it.a),
+      el("div", { class: "judge" },
+        el("button", { class: "j-ok", type: "button", onclick: () => judge("ok") }, "○ 合ってた"),
+        el("button", { class: "j-ng", type: "button", onclick: () => judge("ng") }, "× まちがえた")));
+  } else {
+    body.push(el("button", { class: "reveal", type: "button", id: "reveal", onclick: () => { quiz.open = true; card(); } }, "答えを見る"));
+  }
+  show(
+    backBar(el("span", { class: "count" }, `${i + 1} / ${list.length}`)),
+    el("div", { class: "bar", "aria-hidden": "true" }, el("i", { style: `width:${(i / list.length) * 100}%` })),
+    el("div", { class: "where" }, name),
+    el("div", { class: "card" }, body),
+    el("div", { class: "nav" },
+      el("button", { type: "button", disabled: i === 0, onclick: () => go(-1) }, "← 前の問題"),
+      el("button", { type: "button", onclick: () => go(1) }, i + 1 < list.length ? "とばす →" : "おわる →")),
+    el("div", { class: "keys" }, "キーボード: スペース＝答えを見る　1＝○　2＝×"));
+}
+function judge(v) {
+  const it = quiz.list[quiz.i];
+  marks[it.n] = v; quiz.got[it.n] = v; save();
+  go(1);
+}
+function go(d) {
+  quiz.i = Math.max(0, quiz.i + d); quiz.open = false;
+  if (quiz.i >= quiz.list.length) return result();
+  card();
+}
+document.addEventListener("keydown", e => {
+  if (!quiz || e.altKey || e.ctrlKey || e.metaKey) return;
+  if (e.key === " " && !quiz.open) { e.preventDefault(); quiz.open = true; card(); }
+  else if (quiz.open && e.key === "1") judge("ok");
+  else if (quiz.open && e.key === "2") judge("ng");
+});
+
+/* ── 結果 ──────────────────────────────── */
+function result() {
+  const { name, list, got } = quiz;
+  quiz = null;
+  const ok = list.filter(it => got[it.n] === "ok").length;
+  const wrong = list.filter(it => got[it.n] === "ng");
+  const skipped = list.length - ok - wrong.length;
+  show(backBar(),
+    el("div", { class: "result" },
+      el("div", null, name),
+      el("div", { class: "big" }, `${ok} / ${list.length}`),
+      el("div", { class: "stats" },
+        el("span", { class: "s-ok" }, "○ ", el("b", null, ok)),
+        el("span", { class: "s-ng" }, "× ", el("b", null, wrong.length)),
+        skipped ? el("span", { class: "s-todo" }, "とばした ", el("b", null, skipped)) : null),
+      el("div", { class: "actions" },
+        wrong.length ? el("button", { class: "btn main", type: "button", onclick: () => start(`${name}（×の解き直し）`, wrong) }, `× の ${wrong.length}問をもう一度`) : null,
+        el("button", { class: wrong.length ? "btn" : "btn main", type: "button", onclick: () => start(name, list) }, "同じ問題をもう一度"),
+        el("button", { class: "btn", type: "button", onclick: home }, "メニューに戻る"))));
+}
+
+/* ── まとめ一覧 ─────────────────────────── */
+const view = { unit: -1, hide: false, star: false, ng: false };
+function sheet() {
+  const chip = (label, on, fn) => el("button", { class: "chip", type: "button", "aria-pressed": String(on), onclick: () => { fn(); sheet(); } }, label);
+  const groups = DRILL.sections.map((s, si) => {
+    if (view.unit !== -1 && view.unit !== si) return null;
+    const list = items.filter(it => it.si === si && (!view.star || it.star) && (!view.ng || marks[it.n] === "ng"));
+    if (!list.length) return null;
+    return el("section", null, el("h3", null, s.title),
+      el("ol", { class: "rows" }, list.map(it => {
+        const a = el("div", { class: "a" + (view.hide ? " hide" : "") }, it.a);
+        if (view.hide) a.addEventListener("click", () => a.classList.toggle("hide"));
+        return el("li", { class: marks[it.n] || "" },
+          el("span", { class: "no" }, it.star ? el("span", { class: "st" }, "★") : null, it.n),
+          el("div", { class: "qa" }, el("div", { class: "q" }, it.q), a));
+      })));
+  }).filter(Boolean);
+  const y = window.scrollY;
+  show(backBar(), el("h2", null, "まとめ一覧"),
+    el("div", { class: "filters" },
+      chip("全単元", view.unit === -1, () => view.unit = -1),
+      DRILL.sections.map((s, si) => chip(`単元${si + 1}`, view.unit === si, () => view.unit = si))),
+    el("div", { class: "filters" },
+      chip("★だけ", view.star, () => view.star = !view.star),
+      chip("×だけ", view.ng, () => view.ng = !view.ng),
+      chip("答えをかくす", view.hide, () => view.hide = !view.hide)),
+    view.hide ? el("p", { class: "count", style: "margin:0" }, "かくした答えは、タップすると表示されます。") : null,
+    groups.length ? el("div", { class: "sheet" }, groups) : el("p", { class: "empty" }, "あてはまる問題はありません。"));
+  window.scrollTo(0, y);
+}
+
+home();
+</script>
