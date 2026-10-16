@@ -1,0 +1,465 @@
+{
+  "title": "令和8年度 2学期 中間テスト（高1）",
+  "student": "小太郎（高1）",
+  "budget": {
+    "weekday_hours": 4,
+    "weekend_hours": 6,
+    "exam_afternoon_hours": 6
+  },
+  "subjects": {
+    "EA": {
+      "level": "mid",
+      "level_label": "普通",
+      "exam": "10/22 ①",
+      "folder": "ea"
+    },
+    "古文": {
+      "level": "bad",
+      "level_label": "まずい",
+      "exam": "10/22 ②",
+      "folder": "kobun"
+    },
+    "地理": {
+      "level": "easy",
+      "level_label": "楽",
+      "exam": "10/22 ③",
+      "folder": "chiri"
+    },
+    "数β": {
+      "level": "bad",
+      "level_label": "まずい",
+      "exam": "10/23 ①",
+      "folder": "math-beta"
+    },
+    "化学": {
+      "level": "bad",
+      "level_label": "まずい",
+      "exam": "10/23 ②",
+      "folder": "chem"
+    },
+    "現代文": {
+      "level": "easy",
+      "level_label": "楽",
+      "exam": "10/26 ①",
+      "folder": "gendaibun"
+    },
+    "EB": {
+      "level": "bad",
+      "level_label": "まずい",
+      "exam": "10/26 ②",
+      "folder": "eb"
+    },
+    "歴史": {
+      "level": "easy",
+      "level_label": "楽",
+      "exam": "10/26 ③",
+      "folder": "rekishi"
+    },
+    "数α": {
+      "level": "easy",
+      "level_label": "楽",
+      "exam": "10/27 ①",
+      "folder": "math-alpha"
+    },
+    "漢文": {
+      "level": "mid",
+      "level_label": "普通",
+      "exam": "10/27 ②",
+      "folder": "kanbun"
+    }
+  },
+  "exams": [
+    {
+      "date": "10/22",
+      "weekday": "木",
+      "periods": [
+        {
+          "period": "①8:45",
+          "subject": "EA",
+          "label": "English A・リスニング"
+        },
+        {
+          "period": "②10:00",
+          "subject": "古文",
+          "label": "古文"
+        },
+        {
+          "period": "③11:15",
+          "subject": "地理",
+          "label": "地理総合"
+        }
+      ]
+    },
+    {
+      "date": "10/23",
+      "weekday": "金",
+      "periods": [
+        {
+          "period": "①8:45",
+          "subject": "数β",
+          "label": "数学β"
+        },
+        {
+          "period": "②10:00",
+          "subject": "化学",
+          "label": "化学"
+        }
+      ]
+    },
+    {
+      "date": "10/26",
+      "weekday": "月",
+      "periods": [
+        {
+          "period": "①8:45",
+          "subject": "現代文",
+          "label": "現代文"
+        },
+        {
+          "period": "②10:00",
+          "subject": "EB",
+          "label": "English B/BN"
+        },
+        {
+          "period": "③11:15",
+          "subject": "歴史",
+          "label": "歴史総合"
+        }
+      ]
+    },
+    {
+      "date": "10/27",
+      "weekday": "火",
+      "periods": [
+        {
+          "period": "①8:45",
+          "subject": "数α",
+          "label": "数学α"
+        },
+        {
+          "period": "②10:00",
+          "subject": "漢文",
+          "label": "漢文"
+        }
+      ]
+    }
+  ],
+  "days": [
+    {
+      "date": "2026-10-16",
+      "weekday": "金",
+      "kind": "平日 4h",
+      "tasks": [
+        {
+          "subject": "古文",
+          "hours": 1.5,
+          "what": "範囲の本文を品詞分解し、助動詞の意味を確認する"
+        },
+        {
+          "subject": "数β",
+          "hours": 1.5,
+          "what": "教科書の例題を全部解き直し、解けなかった問題に印をつける"
+        },
+        {
+          "subject": "化学",
+          "hours": 1,
+          "what": "プリントを読み、範囲の要点と苦手な単元を書き出す"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-17",
+      "weekday": "土",
+      "kind": "休日 6h",
+      "tasks": [
+        {
+          "subject": "古文",
+          "hours": 1.5,
+          "what": "本文を自力で現代語訳してから答え合わせ"
+        },
+        {
+          "subject": "数β",
+          "hours": 1.5,
+          "what": "印をつけた問題の解き直しと、問題集の基本問題"
+        },
+        {
+          "subject": "化学",
+          "hours": 1.5,
+          "what": "計算問題（mol・濃度など）の型を練習"
+        },
+        {
+          "subject": "EA",
+          "hours": 1.5,
+          "what": "単語ドリル1周目と、リスニング音源を聞く",
+          "needs": "単語ドリル"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-18",
+      "weekday": "日",
+      "kind": "休日 6h",
+      "tasks": [
+        {
+          "subject": "古文",
+          "hours": 1,
+          "what": "重要古語・敬語の確認"
+        },
+        {
+          "subject": "数β",
+          "hours": 1,
+          "what": "問題集の発展問題"
+        },
+        {
+          "subject": "化学",
+          "hours": 1.5,
+          "what": "化学ドリル1周目",
+          "needs": "化学ドリル"
+        },
+        {
+          "subject": "EB",
+          "hours": 1.5,
+          "what": "100本ノック 1〜30",
+          "needs": "100本ノック"
+        },
+        {
+          "subject": "地理",
+          "hours": 1,
+          "what": "ノートドリル1周目",
+          "needs": "地理ドリル"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-19",
+      "weekday": "月",
+      "kind": "平日 4h",
+      "tasks": [
+        {
+          "subject": "古文",
+          "hours": 1.5,
+          "what": "全範囲の訳を音読し、文法問題を解く"
+        },
+        {
+          "subject": "数β",
+          "hours": 1,
+          "what": "間違えた問題だけ再演習"
+        },
+        {
+          "subject": "EB",
+          "hours": 1.5,
+          "what": "100本ノック 31〜60"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-20",
+      "weekday": "火",
+      "kind": "平日 4h",
+      "tasks": [
+        {
+          "subject": "数β",
+          "hours": 1.5,
+          "what": "時間を計って総合演習（60分）"
+        },
+        {
+          "subject": "化学",
+          "hours": 1.5,
+          "what": "化学ドリル2周目（間違えた問題のみ）"
+        },
+        {
+          "subject": "EA",
+          "hours": 1,
+          "what": "単語ドリル2周目"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-21",
+      "weekday": "水",
+      "kind": "試験前日 4h",
+      "tasks": [
+        {
+          "subject": "古文",
+          "hours": 1.5,
+          "what": "最終確認：訳・文法・単語を一通り"
+        },
+        {
+          "subject": "EA",
+          "hours": 1.5,
+          "what": "リスニングと単語の最終確認"
+        },
+        {
+          "subject": "地理",
+          "hours": 1,
+          "what": "地理ドリル2周目"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-22",
+      "weekday": "木",
+      "kind": "試験①の午後 6h",
+      "tasks": [
+        {
+          "subject": "数β",
+          "hours": 3,
+          "what": "間違いノートを全部解き直し、公式を確認。最後に時間を計って1セット"
+        },
+        {
+          "subject": "化学",
+          "hours": 3,
+          "what": "化学ドリル最終・計算問題の仕上げと、プリントの重要語の最終確認"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "weekday": "金",
+      "kind": "試験②の午後 6h",
+      "tasks": [
+        {
+          "subject": "EB",
+          "hours": 3,
+          "what": "100本ノック 61〜100（間違えた問題に印）"
+        },
+        {
+          "subject": "漢文",
+          "hours": 1,
+          "what": "教科書本文の音読と、出てくる句法の洗い出し"
+        },
+        {
+          "subject": "現代文",
+          "hours": 1,
+          "what": "教科書本文の読み直しと漢字"
+        },
+        {
+          "subject": "歴史",
+          "hours": 1,
+          "what": "歴史ドリル1周目",
+          "needs": "歴史ドリル"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-24",
+      "weekday": "土",
+      "kind": "休日 6h",
+      "tasks": [
+        {
+          "subject": "EB",
+          "hours": 2,
+          "what": "100本ノックの間違えた問題を全部やり直す"
+        },
+        {
+          "subject": "歴史",
+          "hours": 1,
+          "what": "歴史ドリル2周目"
+        },
+        {
+          "subject": "現代文",
+          "hours": 1,
+          "what": "授業ノートと設問の確認"
+        },
+        {
+          "subject": "数α",
+          "hours": 1,
+          "what": "教科書例題の確認"
+        },
+        {
+          "subject": "漢文",
+          "hours": 1,
+          "what": "句法と書き下しの確認"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-25",
+      "weekday": "日",
+      "kind": "休日 6h",
+      "tasks": [
+        {
+          "subject": "EB",
+          "hours": 2,
+          "what": "本文の重要構文・文法の総仕上げ"
+        },
+        {
+          "subject": "歴史",
+          "hours": 1,
+          "what": "歴史の最終確認"
+        },
+        {
+          "subject": "数α",
+          "hours": 1,
+          "what": "問題集で演習"
+        },
+        {
+          "subject": "漢文",
+          "hours": 2,
+          "what": "本文の書き下しと現代語訳"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-26",
+      "weekday": "月",
+      "kind": "試験③の午後 6h",
+      "tasks": [
+        {
+          "subject": "数α",
+          "hours": 3,
+          "what": "間違い直しと、時間を計った総合演習（60分）"
+        },
+        {
+          "subject": "漢文",
+          "hours": 3,
+          "what": "句法の最終確認と、本文の書き下し・訳を通しで"
+        }
+      ]
+    }
+  ],
+  "prep": [
+    {
+      "id": "p-kobun",
+      "subject": "古文",
+      "what": "本文を共有する（Claudeが訳・文法の確認資料を作成）",
+      "due": "10/16中"
+    },
+    {
+      "id": "p-ea",
+      "subject": "EA",
+      "what": "単語を共有 → 単語ドリル作成",
+      "due": "10/17朝まで"
+    },
+    {
+      "id": "p-chem",
+      "subject": "化学",
+      "what": "プリントを共有 → 化学ドリル作成",
+      "due": "10/18朝まで"
+    },
+    {
+      "id": "p-geo",
+      "subject": "地理",
+      "what": "ノートを共有 → 地理ドリル作成",
+      "due": "10/18朝まで"
+    },
+    {
+      "id": "p-eb",
+      "subject": "EB",
+      "what": "テキストを共有 → 印刷用100本ノック作成",
+      "due": "10/18朝まで"
+    },
+    {
+      "id": "p-hist",
+      "subject": "歴史",
+      "what": "プリントを共有 → 歴史ドリル作成",
+      "due": "10/23朝まで"
+    },
+    {
+      "id": "p-kanbun",
+      "subject": "漢文",
+      "what": "テキストを共有",
+      "due": "10/24朝まで"
+    }
+  ]
+}

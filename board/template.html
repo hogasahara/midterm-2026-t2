@@ -1,0 +1,205 @@
+<title>高1 二学期中間 対策ボード</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@700&family=BIZ+UDPGothic:wght@400;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: 一枚の対策ボード。上から「残り日数→試験日程→配分→今日→全日程→準備」。答案用紙の罫線をモチーフに */
+:root{
+  --paper:#f3f5f8; --sheet:#ffffff; --ink:#1d2a44; --muted:#5e6a80; --rule:#d5dbe5;
+  --accent:#2b4fa3; --accent-soft:#e3e9f7;
+  --bad:#c23a3a; --bad-soft:#fbe7e6; --mid:#b07a12; --mid-soft:#fbf1dc; --easy:#2f7d55; --easy-soft:#e2f2e9;
+  --f-display:"Kaisei Decol","Hiragino Mincho ProN","Yu Mincho",serif;
+  --f-body:"BIZ UDPGothic","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
+  --f-num:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#12161e; --sheet:#1a202b; --ink:#e4e8f0; --muted:#98a2b5; --rule:#2c3442;
+  --accent:#8eaaf0; --accent-soft:#232e47;
+  --bad:#f08a84; --bad-soft:#3a2224; --mid:#e2b45a; --mid-soft:#352c19; --easy:#76c99c; --easy-soft:#1b3227; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#12161e; --sheet:#1a202b; --ink:#e4e8f0; --muted:#98a2b5; --rule:#2c3442;
+  --accent:#8eaaf0; --accent-soft:#232e47;
+  --bad:#f08a84; --bad-soft:#3a2224; --mid:#e2b45a; --mid-soft:#352c19; --easy:#76c99c; --easy-soft:#1b3227; color-scheme:dark}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);line-height:1.6;font-size:15px}
+.wrap{max-width:980px;margin:0 auto;padding-block:24px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:28px}
+h1,h2{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.3}
+h1{font-size:clamp(24px,5vw,34px)}
+h2{font-size:20px;display:flex;align-items:baseline;gap:10px}
+h2 small{font-family:var(--f-body);font-size:12px;color:var(--muted);font-weight:400}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+header{display:grid;gap:14px}
+.eyebrow{font-size:12px;letter-spacing:.12em;color:var(--muted)}
+.stats{display:flex;flex-wrap:wrap;gap:24px;align-items:flex-end}
+.stat b{display:block;font-family:var(--f-num);font-size:34px;line-height:1;color:var(--accent)}
+.stat span{font-size:12px;color:var(--muted)}
+.bar{height:8px;background:var(--rule);border-radius:4px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);transition:width .3s}
+.sync{font-size:12px;color:var(--muted)}
+section{display:grid;gap:12px}
+.sheet{background:var(--sheet);border:1px solid var(--rule);border-radius:6px}
+/* 試験日程 */
+.exams{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.exam{padding:12px 14px;display:grid;gap:6px}
+.exam h3{margin:0;font-size:14px;display:flex;justify-content:space-between}
+.exam ol{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.exam li{display:flex;gap:8px;align-items:center;font-size:14px}
+.exam li .p{font-family:var(--f-num);font-size:11px;color:var(--muted);width:3.2em}
+.chip{font-size:11px;padding:1px 7px;border-radius:10px;white-space:nowrap}
+.lv-bad{background:var(--bad-soft);color:var(--bad)} .lv-mid{background:var(--mid-soft);color:var(--mid)} .lv-easy{background:var(--easy-soft);color:var(--easy)}
+/* 配分 */
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:520px}
+th,td{padding:8px 12px;text-align:left;border-bottom:1px solid var(--rule)}
+th{font-size:12px;color:var(--muted);font-weight:400}
+td.r,th.r{text-align:right}
+tr:last-child td{border-bottom:0}
+.mini{width:120px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted)}
+/* 日程 */
+.days{display:grid;gap:12px}
+.day{padding:12px 14px 6px;display:grid;gap:4px}
+.day.today{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.day header{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:baseline}
+.day header h3{margin:0;font-size:16px}
+.day header .tag{font-size:12px;color:var(--muted)}
+.day header .tag.ex{color:var(--bad)}
+.day header .dp{margin-left:auto;font-size:12px;color:var(--muted)}
+.task{display:grid;grid-template-columns:auto 4.6em 3.4em 1fr;gap:10px;align-items:start;padding:8px 0;border-top:1px dashed var(--rule)}
+.task:first-of-type{border-top:0}
+.task input{width:20px;height:20px;margin:2px 0 0;accent-color:var(--accent);cursor:pointer}
+.task .subj{font-weight:700;font-size:14px}
+.task .h{font-family:var(--f-num);font-size:13px;color:var(--muted);padding-top:1px}
+.task .what{font-size:14px;min-width:0}
+.task.done .what,.task.done .subj{color:var(--muted);text-decoration:line-through}
+.task .need{display:inline-block;font-size:11px;color:var(--mid);margin-left:6px}
+input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.filter{display:flex;gap:8px;flex-wrap:wrap}
+.filter button{font:inherit;font-size:13px;padding:5px 12px;border-radius:16px;border:1px solid var(--rule);background:var(--sheet);color:var(--ink);cursor:pointer}
+.filter button[aria-pressed="true"]{background:var(--accent);color:var(--sheet);border-color:var(--accent)}
+.note{font-size:13px;color:var(--muted);max-width:68ch}
+@media (max-width:520px){.task{grid-template-columns:auto 4.2em 1fr}.task .h{grid-column:2;grid-row:2;padding:0}.task .what{grid-column:3;grid-row:1/3}}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">令和8年度 2学期 中間テスト ・ 高1</div>
+  <h1>二学期中間 対策ボード</h1>
+  <div class="stats">
+    <div class="stat"><b class="num" id="sDays">–</b><span>初日（10/22）まで</span></div>
+    <div class="stat"><b class="num" id="sDone">0</b><span>完了 / 計画 <span id="sTotal">–</span> 時間</span></div>
+    <div class="stat" style="flex:1;min-width:180px"><div class="bar"><i id="sBar" style="width:0%"></i></div><span id="sPct">0%</span></div>
+  </div>
+  <div class="sync" id="sync">チェックを読み込み中…</div>
+</header>
+
+<section>
+  <h2>試験日程</h2>
+  <div class="exams" id="exams"></div>
+</section>
+
+<section>
+  <h2>教科別の配分 <small id="ratio"></small></h2>
+  <div class="sheet tbl"><table>
+    <thead><tr><th>教科</th><th>状態</th><th>試験</th><th class="r">計画</th><th class="r">完了</th><th class="mini">進み具合</th></tr></thead>
+    <tbody id="alloc"></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>日別スケジュール <small>1コマ＝その日の教科ブロック。終わったらチェック</small></h2>
+  <div class="filter" id="filter" role="group" aria-label="表示する日">
+    <button type="button" id="fToday" aria-pressed="true">今日から</button>
+    <button type="button" id="fAll" aria-pressed="false">全日程</button>
+  </div>
+  <div class="days" id="days"></div>
+</section>
+
+<section>
+  <h2>教材の共有とドリル作成 <small>保護者・Claude側の準備</small></h2>
+  <div class="sheet day" id="prep"></div>
+  <p class="note">平日4時間、土日と試験期間中の午後は6時間で組んでいます。計画の元データは data/plan.json です。</p>
+</section>
+</div>
+
+<script>
+const LV={bad:["まずい","lv-bad"],mid:["普通","lv-mid"],easy:["楽","lv-easy"]};
+const PLAN=/*__PLAN__*/null;
+const SUBJ=Object.fromEntries(Object.entries(PLAN.subjects).map(([k,v])=>[k,{lv:v.level,ex:v.exam}]));
+const EXAMS=PLAN.exams.map(e=>[e.date,e.weekday,e.periods.map(p=>[p.period,p.subject,p.label])]);
+const DAYS=PLAN.days.map(d=>[d.date,d.weekday,d.kind,d.tasks.map(t=>[t.subject,t.hours,t.what,t.needs])]);
+const PREP=PLAN.prep.map(p=>[p.id,p.subject,p.what,p.due]);
+const TOTAL=DAYS.reduce((a,d)=>a+d[3].reduce((b,t)=>b+t[1],0),0);
+const LAST=DAYS[DAYS.length-1][0];
+const tid=(d,i)=>d.replace(/-/g,"").slice(4)+"-"+i;
+let checks={}; let db=null; let showAll=false;
+const LS="exam-board-checks";
+try{checks=JSON.parse(localStorage.getItem(LS)||"{}")}catch(e){}
+
+function todayStr(){const n=new Date(Date.now()+9*3600e3);return n.toISOString().slice(0,10)}
+function el(t,c,txt){const e=document.createElement(t);if(c)e.className=c;if(txt!=null)e.textContent=txt;return e}
+function chip(s){const [n,c]=LV[SUBJ[s].lv];return el("span","chip "+c,n)}
+
+function renderExams(){
+  const box=document.getElementById("exams");box.replaceChildren();
+  EXAMS.forEach(([d,w,rows])=>{
+    const c=el("div","sheet exam");const h=el("h3");h.append(el("span","",`${d}（${w}）`));c.append(h);
+    const ol=el("ol");rows.forEach(([p,s,note])=>{const li=el("li");li.append(el("span","p",p),el("span","",note),chip(s));ol.append(li)});
+    c.append(ol);box.append(c)});
+}
+function totals(){
+  const plan={},done={};let all=0;
+  DAYS.forEach(([d,,,ts])=>ts.forEach(([s,h],i)=>{plan[s]=(plan[s]||0)+h;if(checks[tid(d,i)]){done[s]=(done[s]||0)+h;all+=h}}));
+  return {plan,done,all};
+}
+function renderAlloc(){
+  const {plan,done,all}=totals();const tb=document.getElementById("alloc");tb.replaceChildren();
+  const order=Object.keys(SUBJ).sort((a,b)=>{const r={bad:0,mid:1,easy:2};return r[SUBJ[a].lv]-r[SUBJ[b].lv]||plan[b]-plan[a]});
+  order.forEach(s=>{const tr=el("tr");const p=plan[s]||0,d=done[s]||0;
+    const td1=el("td");td1.append(el("strong","",s));
+    const td2=el("td");td2.append(chip(s));
+    const bar=el("div","bar");const i=el("i");i.style.width=(p?d/p*100:0)+"%";bar.append(i);const tdb=el("td","mini");tdb.append(bar);
+    tr.append(td1,td2,el("td","num",SUBJ[s].ex),el("td","r num",p.toFixed(1)+"h"),el("td","r num",d.toFixed(1)+"h"),tdb);tb.append(tr)});
+  document.getElementById("sDone").textContent=all%1?all.toFixed(1):all;
+  const pct=Math.round(all/TOTAL*100);document.getElementById("sBar").style.width=pct+"%";document.getElementById("sPct").textContent=pct+"%";
+  const ms=new Date("2026-10-22T00:00:00+09:00")-new Date(todayStr()+"T00:00:00+09:00");const dd=Math.round(ms/864e5);
+  document.getElementById("sDays").textContent=dd>0?dd+"日":"試験中";
+}
+function renderDays(){
+  const box=document.getElementById("days");box.replaceChildren();const t=todayStr();
+  DAYS.forEach(([d,w,kind,ts])=>{
+    if(!showAll&&d<t&&t<=LAST)return;
+    const c=el("div","sheet day"+(d===t?" today":""));const h=el("header");
+    const sum=ts.reduce((a,x)=>a+x[1],0);const dn=ts.reduce((a,x,i)=>a+(checks[tid(d,i)]?x[1]:0),0);
+    h.append(el("h3","",`${+d.slice(5,7)}/${+d.slice(8)}（${w}）${d===t?" ・ 今日":""}`),el("span","tag"+(kind.includes("試験")?" ex":""),kind),el("span","dp num",`${dn}/${sum}h`));c.append(h);
+    ts.forEach(([s,hrs,what,need],i)=>{const id=tid(d,i);const row=el("label","task"+(checks[id]?" done":""));
+      const cb=el("input");cb.type="checkbox";cb.id="cb-"+id;cb.checked=!!checks[id];cb.addEventListener("change",()=>toggle(id,cb.checked));
+      const subj=el("span","subj",s);const w2=el("span","what",what);if(need){w2.append(el("span","need","要："+need))}
+      row.append(cb,subj,el("span","h",hrs+"h"),w2);c.append(row)});
+    box.append(c)});
+}
+function renderPrep(){
+  const box=document.getElementById("prep");box.replaceChildren();
+  PREP.forEach(([id,s,what,due])=>{const row=el("label","task"+(checks[id]?" done":""));
+    const cb=el("input");cb.type="checkbox";cb.id="cb-"+id;cb.checked=!!checks[id];cb.addEventListener("change",()=>toggle(id,cb.checked));
+    row.append(cb,el("span","subj",s),el("span","h",""),el("span","what",what+"（"+due+"）"));box.append(row)});
+}
+function renderAll(){renderAlloc();renderDays();renderPrep()}
+async function toggle(id,v){
+  checks[id]=v;try{localStorage.setItem(LS,JSON.stringify(checks))}catch(e){}
+  renderAll();
+  if(db){try{await db.collection("checks").doc(id).set({done:v})}catch(e){document.getElementById("sync").textContent="保存できませんでした（この端末には記録済み）"}}
+}
+document.getElementById("fToday").addEventListener("click",()=>{showAll=false;setF()});
+document.getElementById("fAll").addEventListener("click",()=>{showAll=true;setF()});
+function setF(){document.getElementById("fToday").setAttribute("aria-pressed",String(!showAll));document.getElementById("fAll").setAttribute("aria-pressed",String(showAll));renderDays()}
+document.getElementById("sTotal").textContent=TOTAL;
+(()=>{const g={bad:0,mid:0,easy:0};DAYS.forEach(d=>d[3].forEach(t=>g[SUBJ[t[0]].lv]+=t[1]));const f=x=>Math.round(x/TOTAL*100);document.getElementById("ratio").textContent=`まずい ${f(g.bad)}% ・ 普通 ${f(g.mid)}% ・ 楽 ${f(g.easy)}%`})();
+renderExams();renderAll();
+(async()=>{
+  const sync=document.getElementById("sync");
+  try{db=window.claude?await window.claude.use("db"):null}catch(e){db=null}
+  if(!db){sync.textContent="チェックはこの端末のブラウザに保存されます";return}
+  sync.textContent="チェックは共有保存されます（別の端末から開いても同じ状態）";
+  db.collection("checks").onSnapshot(q=>{const m={};q.docs.forEach(d=>{if(d.exists)m[d.id]=!!(d.data()||{}).done});checks=Object.assign({},checks,m);renderAll()},()=>{sync.textContent="共有保存に接続できません（この端末に保存中）"});
+})();
+</script>
