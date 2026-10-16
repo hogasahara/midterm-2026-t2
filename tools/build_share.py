@@ -15,7 +15,7 @@ import pathlib
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 YEAR = 2026
 
-# 教科ごとのアクセント色（ライト／ダーク）
+# 教科ごとのアクセント色（ライト／ダーク）。淡い面の色は背景と混ぜて作る
 ACCENTS = {
     "ea": ("#2d5aa8", "#8fb3f0"),
     "kobun": ("#8a3b5c", "#e3a0bd"),
@@ -28,6 +28,13 @@ ACCENTS = {
     "math-alpha": ("#4a5aa0", "#a6b3f0"),
     "kanbun": ("#5c6b2a", "#c2d17a"),
 }
+
+
+def mix(color, base, t):
+    """color を割合 t で base に混ぜた色（#rrggbb）。"""
+    c = [int(color[i:i + 2], 16) for i in (1, 3, 5)]
+    b = [int(base[i:i + 2], 16) for i in (1, 3, 5)]
+    return "#" + "".join(f"{round(b[k] + (c[k] - b[k]) * t):02x}" for k in range(3))
 
 
 def exam_info(plan, subject):
@@ -64,6 +71,8 @@ def main():
         }
         light, dark = ACCENTS[folder]
         page = (tpl.replace("__TITLE__", f"{course} 中間ドリル")
+                   .replace("__ACCENT_SOFT_LIGHT__", mix(light, "#ffffff", 0.12))
+                   .replace("__ACCENT_SOFT_DARK__", mix(dark, "#1a201d", 0.16))
                    .replace("__ACCENT_LIGHT__", light)
                    .replace("__ACCENT_DARK__", dark)
                    .replace("/*__DRILL__*/null", json.dumps(data, ensure_ascii=False)))

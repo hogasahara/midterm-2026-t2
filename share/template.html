@@ -4,10 +4,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Shippori+Mincho+B1:wght@700;800&display=swap">
 <style>
-/* Layout: 単語帳のように1列に積む問題リスト。上に試験日と進み具合、教科ごとにアクセント色だけ変える */
+/* Layout: 開くとメニュー（進み具合＋6つの学習ボタン）だけ。ボタンから「1問ずつ解く画面」か「一覧」に入る。教科ごとにアクセント色だけ変える */
 :root{
   --accent:__ACCENT_LIGHT__;
   --accent-ink:#ffffff;
+  --accent-soft:__ACCENT_SOFT_LIGHT__;
   --bg:#f6f7f5;
   --paper:#ffffff;
   --ink:#1c211f;
@@ -17,205 +18,339 @@
   --ok-bg:#e3f3ea;
   --ng:#b3361f;
   --ng-bg:#fbe7e2;
+  --star:#9a6a00;
   --f-display:"Shippori Mincho B1","Hiragino Mincho ProN","Yu Mincho",serif;
   --f-body:"BIZ UDPGothic","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --accent:__ACCENT_DARK__;--accent-ink:#0f1412;--bg:#121614;--paper:#1a201d;--ink:#e6ebe8;--muted:#9aa49f;--line:#2c3430;
-  --ok:#6fd19c;--ok-bg:#183326;--ng:#ff9a85;--ng-bg:#3a1f19;color-scheme:dark}}
+  --accent:__ACCENT_DARK__;--accent-ink:#0f1412;--accent-soft:__ACCENT_SOFT_DARK__;--bg:#121614;--paper:#1a201d;--ink:#e6ebe8;--muted:#9aa49f;--line:#2c3430;
+  --ok:#6fd19c;--ok-bg:#183326;--ng:#ff9a85;--ng-bg:#3a1f19;--star:#f2c14e;color-scheme:dark}}
 :root[data-theme="dark"]{
-  --accent:__ACCENT_DARK__;--accent-ink:#0f1412;--bg:#121614;--paper:#1a201d;--ink:#e6ebe8;--muted:#9aa49f;--line:#2c3430;
-  --ok:#6fd19c;--ok-bg:#183326;--ng:#ff9a85;--ng-bg:#3a1f19;color-scheme:dark}
+  --accent:__ACCENT_DARK__;--accent-ink:#0f1412;--accent-soft:__ACCENT_SOFT_DARK__;--bg:#121614;--paper:#1a201d;--ink:#e6ebe8;--muted:#9aa49f;--line:#2c3430;
+  --ok:#6fd19c;--ok-bg:#183326;--ng:#ff9a85;--ng-bg:#3a1f19;--star:#f2c14e;color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6}
-.wrap{max-width:760px;margin:0 auto;padding-block:20px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-header{display:grid;gap:6px;padding-bottom:14px;border-bottom:3px solid var(--accent)}
+.wrap{max-width:720px;margin:0 auto;padding-block:20px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:18px}
+button{font:inherit;color:inherit}
+button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ヘッダー */
+header{display:grid;gap:6px}
 .eyebrow{font-size:13px;letter-spacing:.08em;color:var(--muted)}
-h1{font-family:var(--f-display);font-weight:800;font-size:clamp(26px,6vw,36px);line-height:1.25;margin:0;text-wrap:balance}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(26px,6.4vw,36px);line-height:1.25;margin:0;text-wrap:balance}
 h1 .seg{display:inline-block}
-.exam{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:baseline;font-size:14px;color:var(--muted)}
+.exam{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:14px;color:var(--muted)}
 .exam strong{color:var(--ink)}
-.days{display:inline-block;background:var(--accent);color:var(--accent-ink);font-weight:700;border-radius:4px;padding:1px 8px;font-size:13px}
-.howto{font-size:14px;color:var(--muted);margin:12px 0 0}
-.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:10px;display:grid;gap:8px;border-bottom:1px solid var(--line)}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
-.stats{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px;font-variant-numeric:tabular-nums}
-.stats b{font-size:16px}
-.s-ok{color:var(--ok)}.s-ng{color:var(--ng)}
-.meter{height:6px;border-radius:3px;background:var(--line);overflow:hidden;display:flex}
+.days{background:var(--accent);color:var(--accent-ink);font-weight:700;border-radius:4px;padding:1px 8px;font-size:13px}
+
+/* 進み具合 */
+.progress{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:grid;gap:8px}
+.stats{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:14px;font-variant-numeric:tabular-nums;align-items:baseline}
+.stats b{font-size:20px}
+.s-ok{color:var(--ok)}.s-ng{color:var(--ng)}.s-todo{color:var(--muted)}
+.meter{height:8px;border-radius:4px;background:var(--line);overflow:hidden;display:flex}
 .meter i{display:block;height:100%}
-.meter .m-ok{background:var(--ok)}.meter .m-ng{background:var(--ng)}
-.controls{display:flex;flex-wrap:wrap;gap:6px}
-.chip{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:5px 12px;cursor:pointer}
+.m-ok{background:var(--ok)}.m-ng{background:var(--ng)}
+
+/* メニューのボタン */
+.modes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.mode{display:grid;gap:2px;text-align:left;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px;cursor:pointer;min-height:84px;align-content:start}
+.mode:hover{border-color:var(--accent)}
+.mode .label{font-weight:700;font-size:17px}
+.mode .sub{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.mode.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.mode.primary .sub{color:inherit;opacity:.85}
+.mode:disabled{cursor:default;opacity:.5}
+.mode:disabled:hover{border-color:var(--line)}
+.under{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:8px;font-size:13px;color:var(--muted)}
+details summary{cursor:pointer}
+details p{margin:6px 0 0;max-width:36em}
+.link{background:none;border:0;padding:0;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:13px}
+.link:disabled{opacity:.4;cursor:default}
+.confirm{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:14px}
+
+/* 画面上部（戻る） */
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.back{border:1px solid var(--line);border-radius:999px;padding:4px 12px;cursor:pointer;font-size:14px;background:var(--paper)}
+.where{font-weight:700}
+.count{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+h2{font-size:18px;margin:0;text-wrap:balance}
+
+/* 単元・問題数の選択 */
+.choices{display:grid;gap:8px}
+.choice{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;align-items:center;text-align:left;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 14px;cursor:pointer}
+.choice:hover{border-color:var(--accent)}
+.choice .c-title{font-weight:700}
+.choice .c-meta{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.choice .meter{grid-column:1/-1;height:5px}
+
+/* 1問ずつ解く画面 */
+.bar{height:4px;background:var(--line);border-radius:2px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent)}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px 16px;display:grid;gap:14px;min-height:240px;align-content:start}
+.card .meta{display:flex;flex-wrap:wrap;gap:6px 10px;font-size:13px;color:var(--muted);align-items:center}
+.badge{border-radius:4px;padding:0 6px;font-size:12px;font-weight:700}
+.b-star{color:var(--star);border:1px solid var(--star)}
+.b-ng{color:var(--ng);border:1px solid var(--ng)}
+.b-ok{color:var(--ok);border:1px solid var(--ok)}
+.qtext{font-size:19px;line-height:1.65;overflow-wrap:anywhere}
+.reveal{border:2px dashed var(--accent);color:var(--accent);background:var(--accent-soft);border-radius:10px;padding:14px;font-weight:700;cursor:pointer;font-size:16px}
+.answer{font-size:19px;font-weight:700;background:var(--accent-soft);border-radius:10px;padding:12px 14px;overflow-wrap:anywhere}
+.judge{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.judge button{border-radius:10px;padding:14px 8px;font-weight:700;font-size:16px;cursor:pointer;border:2px solid}
+.j-ok{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+.j-ng{background:var(--ng-bg);border-color:var(--ng);color:var(--ng)}
+.nav{display:flex;justify-content:space-between;gap:8px}
+.nav button{background:none;border:0;color:var(--muted);cursor:pointer;font-size:14px;padding:4px 0}
+.nav button:disabled{opacity:.35;cursor:default}
+.keys{font-size:12px;color:var(--muted);text-align:center}
+@media (hover:none){.keys{display:none}}
+
+/* 結果 */
+.result{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:20px 16px;display:grid;gap:12px;text-align:center}
+.result .big{font-family:var(--f-display);font-size:40px;font-weight:800;font-variant-numeric:tabular-nums}
+.result .stats{justify-content:center}
+.actions{display:grid;gap:8px}
+.btn{border-radius:10px;padding:12px;font-weight:700;cursor:pointer;border:1px solid var(--line);background:var(--paper)}
+.btn.main{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+
+/* まとめ一覧 */
+.filters{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:13px;border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:4px 11px;cursor:pointer}
 .chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
-.chip:focus-visible,.btn:focus-visible,.reveal:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.chip.ghost{background:transparent;color:var(--muted)}
-.reset-confirm{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:14px}
-section{margin-top:22px}
-h2{font-size:17px;margin:0 0 8px;display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap;text-wrap:balance}
-h2 small{font-weight:400;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
-ol{list-style:none;margin:0;padding:0;display:grid;gap:8px}
-.q{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:grid;grid-template-columns:2.2em 1fr;gap:4px 8px}
-.q.is-ok{border-left:4px solid var(--ok)}
-.q.is-ng{border-left:4px solid var(--ng)}
-.no{font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right}
-.body{min-width:0;display:grid;gap:8px}
-.text{overflow-wrap:anywhere}
-.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.reveal{font:inherit;font-size:14px;border:1px dashed var(--accent);color:var(--accent);background:transparent;border-radius:6px;padding:4px 12px;cursor:pointer}
-.answer{font-weight:700;background:var(--bg);border-radius:6px;padding:6px 10px;overflow-wrap:anywhere}
-.btn{font:inherit;font-size:14px;font-weight:700;border-radius:6px;padding:4px 14px;cursor:pointer;border:1px solid var(--line);background:var(--paper);color:var(--ink)}
-.btn.ok[aria-pressed="true"]{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
-.btn.ng[aria-pressed="true"]{background:var(--ng-bg);border-color:var(--ng);color:var(--ng)}
-.empty{color:var(--muted);font-size:14px;padding:20px 0;text-align:center}
-footer{margin-top:36px;font-size:13px;color:var(--muted);display:grid;gap:4px}
-@media (prefers-reduced-motion:no-preference){.answer{animation:fade .18s ease-out}@keyframes fade{from{opacity:.4}to{opacity:1}}}
+.sheet{display:grid;gap:16px}
+.sheet h3{font-size:15px;margin:0 0 6px;color:var(--muted);text-wrap:balance}
+.rows{list-style:none;margin:0;padding:0;background:var(--paper);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.rows li{display:grid;grid-template-columns:3.2em minmax(0,1fr);gap:2px 8px;padding:9px 12px;border-top:1px solid var(--line)}
+.rows li:first-child{border-top:0}
+.rows .no{font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.rows .st{color:var(--star)}
+.rows .qa{display:grid;gap:2px}
+.rows .q{overflow-wrap:anywhere}
+.rows .a{font-weight:700;overflow-wrap:anywhere}
+.rows .a.hide{color:transparent;background:var(--line);border-radius:4px;cursor:pointer;user-select:none}
+.rows li.ok{box-shadow:inset 3px 0 0 var(--ok)}
+.rows li.ng{box-shadow:inset 3px 0 0 var(--ng)}
+.empty{color:var(--muted);text-align:center;padding:24px 0}
+footer{font-size:12px;color:var(--muted);display:grid;gap:2px}
+@media (max-width:340px){.modes{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:no-preference){.answer{animation:fade .18s ease-out}@keyframes fade{from{opacity:.5}to{opacity:1}}}
 </style>
 
-<div class="wrap">
-  <header>
-    <div class="eyebrow" id="eyebrow"></div>
-    <h1 id="title"></h1>
-    <div class="exam" id="exam"></div>
-    <p class="howto">問題を読んで答えを考えたら「答えを見る」。合っていたら ○、まちがえたら × を押す。2周目は「×だけ」で、まちがえた問題だけ解き直せる。記録はこの端末のブラウザにだけ残る。</p>
-  </header>
-
-  <div class="bar">
-    <div class="stats" id="stats"></div>
-    <div class="meter" aria-hidden="true"><i class="m-ok" id="m-ok"></i><i class="m-ng" id="m-ng"></i></div>
-    <div class="controls" role="group" aria-label="表示する問題">
-      <button class="chip" id="f-all" data-filter="all" aria-pressed="true">全部</button>
-      <button class="chip" id="f-todo" data-filter="todo" aria-pressed="false">未回答</button>
-      <button class="chip" id="f-ng" data-filter="ng" aria-pressed="false">×だけ</button>
-      <button class="chip" id="t-show" aria-pressed="false">答えを全部表示</button>
-      <button class="chip ghost" id="reset">記録を消す</button>
-    </div>
-    <div class="reset-confirm" id="reset-confirm" hidden>
-      ○×の記録をすべて消します。
-      <button class="chip" id="reset-yes">消す</button>
-      <button class="chip ghost" id="reset-no">やめる</button>
-    </div>
-  </div>
-
-  <main id="list"></main>
-
-  <footer id="footer"></footer>
-</div>
+<div class="wrap" id="app"></div>
 
 <script>
 const DRILL = /*__DRILL__*/null;
 const KEY = "drill:" + DRILL.id;
-let marks = {}, shown = {}, filter = "all", showAll = false;
+const app = document.getElementById("app");
+
+let marks = {};
 try { marks = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { marks = {}; }
 function save() { try { localStorage.setItem(KEY, JSON.stringify(marks)); } catch (e) {} }
 
 const items = [];
-DRILL.sections.forEach((s, si) => s.items.forEach(([q, a]) => items.push({ n: items.length + 1, si, q, a })));
+DRILL.sections.forEach((s, si) => s.items.forEach(([q, a, imp]) =>
+  items.push({ n: items.length + 1, si, q, a, star: !!imp })));
 
-function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
-
+function el(tag, attrs, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (k === "class") e.className = v;
+    else if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
+    else if (v === true) e.setAttribute(k, "");
+    else if (v !== false && v != null) e.setAttribute(k, v);
+  }
+  for (const c of kids.flat()) if (c != null && c !== false) e.append(c);
+  return e;
+}
+const count = (list, v) => list.filter(it => v === "todo" ? !marks[it.n] : marks[it.n] === v).length;
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function meter(list) {
+  const ok = count(list, "ok") / list.length * 100, ng = count(list, "ng") / list.length * 100;
+  return el("div", { class: "meter", "aria-hidden": "true" },
+    el("i", { class: "m-ok", style: `width:${ok}%` }), el("i", { class: "m-ng", style: `width:${ng}%` }));
+}
 function daysLeft() {
   const now = new Date(Date.now() + 9 * 3600e3);              // 日本時間
   const today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
   const [y, m, d] = DRILL.exam_date.split("-").map(Number);
   return Math.round((Date.UTC(y, m - 1, d) - today) / 864e5);
 }
+const backBar = extra => el("div", { class: "top" },
+  el("button", { class: "back", type: "button", onclick: home }, "← メニュー"), extra || null);
+function show(...nodes) { app.replaceChildren(...nodes); window.scrollTo(0, 0); }
 
-function header() {
-  document.getElementById("eyebrow").textContent = DRILL.course;
-  const h = document.getElementById("title"); h.replaceChildren();
-  DRILL.title.split(/\s+/).forEach((part, i) => { if (i) h.append(" "); h.append(el("span", "seg", part)); });
-  const ex = document.getElementById("exam"); ex.replaceChildren();
-  const t = el("span"); t.append("試験 ", el("strong", null, DRILL.exam));
-  ex.append(t);
+/* ── メニュー ───────────────────────────── */
+let confirmReset = false;
+function home() {
+  quiz = null;
+  const ok = count(items, "ok"), ng = count(items, "ng"), todo = count(items, "todo");
+  const stars = items.filter(it => it.star);
   const dl = daysLeft();
-  ex.append(el("span", "days", dl > 0 ? `あと${dl}日` : dl === 0 ? "今日が試験" : "試験は終了"));
-  ex.append(el("span", null, `全${items.length}問`));
-  const f = document.getElementById("footer"); f.replaceChildren();
-  f.append(el("div", null, `出典: ${DRILL.source}`), el("div", null, `更新: ${DRILL.updated}`));
+  const title = el("h1", null);
+  DRILL.title.split(/\s+/).forEach((p, i) => { if (i) title.append(" "); title.append(el("span", { class: "seg" }, p)); });
+  const mode = (label, sub, onclick, opts = {}) =>
+    el("button", { class: "mode" + (opts.primary ? " primary" : ""), type: "button", disabled: !!opts.disabled, onclick },
+      el("span", { class: "label" }, label), el("span", { class: "sub" }, sub));
+
+  show(
+    el("header", null,
+      el("div", { class: "eyebrow" }, DRILL.course), title,
+      el("div", { class: "exam" },
+        el("span", null, "試験 ", el("strong", null, DRILL.exam)),
+        el("span", { class: "days" }, dl > 0 ? `あと${dl}日` : dl === 0 ? "今日が試験" : "試験は終了"),
+        el("span", null, `全${items.length}問`))),
+    el("div", { class: "progress" },
+      el("div", { class: "stats" },
+        el("span", { class: "s-ok" }, "○ ", el("b", null, ok)),
+        el("span", { class: "s-ng" }, "× ", el("b", null, ng)),
+        el("span", { class: "s-todo" }, "未回答 ", el("b", null, todo))),
+      meter(items)),
+    el("div", { class: "modes" },
+      mode("単元別", `${DRILL.sections.length}単元から選ぶ`, units, { primary: true }),
+      mode("ランダム", "10問・20問・全部", randomPick),
+      mode("間違えた問題", ng ? `× が ${ng}問` : "まだありません",
+        () => start("間違えた問題の復習", shuffle(items.filter(it => marks[it.n] === "ng"))), { disabled: !ng }),
+      mode("★ 重要問題", `${stars.length}問`, () => start("★ 重要問題", stars)),
+      mode("未回答だけ", todo ? `残り ${todo}問` : "全部解きました",
+        () => start("まだ解いていない問題", items.filter(it => !marks[it.n])), { disabled: !todo }),
+      mode("まとめ一覧", "答えつきで見直す", sheet)),
+    el("div", { class: "under" },
+      el("details", null, el("summary", null, "使い方"),
+        el("p", null, "1問ずつ問題が出ます。答えを考えてから「答えを見る」を押し、合っていたら ○、まちがえたら × を押すと次へ進みます。×をつけた問題は「間違えた問題」でまとめて解き直せます。○×の記録はこの端末のブラウザにだけ残ります。")),
+      confirmReset
+        ? el("div", { class: "confirm" }, "○×の記録をすべて消しますか？",
+            el("button", { class: "chip", type: "button", onclick: () => { marks = {}; save(); confirmReset = false; home(); } }, "消す"),
+            el("button", { class: "chip", type: "button", onclick: () => { confirmReset = false; home(); } }, "やめる"))
+        : el("button", { class: "link", type: "button", disabled: ok + ng === 0, onclick: () => { confirmReset = true; home(); } }, "記録を消す")),
+    el("footer", null, el("div", null, `出典: ${DRILL.source}`), el("div", null, `更新: ${DRILL.updated}`)));
 }
 
-function stats() {
-  let ok = 0, ng = 0;
-  items.forEach(it => { if (marks[it.n] === "ok") ok++; else if (marks[it.n] === "ng") ng++; });
-  const todo = items.length - ok - ng;
-  const s = document.getElementById("stats"); s.replaceChildren();
-  const a = el("span", "s-ok"); a.append("○ ", el("b", null, ok));
-  const b = el("span", "s-ng"); b.append("× ", el("b", null, ng));
-  const c = el("span"); c.append("未回答 ", el("b", null, todo));
-  s.append(a, b, c);
-  document.getElementById("m-ok").style.width = (ok / items.length * 100) + "%";
-  document.getElementById("m-ng").style.width = (ng / items.length * 100) + "%";
+/* ── 単元を選ぶ ─────────────────────────── */
+function units() {
+  show(backBar(), el("h2", null, "単元を選ぶ"),
+    el("div", { class: "choices" }, DRILL.sections.map((s, si) => {
+      const list = items.filter(it => it.si === si);
+      return el("button", { class: "choice", type: "button", onclick: () => start(s.title, list) },
+        el("span", { class: "c-title" }, s.title),
+        el("span", { class: "c-meta" }, `○ ${count(list, "ok")} / ${list.length}問`),
+        meter(list));
+    })));
 }
 
-function visible(it) {
-  if (filter === "todo") return !marks[it.n];
-  if (filter === "ng") return marks[it.n] === "ng";
-  return true;
+/* ── ランダムの問題数 ───────────────────── */
+function randomPick() {
+  const opts = [[10, "10問"], [20, "20問"], [items.length, `全部（${items.length}問）`]];
+  show(backBar(), el("h2", null, "ランダムで何問？"),
+    el("div", { class: "choices" }, opts.map(([n, label]) =>
+      el("button", { class: "choice", type: "button", onclick: () => start(`ランダム ${label}`, shuffle(items).slice(0, n)) },
+        el("span", { class: "c-title" }, label),
+        el("span", { class: "c-meta" }, "全単元からまぜて出題")))));
 }
 
-function card(it) {
-  const li = el("li", "q" + (marks[it.n] === "ok" ? " is-ok" : marks[it.n] === "ng" ? " is-ng" : ""));
-  li.id = "q" + it.n;
-  li.append(el("span", "no", it.n));
-  const body = el("div", "body");
-  body.append(el("div", "text", it.q));
-  if (showAll || shown[it.n]) {
-    body.append(el("div", "answer", it.a));
+/* ── 1問ずつ解く ────────────────────────── */
+let quiz = null;
+function start(name, list) {
+  if (!list.length) return home();
+  quiz = { name, list, i: 0, open: false, got: {} };
+  card();
+}
+function card() {
+  const { name, list, i } = quiz, it = list[i], mk = marks[it.n];
+  const body = [
+    el("div", { class: "meta" },
+      el("span", null, `No.${it.n}`),
+      it.star ? el("span", { class: "badge b-star" }, "★重要") : null,
+      mk === "ng" ? el("span", { class: "badge b-ng" }, "前回 ×") : mk === "ok" ? el("span", { class: "badge b-ok" }, "前回 ○") : null,
+      el("span", null, DRILL.sections[it.si].title)),
+    el("div", { class: "qtext" }, it.q),
+  ];
+  if (quiz.open) {
+    body.push(el("div", { class: "answer" }, it.a),
+      el("div", { class: "judge" },
+        el("button", { class: "j-ok", type: "button", onclick: () => judge("ok") }, "○ 合ってた"),
+        el("button", { class: "j-ng", type: "button", onclick: () => judge("ng") }, "× まちがえた")));
   } else {
-    const r = el("button", "reveal", "答えを見る"); r.type = "button";
-    r.addEventListener("click", () => { shown[it.n] = true; render(); });
-    const rr = el("div", "row"); rr.append(r); body.append(rr);
+    body.push(el("button", { class: "reveal", type: "button", id: "reveal", onclick: () => { quiz.open = true; card(); } }, "答えを見る"));
   }
-  const row = el("div", "row");
-  [["ok", "○"], ["ng", "×"]].forEach(([v, label]) => {
-    const btn = el("button", "btn " + v, label); btn.type = "button";
-    btn.setAttribute("aria-label", `${it.n}番を${v === "ok" ? "正解" : "不正解"}にする`);
-    btn.setAttribute("aria-pressed", String(marks[it.n] === v));
-    btn.addEventListener("click", () => {
-      if (marks[it.n] === v) delete marks[it.n]; else marks[it.n] = v;
-      save(); render();
-    });
-    row.append(btn);
-  });
-  body.append(row);
-  li.append(body);
-  return li;
+  show(
+    backBar(el("span", { class: "count" }, `${i + 1} / ${list.length}`)),
+    el("div", { class: "bar", "aria-hidden": "true" }, el("i", { style: `width:${(i / list.length) * 100}%` })),
+    el("div", { class: "where" }, name),
+    el("div", { class: "card" }, body),
+    el("div", { class: "nav" },
+      el("button", { type: "button", disabled: i === 0, onclick: () => go(-1) }, "← 前の問題"),
+      el("button", { type: "button", onclick: () => go(1) }, i + 1 < list.length ? "とばす →" : "おわる →")),
+    el("div", { class: "keys" }, "キーボード: スペース＝答えを見る　1＝○　2＝×"));
 }
-
-function render() {
-  stats();
-  const list = document.getElementById("list"); list.replaceChildren();
-  let any = false;
-  DRILL.sections.forEach((s, si) => {
-    const its = items.filter(it => it.si === si);
-    const vis = its.filter(visible);
-    if (!vis.length) return;
-    any = true;
-    const sec = el("section");
-    const ok = its.filter(it => marks[it.n] === "ok").length;
-    const h = el("h2", null, s.title); h.append(el("small", null, `○ ${ok} / ${its.length}`));
-    const ol = el("ol");
-    vis.forEach(it => ol.append(card(it)));
-    sec.append(h, ol);
-    list.append(sec);
-  });
-  if (!any) list.append(el("p", "empty", filter === "ng" ? "×をつけた問題はありません。" : "未回答の問題はありません。"));
+function judge(v) {
+  const it = quiz.list[quiz.i];
+  marks[it.n] = v; quiz.got[it.n] = v; save();
+  go(1);
 }
-
-document.querySelectorAll("[data-filter]").forEach(b => b.addEventListener("click", () => {
-  filter = b.dataset.filter;
-  document.querySelectorAll("[data-filter]").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
-  render();
-}));
-document.getElementById("t-show").addEventListener("click", e => {
-  showAll = !showAll; e.currentTarget.setAttribute("aria-pressed", String(showAll)); render();
+function go(d) {
+  quiz.i = Math.max(0, quiz.i + d); quiz.open = false;
+  if (quiz.i >= quiz.list.length) return result();
+  card();
+}
+document.addEventListener("keydown", e => {
+  if (!quiz || e.altKey || e.ctrlKey || e.metaKey) return;
+  if (e.key === " " && !quiz.open) { e.preventDefault(); quiz.open = true; card(); }
+  else if (quiz.open && e.key === "1") judge("ok");
+  else if (quiz.open && e.key === "2") judge("ng");
 });
-const rc = document.getElementById("reset-confirm");
-document.getElementById("reset").addEventListener("click", () => { rc.hidden = false; });
-document.getElementById("reset-no").addEventListener("click", () => { rc.hidden = true; });
-document.getElementById("reset-yes").addEventListener("click", () => { marks = {}; shown = {}; save(); rc.hidden = true; render(); });
 
-header();
-render();
+/* ── 結果 ──────────────────────────────── */
+function result() {
+  const { name, list, got } = quiz;
+  quiz = null;
+  const ok = list.filter(it => got[it.n] === "ok").length;
+  const wrong = list.filter(it => got[it.n] === "ng");
+  const skipped = list.length - ok - wrong.length;
+  show(backBar(),
+    el("div", { class: "result" },
+      el("div", null, name),
+      el("div", { class: "big" }, `${ok} / ${list.length}`),
+      el("div", { class: "stats" },
+        el("span", { class: "s-ok" }, "○ ", el("b", null, ok)),
+        el("span", { class: "s-ng" }, "× ", el("b", null, wrong.length)),
+        skipped ? el("span", { class: "s-todo" }, "とばした ", el("b", null, skipped)) : null),
+      el("div", { class: "actions" },
+        wrong.length ? el("button", { class: "btn main", type: "button", onclick: () => start(`${name}（×の解き直し）`, wrong) }, `× の ${wrong.length}問をもう一度`) : null,
+        el("button", { class: wrong.length ? "btn" : "btn main", type: "button", onclick: () => start(name, list) }, "同じ問題をもう一度"),
+        el("button", { class: "btn", type: "button", onclick: home }, "メニューに戻る"))));
+}
+
+/* ── まとめ一覧 ─────────────────────────── */
+const view = { unit: -1, hide: false, star: false, ng: false };
+function sheet() {
+  const chip = (label, on, fn) => el("button", { class: "chip", type: "button", "aria-pressed": String(on), onclick: () => { fn(); sheet(); } }, label);
+  const groups = DRILL.sections.map((s, si) => {
+    if (view.unit !== -1 && view.unit !== si) return null;
+    const list = items.filter(it => it.si === si && (!view.star || it.star) && (!view.ng || marks[it.n] === "ng"));
+    if (!list.length) return null;
+    return el("section", null, el("h3", null, s.title),
+      el("ol", { class: "rows" }, list.map(it => {
+        const a = el("div", { class: "a" + (view.hide ? " hide" : "") }, it.a);
+        if (view.hide) a.addEventListener("click", () => a.classList.toggle("hide"));
+        return el("li", { class: marks[it.n] || "" },
+          el("span", { class: "no" }, it.star ? el("span", { class: "st" }, "★") : null, it.n),
+          el("div", { class: "qa" }, el("div", { class: "q" }, it.q), a));
+      })));
+  }).filter(Boolean);
+  const y = window.scrollY;
+  show(backBar(), el("h2", null, "まとめ一覧"),
+    el("div", { class: "filters" },
+      chip("全単元", view.unit === -1, () => view.unit = -1),
+      DRILL.sections.map((s, si) => chip(`単元${si + 1}`, view.unit === si, () => view.unit = si))),
+    el("div", { class: "filters" },
+      chip("★だけ", view.star, () => view.star = !view.star),
+      chip("×だけ", view.ng, () => view.ng = !view.ng),
+      chip("答えをかくす", view.hide, () => view.hide = !view.hide)),
+    view.hide ? el("p", { class: "count", style: "margin:0" }, "かくした答えは、タップすると表示されます。") : null,
+    groups.length ? el("div", { class: "sheet" }, groups) : el("p", { class: "empty" }, "あてはまる問題はありません。"));
+  window.scrollTo(0, y);
+}
+
+home();
 </script>

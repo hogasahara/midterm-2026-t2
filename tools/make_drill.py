@@ -9,7 +9,8 @@ PDF 化は Chromium（Node の playwright）で行う。日本語フォントは
 
 JSON の形:
     {"title": ..., "subject": ..., "exam": ..., "source": ..., "date": ...,
-     "sections": [{"title": ..., "items": [["問題", "解答"], ...]}, ...]}
+     "sections": [{"title": ..., "items": [["問題", "解答"], ["問題", "解答", 1], ...]}, ...]}
+    3番目の要素が 1 の問題は重要問題（★）
 """
 import html
 import json
@@ -34,7 +35,8 @@ h2 { font-size: 11pt; margin: 10px 0 3px; padding: 2px 6px; background: #e8e8e8;
 table { width: 100%; border-collapse: collapse; table-layout: fixed; }
 td { border-bottom: 0.6px solid #999; padding: 4px 4px; vertical-align: top; line-height: 1.45; }
 tr { break-inside: avoid; }
-td.no { width: 9mm; text-align: right; font-weight: bold; }
+td.no { width: 12mm; text-align: right; font-weight: bold; white-space: nowrap; }
+.star { font-size: 8pt; margin-right: 1px; }
 td.chk { width: 11mm; text-align: center; color: #666; letter-spacing: 1px; }
 td.q { width: 52%; }
 td.a { border-left: 0.6px dotted #999; }
@@ -58,15 +60,16 @@ def render(data, answers):
     out.append("</div></header>")
     if not answers:
         out.append("<p class='howto'>□□ は 1周目／2周目 のチェック欄。間違えた問題に印をつけ、"
-                   "2周目は印のある問題だけ解く。</p>")
+                   "2周目は印のある問題だけ解く。★は重要問題。</p>")
     n = 0
     for sec in data["sections"]:
         out.append(f"<h2>{html.escape(sec['title'])}</h2><table>")
-        for q, a in sec["items"]:
+        for q, a, *flag in sec["items"]:
             n += 1
             ans = html.escape(a) if answers else ""
+            star = "<span class='star'>★</span>" if flag and flag[0] else ""
             out.append(
-                f"<tr><td class='no'>{n}</td><td class='chk'>□□</td>"
+                f"<tr><td class='no'>{star}{n}</td><td class='chk'>□□</td>"
                 f"<td class='q'>{html.escape(q)}</td><td class='a'>{ans}</td></tr>"
             )
         out.append("</table>")
