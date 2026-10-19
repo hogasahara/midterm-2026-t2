@@ -100,6 +100,8 @@ h2{font-size:18px;margin:0;text-wrap:balance}
 .b-ok{color:var(--ok);border:1px solid var(--ok)}
 .qtext{font-size:19px;line-height:1.65;overflow-wrap:anywhere;white-space:pre-line}
 .reveal{border:2px dashed var(--accent);color:var(--accent);background:var(--accent-soft);border-radius:10px;padding:14px;font-weight:700;cursor:pointer;font-size:16px}
+.hintbtn{justify-self:start;border:1px solid var(--line);background:var(--paper);color:var(--muted);border-radius:999px;padding:4px 14px;font-size:14px;cursor:pointer}
+.hint{justify-self:start;font-weight:700;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:4px 14px;font-size:15px}
 .answer{font-size:19px;font-weight:700;background:var(--accent-soft);border-radius:10px;padding:12px 14px;overflow-wrap:anywhere}
 .judge{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .judge button{border-radius:10px;padding:14px 8px;font-weight:700;font-size:16px;cursor:pointer;border:2px solid}
@@ -154,8 +156,8 @@ try { marks = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) {
 function save() { try { localStorage.setItem(KEY, JSON.stringify(marks)); } catch (e) {} }
 
 const items = [];
-DRILL.sections.forEach((s, si) => s.items.forEach(([q, a, imp, w]) =>
-  items.push({ n: items.length + 1, si, q, a, star: !!imp, group: s.group || "", w: w ?? null })));
+DRILL.sections.forEach((s, si) => s.items.forEach(([q, a, imp, w, hint]) =>
+  items.push({ n: items.length + 1, si, q, a, star: !!imp, group: s.group || "", w: w ?? null, hint: hint || "" })));
 // 単語集のページ（vocab あり）は、×をつけた問題を単語ごとにまとめて「間違えた単語集」にする
 const VOCAB = DRILL.vocab || [];
 const wrongWords = () => [...new Set(items.filter(it => it.w !== null && marks[it.n] === "ng").map(it => it.w))].sort((a, b) => a - b);
@@ -289,6 +291,9 @@ function card() {
         el("button", { class: "j-ok", type: "button", onclick: () => judge("ok") }, "○ 合ってた"),
         el("button", { class: "j-ng", type: "button", onclick: () => judge("ng") }, "× まちがえた")));
   } else {
+    if (it.hint) body.push(quiz.hint
+      ? el("div", { class: "hint" }, it.hint)
+      : el("button", { class: "hintbtn", type: "button", onclick: () => { quiz.hint = true; card(); } }, "ヒントを表示"));
     body.push(el("button", { class: "reveal", type: "button", id: "reveal", onclick: () => { quiz.open = true; card(); } }, "答えを見る"));
   }
   show(
@@ -307,7 +312,7 @@ function judge(v) {
   go(1);
 }
 function go(d) {
-  quiz.i = Math.max(0, quiz.i + d); quiz.open = false;
+  quiz.i = Math.max(0, quiz.i + d); quiz.open = false; quiz.hint = false;
   if (quiz.i >= quiz.list.length) return result();
   card();
 }
