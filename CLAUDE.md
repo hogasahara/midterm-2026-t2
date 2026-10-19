@@ -62,6 +62,7 @@
 - ドリルを作ったら build_share.py を実行し、その教科の URL に Artifact ツールで再公開する（未公開の教科は新規公開して下の表に URL を追記）
 - ○×の記録は閲覧者ごとのブラウザ（localStorage）に保存。共有DBは使わない
 - section に "group" を付けるとメニューにグループのボタンが出る（古文は「単語・文学的知識」「文法」、時事は自動で「時事問題」）。補足は JSON の group_notes
+- 単語集は `"kind": "vocab"` の JSON（units → words）で書く。`tools/vocab.py` が英日・日英・空欄補充の3グループに展開し、ページには「間違えた単語集」（×をつけた単語の一覧と解き直し）が出る
 - ★（重要問題）は items の3番目を 1 にする。地理はノートで強調された所と頻出の仕組み、歴史はプリントの穴埋め空欄を★にした
 - 公開はデフォルト非公開。クラスに見せるには、ページの共有メニューからリンク共有をオンにしてもらう
 
@@ -70,6 +71,7 @@
 | 地理 | https://claude.ai/artifact/SXzgdvqiZy2tuwDJq553zB |
 | 歴史 | https://claude.ai/artifact/2PTLYU9jtFmew82J7Zg7XY |
 | 古文 | https://claude.ai/artifact/1s6zmcm1JivHFLvxzV1Fzj |
+| EA | https://claude.ai/artifact/MzPrcQJPLkEKqTse7HPzWT |
 
 ## 教材の受け取り
 

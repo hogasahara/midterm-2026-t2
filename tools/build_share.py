@@ -14,6 +14,8 @@ section に "group" があると、ページのメニューにグループごと
 import json
 import pathlib
 
+import vocab
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 YEAR = 2026
 
@@ -59,6 +61,8 @@ def main():
         if not files:
             continue
         drills = [json.loads(f.read_text(encoding="utf-8")) for f in files]
+        # 単語集（kind: "vocab"）は英日・日英・空欄補充の問題に展開する
+        drills = [vocab.expand(d) if d.get("kind") == "vocab" else d for d in drills]
         exam, exam_date, course = exam_info(plan, subject)
         # 時事（kind: "jiji"）は教科のドリルのあとに「時事問題」グループとして並べる
         main = [d for d in drills if d.get("kind") != "jiji"] or drills
@@ -77,6 +81,7 @@ def main():
             "source": "、".join(d.get("share_source", "授業ノート") for d in drills),
             "updated": max(d["date"] for d in drills),
             "group_notes": group_notes,
+            "vocab": [w for d in main for w in d.get("vocab", [])],
             "sections": sections,
         }
         light, dark = ACCENTS[folder]

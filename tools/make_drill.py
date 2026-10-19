@@ -18,6 +18,8 @@ import pathlib
 import subprocess
 import sys
 
+import vocab
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 CSS = """
@@ -39,7 +41,7 @@ tr { break-inside: avoid; }
 td.no { width: 12mm; text-align: right; font-weight: bold; white-space: nowrap; }
 .star { font-size: 8pt; margin-right: 1px; }
 td.chk { width: 11mm; text-align: center; color: #666; letter-spacing: 1px; }
-td.q { width: 52%; }
+td.q { width: 52%; white-space: pre-line; }
 td.a { border-left: 0.6px dotted #999; }
 .kaitou td.a { font-weight: bold; }
 .kaitou td.q { color: #444; }
@@ -110,6 +112,8 @@ def to_pdf(html_path, pdf_path):
 def main():
     src = pathlib.Path(sys.argv[1]).resolve()
     data = json.loads(src.read_text(encoding="utf-8"))
+    if data.get("kind") == "vocab":  # 単語集は英日・日英・空欄補充に展開する
+        data = vocab.expand(data)
     stem = src.with_suffix("")
     for answers, suffix in ((False, "mondai"), (True, "kaitou")):
         doc, n = render(data, answers)

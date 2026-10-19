@@ -62,6 +62,8 @@ h1 .seg{display:inline-block}
 .mode.primary .sub{color:inherit;opacity:.85}
 .mode:disabled{cursor:default;opacity:.5}
 .mode.wide{grid-column:1/-1;min-height:0}
+.modes.vocab .wide{order:-2}
+.modes.vocab .wide.wrong{order:-1}
 .mode:disabled:hover{border-color:var(--line)}
 .under{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:8px;font-size:13px;color:var(--muted)}
 details summary{cursor:pointer}
@@ -96,7 +98,7 @@ h2{font-size:18px;margin:0;text-wrap:balance}
 .b-star{color:var(--star);border:1px solid var(--star)}
 .b-ng{color:var(--ng);border:1px solid var(--ng)}
 .b-ok{color:var(--ok);border:1px solid var(--ok)}
-.qtext{font-size:19px;line-height:1.65;overflow-wrap:anywhere}
+.qtext{font-size:19px;line-height:1.65;overflow-wrap:anywhere;white-space:pre-line}
 .reveal{border:2px dashed var(--accent);color:var(--accent);background:var(--accent-soft);border-radius:10px;padding:14px;font-weight:700;cursor:pointer;font-size:16px}
 .answer{font-size:19px;font-weight:700;background:var(--accent-soft);border-radius:10px;padding:12px 14px;overflow-wrap:anywhere}
 .judge{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -129,7 +131,7 @@ h2{font-size:18px;margin:0;text-wrap:balance}
 .rows .no{font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
 .rows .st{color:var(--star)}
 .rows .qa{display:grid;gap:2px}
-.rows .q{overflow-wrap:anywhere}
+.rows .q{overflow-wrap:anywhere;white-space:pre-line}
 .rows .a{font-weight:700;overflow-wrap:anywhere}
 .rows .a.hide{color:transparent;background:var(--line);border-radius:4px;cursor:pointer;user-select:none}
 .rows li.ok{box-shadow:inset 3px 0 0 var(--ok)}
@@ -152,8 +154,11 @@ try { marks = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) {
 function save() { try { localStorage.setItem(KEY, JSON.stringify(marks)); } catch (e) {} }
 
 const items = [];
-DRILL.sections.forEach((s, si) => s.items.forEach(([q, a, imp]) =>
-  items.push({ n: items.length + 1, si, q, a, star: !!imp, group: s.group || "" })));
+DRILL.sections.forEach((s, si) => s.items.forEach(([q, a, imp, w]) =>
+  items.push({ n: items.length + 1, si, q, a, star: !!imp, group: s.group || "", w: w ?? null })));
+// 単語集のページ（vocab あり）は、×をつけた問題を単語ごとにまとめて「間違えた単語集」にする
+const VOCAB = DRILL.vocab || [];
+const wrongWords = () => [...new Set(items.filter(it => it.w !== null && marks[it.n] === "ng").map(it => it.w))].sort((a, b) => a - b);
 const groups = [...new Set(DRILL.sections.map(s => s.group).filter(Boolean))];
 const groupNote = g => (DRILL.group_notes || {})[g] || "";
 
@@ -195,7 +200,7 @@ function home() {
   const title = el("h1", null);
   DRILL.title.split(/\s+/).forEach((p, i) => { if (i) title.append(" "); title.append(el("span", { class: "seg" }, p)); });
   const mode = (label, sub, onclick, opts = {}) =>
-    el("button", { class: "mode" + (opts.primary ? " primary" : "") + (opts.wide ? " wide" : ""), type: "button", disabled: !!opts.disabled, onclick },
+    el("button", { class: "mode" + (opts.primary ? " primary" : "") + (opts.wide ? " wide" : "") + (opts.cls ? " " + opts.cls : ""), type: "button", disabled: !!opts.disabled, onclick },
       el("span", { class: "label" }, label), el("span", { class: "sub" }, sub));
 
   show(
@@ -211,11 +216,13 @@ function home() {
         el("span", { class: "s-ng" }, "× ", el("b", null, ng)),
         el("span", { class: "s-todo" }, "未回答 ", el("b", null, todo))),
       meter(items)),
-    el("div", { class: "modes" },
+    el("div", { class: "modes" + (VOCAB.length ? " vocab" : "") },
       mode("単元別", `${DRILL.sections.length}単元から選ぶ`, units, { primary: true }),
       mode("ランダム", "10問・20問・全部", randomPick),
-      mode("間違えた問題", ng ? `× が ${ng}問` : "まだありません",
-        () => start("間違えた問題の復習", shuffle(items.filter(it => marks[it.n] === "ng"))), { disabled: !ng }),
+      VOCAB.length
+        ? mode("間違えた単語集", wrongWords().length ? `${wrongWords().length}語・×をつけた単語をまとめて復習` : "まだありません（×をつけた単語がここにたまる）", wrongList, { disabled: !wrongWords().length, wide: true, cls: "wrong" })
+        : mode("間違えた問題", ng ? `× が ${ng}問` : "まだありません",
+            () => start("間違えた問題の復習", shuffle(items.filter(it => marks[it.n] === "ng"))), { disabled: !ng }),
       mode("★ 重要問題", `${stars.length}問`, () => start("★ 重要問題", stars)),
       mode("未回答だけ", todo ? `残り ${todo}問` : "全部解きました",
         () => start("まだ解いていない問題", items.filter(it => !marks[it.n])), { disabled: !todo }),
@@ -330,6 +337,27 @@ function result() {
         wrong.length ? el("button", { class: "btn main", type: "button", onclick: () => start(`${name}（×の解き直し）`, wrong) }, `× の ${wrong.length}問をもう一度`) : null,
         el("button", { class: wrong.length ? "btn" : "btn main", type: "button", onclick: () => start(name, list) }, "同じ問題をもう一度"),
         el("button", { class: "btn", type: "button", onclick: home }, "メニューに戻る"))));
+}
+
+/* ── 間違えた単語集（単語集のページだけ） ── */
+function wrongList() {
+  const ids = wrongWords();
+  if (!ids.length) return home();
+  const inWrong = it => it.w !== null && ids.includes(it.w);
+  const drill = g => items.filter(it => it.group === g && inWrong(it));
+  show(backBar(el("span", { class: "count" }, `${ids.length}語`)),
+    el("h2", null, "間違えた単語集"),
+    el("p", { class: "count", style: "margin:0" }, "どこかのモードで×をつけた単語です。解き直して○にすると、このリストから消えます。"),
+    el("div", { class: "actions" },
+      groups.filter(g => drill(g).length).map((g, i) =>
+        el("button", { class: i ? "btn" : "btn main", type: "button", onclick: () => start(`間違えた単語（${g}）`, shuffle(drill(g))) },
+          `${g}で解き直す（${drill(g).length}問）`))),
+    el("ol", { class: "rows" }, ids.map(id => {
+      const v = VOCAB[id];
+      return el("li", { class: "ng" },
+        el("span", { class: "no" }, `${id + 1}`),
+        el("div", { class: "qa" }, el("div", { class: "q" }, `${v.en}（${v.pos}）`), el("div", { class: "a" }, v.ja)));
+    })));
 }
 
 /* ── まとめ一覧 ─────────────────────────── */

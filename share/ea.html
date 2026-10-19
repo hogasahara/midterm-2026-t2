@@ -1,0 +1,395 @@
+<title>English A・リスニング 中間ドリル</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Shippori+Mincho+B1:wght@700;800&display=swap">
+<style>
+/* Layout: 開くとメニュー（進み具合＋6つの学習ボタン）だけ。ボタンから「1問ずつ解く画面」か「一覧」に入る。教科ごとにアクセント色だけ変える */
+:root{
+  --accent:#2d5aa8;
+  --accent-ink:#ffffff;
+  --accent-soft:#e6ebf5;
+  --bg:#f6f7f5;
+  --paper:#ffffff;
+  --ink:#1c211f;
+  --muted:#5f6864;
+  --line:#dde2df;
+  --ok:#1f7a4d;
+  --ok-bg:#e3f3ea;
+  --ng:#b3361f;
+  --ng-bg:#fbe7e2;
+  --star:#9a6a00;
+  --f-display:"Shippori Mincho B1","Hiragino Mincho ProN","Yu Mincho",serif;
+  --f-body:"BIZ UDPGothic","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --accent:#8fb3f0;--accent-ink:#0f1412;--accent-soft:#2d383f;--bg:#121614;--paper:#1a201d;--ink:#e6ebe8;--muted:#9aa49f;--line:#2c3430;
+  --ok:#6fd19c;--ok-bg:#183326;--ng:#ff9a85;--ng-bg:#3a1f19;--star:#f2c14e;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --accent:#8fb3f0;--accent-ink:#0f1412;--accent-soft:#2d383f;--bg:#121614;--paper:#1a201d;--ink:#e6ebe8;--muted:#9aa49f;--line:#2c3430;
+  --ok:#6fd19c;--ok-bg:#183326;--ng:#ff9a85;--ng-bg:#3a1f19;--star:#f2c14e;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6}
+.wrap{max-width:720px;margin:0 auto;padding-block:20px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:18px}
+button{font:inherit;color:inherit}
+button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ヘッダー */
+header{display:grid;gap:6px}
+.eyebrow{font-size:13px;letter-spacing:.08em;color:var(--muted)}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(26px,6.4vw,36px);line-height:1.25;margin:0;text-wrap:balance}
+h1 .seg{display:inline-block}
+.exam{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:14px;color:var(--muted)}
+.exam strong{color:var(--ink)}
+.days{background:var(--accent);color:var(--accent-ink);font-weight:700;border-radius:4px;padding:1px 8px;font-size:13px}
+
+/* 進み具合 */
+.progress{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:grid;gap:8px}
+.stats{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:14px;font-variant-numeric:tabular-nums;align-items:baseline}
+.stats b{font-size:20px}
+.s-ok{color:var(--ok)}.s-ng{color:var(--ng)}.s-todo{color:var(--muted)}
+.meter{height:8px;border-radius:4px;background:var(--line);overflow:hidden;display:flex}
+.meter i{display:block;height:100%}
+.m-ok{background:var(--ok)}.m-ng{background:var(--ng)}
+
+/* メニューのボタン */
+.modes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.mode{display:grid;gap:2px;text-align:left;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px;cursor:pointer;min-height:84px;align-content:start}
+.mode:hover{border-color:var(--accent)}
+.mode .label{font-weight:700;font-size:17px}
+.mode .sub{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.mode.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.mode.primary .sub{color:inherit;opacity:.85}
+.mode:disabled{cursor:default;opacity:.5}
+.mode.wide{grid-column:1/-1;min-height:0}
+.modes.vocab .wide{order:-2}
+.modes.vocab .wide.wrong{order:-1}
+.mode:disabled:hover{border-color:var(--line)}
+.under{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:8px;font-size:13px;color:var(--muted)}
+details summary{cursor:pointer}
+details p{margin:6px 0 0;max-width:36em}
+.link{background:none;border:0;padding:0;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:13px}
+.link:disabled{opacity:.4;cursor:default}
+.confirm{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:14px}
+
+/* 画面上部（戻る） */
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.back{border:1px solid var(--line);border-radius:999px;padding:4px 12px;cursor:pointer;font-size:14px;background:var(--paper)}
+.where{font-weight:700}
+.count{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+h2{font-size:18px;margin:0;text-wrap:balance}
+
+/* 単元・問題数の選択 */
+.choices{display:grid;gap:8px}
+.choice{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;align-items:center;text-align:left;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 14px;cursor:pointer}
+.choice:hover{border-color:var(--accent)}
+.choice .c-title{font-weight:700}
+.choice .c-meta{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.choice .meter{grid-column:1/-1;height:5px}
+.ghead{font-size:14px;color:var(--muted);margin:10px 0 0;letter-spacing:.04em}
+.ghead:first-child{margin-top:0}
+
+/* 1問ずつ解く画面 */
+.bar{height:4px;background:var(--line);border-radius:2px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent)}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px 16px;display:grid;gap:14px;min-height:240px;align-content:start}
+.card .meta{display:flex;flex-wrap:wrap;gap:6px 10px;font-size:13px;color:var(--muted);align-items:center}
+.badge{border-radius:4px;padding:0 6px;font-size:12px;font-weight:700}
+.b-star{color:var(--star);border:1px solid var(--star)}
+.b-ng{color:var(--ng);border:1px solid var(--ng)}
+.b-ok{color:var(--ok);border:1px solid var(--ok)}
+.qtext{font-size:19px;line-height:1.65;overflow-wrap:anywhere;white-space:pre-line}
+.reveal{border:2px dashed var(--accent);color:var(--accent);background:var(--accent-soft);border-radius:10px;padding:14px;font-weight:700;cursor:pointer;font-size:16px}
+.answer{font-size:19px;font-weight:700;background:var(--accent-soft);border-radius:10px;padding:12px 14px;overflow-wrap:anywhere}
+.judge{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.judge button{border-radius:10px;padding:14px 8px;font-weight:700;font-size:16px;cursor:pointer;border:2px solid}
+.j-ok{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+.j-ng{background:var(--ng-bg);border-color:var(--ng);color:var(--ng)}
+.nav{display:flex;justify-content:space-between;gap:8px}
+.nav button{background:none;border:0;color:var(--muted);cursor:pointer;font-size:14px;padding:4px 0}
+.nav button:disabled{opacity:.35;cursor:default}
+.keys{font-size:12px;color:var(--muted);text-align:center}
+@media (hover:none){.keys{display:none}}
+
+/* 結果 */
+.result{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:20px 16px;display:grid;gap:12px;text-align:center}
+.result .big{font-family:var(--f-display);font-size:40px;font-weight:800;font-variant-numeric:tabular-nums}
+.result .stats{justify-content:center}
+.actions{display:grid;gap:8px}
+.btn{border-radius:10px;padding:12px;font-weight:700;cursor:pointer;border:1px solid var(--line);background:var(--paper)}
+.btn.main{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+
+/* まとめ一覧 */
+.filters{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:13px;border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:4px 11px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.sheet{display:grid;gap:16px}
+.sheet h3{font-size:15px;margin:0 0 6px;color:var(--muted);text-wrap:balance}
+.rows{list-style:none;margin:0;padding:0;background:var(--paper);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.rows li{display:grid;grid-template-columns:3.2em minmax(0,1fr);gap:2px 8px;padding:9px 12px;border-top:1px solid var(--line)}
+.rows li:first-child{border-top:0}
+.rows .no{font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.rows .st{color:var(--star)}
+.rows .qa{display:grid;gap:2px}
+.rows .q{overflow-wrap:anywhere;white-space:pre-line}
+.rows .a{font-weight:700;overflow-wrap:anywhere}
+.rows .a.hide{color:transparent;background:var(--line);border-radius:4px;cursor:pointer;user-select:none}
+.rows li.ok{box-shadow:inset 3px 0 0 var(--ok)}
+.rows li.ng{box-shadow:inset 3px 0 0 var(--ng)}
+.empty{color:var(--muted);text-align:center;padding:24px 0}
+footer{font-size:12px;color:var(--muted);display:grid;gap:2px}
+@media (max-width:340px){.modes{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:no-preference){.answer{animation:fade .18s ease-out}@keyframes fade{from{opacity:.5}to{opacity:1}}}
+</style>
+
+<div class="wrap" id="app"></div>
+
+<script>
+const DRILL = {"id": "ea", "course": "二学期中間テスト（高1）・English A・リスニング", "title": "EA単語ドリル　単語集①・Five Myths About The Atomic Bomb", "exam": "10/22（木）①8:45", "exam_date": "2026-10-22", "source": "授業の単語集（Term 2）", "updated": "2026-10-19", "group_notes": {"英日": "英語 → 日本語", "日英": "日本語 → 英語（頭文字ヒントつき）", "空欄補充": "例文の（ ）に入る語"}, "vocab": [{"en": "invasion", "pos": "n", "ja": "侵略、侵攻"}, {"en": "subsequent", "pos": "adj", "ja": "その後の"}, {"en": "horrific", "pos": "adj", "ja": "恐ろしい"}, {"en": "commit a crime", "pos": "v-n", "ja": "罪を犯す"}, {"en": "surrender", "pos": "v/n", "ja": "降伏する／降伏"}, {"en": "unconditionally", "pos": "adv", "ja": "無条件に"}, {"en": "crown", "pos": "n", "ja": "王冠、王位"}, {"en": "colony", "pos": "n", "ja": "植民地"}, {"en": "The main question raised", "pos": "文法", "ja": "提起された主な疑問"}, {"en": "if it were not for ~ / if it had not been for ~", "pos": "文法", "ja": "もし〜がなければ／もし〜がなかったら"}, {"en": "dozen", "pos": "adj/n", "ja": "12個の、ダース、たくさんの"}, {"en": "occupation", "pos": "n", "ja": "占領"}, {"en": "proclaim", "pos": "v", "ja": "宣言する"}, {"en": "independence", "pos": "n", "ja": "独立"}, {"en": "nationalist", "pos": "adj/n", "ja": "国家主義の・民族主義の／国家主義者"}, {"en": "recall", "pos": "v", "ja": "思い出す、呼び戻す"}, {"en": "negotiation", "pos": "n", "ja": "交渉"}, {"en": "dialogue", "pos": "n", "ja": "対話"}, {"en": "full-fledged A", "pos": "adj", "ja": "本格的なA"}, {"en": "revolution", "pos": "n", "ja": "革命"}, {"en": "opportunity", "pos": "n", "ja": "機会"}, {"en": "Long story short, ~", "pos": "idi", "ja": "要するに"}, {"en": "coerce", "pos": "v", "ja": "強制する"}, {"en": "proclamation", "pos": "n", "ja": "宣言"}, {"en": "stepping stone", "pos": "n", "ja": "踏み石、手段、きっかけ"}, {"en": "eventually", "pos": "adv", "ja": "結局は、最終的に"}, {"en": "give emphasis on ~", "pos": "n", "ja": "〜を強調する"}, {"en": "suffering", "pos": "n", "ja": "苦しみ"}, {"en": "consistent (with ~)", "pos": "adj", "ja": "（〜と）一致して"}, {"en": "portrayal", "pos": "n", "ja": "描写"}, {"en": "portrayal of J as a ...", "pos": "文法", "ja": "Jを〜として描写すること"}, {"en": "cruel", "pos": "adj", "ja": "残酷な"}, {"en": "invader", "pos": "n", "ja": "侵略者"}, {"en": "conquer", "pos": "v", "ja": "征服する"}, {"en": "mercilessly", "pos": "adv", "ja": "無慈悲に"}, {"en": "labor", "pos": "n", "ja": "労働"}, {"en": "rape", "pos": "n/v", "ja": "性的暴行（を加える）"}, {"en": "comfort", "pos": "n", "ja": "慰め、快適さ"}, {"en": "a comfort woman", "pos": "n", "ja": "慰安婦"}, {"en": "torture", "pos": "v/n", "ja": "拷問する／拷問"}, {"en": "whistle", "pos": "v/n", "ja": "口笛を吹く／口笛"}, {"en": "bow", "pos": "v/n", "ja": "お辞儀する／お辞儀"}, {"en": "pass by", "pos": "idi", "ja": "通り過ぎる、（時が）経つ"}, {"en": "shed a tear / tears", "pos": "v-n", "ja": "涙を流す"}, {"en": "There is N -ing/-en", "pos": "文法", "ja": "〜している（されている）Nがいる"}, {"en": "atrocity", "pos": "n", "ja": "残虐行為"}, {"en": "A after A", "pos": "語法", "ja": "次から次へのA"}, {"en": "regarding", "pos": "前置詞", "ja": "〜に関して"}, {"en": "psychology", "pos": "n", "ja": "心理学"}, {"en": "group pressure", "pos": "n", "ja": "集団圧力"}, {"en": "fascism", "pos": "n", "ja": "ファシズム"}, {"en": "involvement", "pos": "n", "ja": "関与、巻き込むこと"}, {"en": "topple", "pos": "v", "ja": "倒す、崩壊させる"}, {"en": "democratic", "pos": "adj", "ja": "民主的な"}, {"en": "cover", "pos": "v", "ja": "扱う"}, {"en": "context", "pos": "n", "ja": "文脈"}, {"en": "In this/that context", "pos": "idi", "ja": "この（その）文脈では"}, {"en": "in general", "pos": "idi", "ja": "一般的に"}, {"en": "subject", "pos": "n", "ja": "主題、テーマ"}, {"en": "technically", "pos": "adv", "ja": "厳密に言えば、専門的に"}, {"en": "radiation", "pos": "n", "ja": "放射線"}, {"en": "necessary evil", "pos": "表現", "ja": "必要悪"}, {"en": "decade", "pos": "n", "ja": "10年間"}, {"en": "controversy", "pos": "n", "ja": "議論、論争"}, {"en": "misinformation", "pos": "n", "ja": "誤情報"}, {"en": "anniversary", "pos": "n", "ja": "周年、記念日"}, {"en": "present", "pos": "v", "ja": "提示する、贈る、発表する"}, {"en": "opportunity", "pos": "n", "ja": "機会"}, {"en": "myth", "pos": "n", "ja": "神話、作り話"}, {"en": "surrender", "pos": "n", "ja": "降伏"}, {"en": "virtually", "pos": "adv", "ja": "実質的に、ほとんど"}, {"en": "default", "pos": "n", "ja": "普通、初期設定、デフォルト"}, {"en": "conclude", "pos": "v", "ja": "結論づける"}, {"en": "unexpected", "pos": "adj", "ja": "予期しない"}, {"en": "entry", "pos": "n", "ja": "参加、入場"}, {"en": "previously", "pos": "adv", "ja": "以前に"}, {"en": "nonaggression", "pos": "n", "ja": "不可侵"}, {"en": "pact", "pos": "n", "ja": "条約"}, {"en": "negotiate", "pos": "v", "ja": "交渉する"}, {"en": "post-", "pos": "接頭辞", "ja": "〜の後の、〜以後の"}, {"en": "postwar", "pos": "adj", "ja": "戦後の"}, {"en": "former", "pos": "adj", "ja": "前の、かつての、前者の"}, {"en": "military", "pos": "n/adj", "ja": "軍／軍事的な"}, {"en": "invasion", "pos": "n", "ja": "侵略"}, {"en": "figure", "pos": "n", "ja": "数字、人物、容姿"}, {"en": "canonical", "pos": "adj", "ja": "規範的な、正典の"}, {"en": "seek", "pos": "v", "ja": "探し求める"}, {"en": "justify", "pos": "v", "ja": "正当化する"}, {"en": "be supported by A", "pos": "語法", "ja": "Aによって支持される（裏づけられる）"}, {"en": "estimate", "pos": "n", "ja": "見積もり、評価"}, {"en": "note", "pos": "v", "ja": "注意する、気付く、記す"}, {"en": "committee", "pos": "n", "ja": "委員会"}, {"en": "set", "pos": "v", "ja": "設置する、配置する、決める"}, {"en": "result in A", "pos": "語法", "ja": "結果としてAになる"}, {"en": "casualty", "pos": "n", "ja": "死傷者、犠牲者"}, {"en": "GI", "pos": "n", "ja": "米兵"}, {"en": "face", "pos": "v", "ja": "直面する"}, {"en": "wrath", "pos": "n", "ja": "激怒、怒り"}, {"en": "alternative", "pos": "n", "ja": "代替案、代わりの選択肢"}, {"en": "decision", "pos": "n", "ja": "決定、決心"}, {"en": "either-or / either/or", "pos": "表現", "ja": "二者択一（の）"}, {"en": "beyond", "pos": "前置詞", "ja": "〜を超えて、〜の向こうに"}, {"en": "naval", "pos": "adj", "ja": "海軍の"}, {"en": "blockade", "pos": "n", "ja": "封鎖、閉鎖"}, {"en": "demonstration", "pos": "n", "ja": "デモ、実演、意思表示"}, {"en": "explode", "pos": "v", "ja": "爆発する"}, {"en": "desert", "pos": "adj", "ja": "人の住まない、見捨てられた"}, {"en": "observer", "pos": "n", "ja": "観察者"}, {"en": "option", "pos": "n", "ja": "選択肢、オプション"}, {"en": "reject", "pos": "v", "ja": "拒絶する"}, {"en": "~, for there were ...", "pos": "接続詞", "ja": "というのは〜だからだ"}, {"en": "available", "pos": "adj", "ja": "手に入る、利用可能な"}, {"en": "dud", "pos": "n", "ja": "不発弾"}, {"en": "accept", "pos": "v", "ja": "受け入れる"}, {"en": "conditional", "pos": "adj", "ja": "条件つきの"}, {"en": "be concerned about A", "pos": "表現", "ja": "Aについて心配している"}, {"en": "war criminal", "pos": "n", "ja": "戦争犯罪者"}, {"en": "ultimately", "pos": "adv", "ja": "最終的に"}, {"en": "clause", "pos": "n", "ja": "条項、節"}, {"en": "grant", "pos": "v", "ja": "与える、認める"}, {"en": "warn", "pos": "v", "ja": "警告する"}, {"en": "demand", "pos": "v", "ja": "要求する"}, {"en": "leaflet", "pos": "n", "ja": "ちらし、リーフレット"}, {"en": "prompt", "pos": "adj", "ja": "迅速な、即座の"}, {"en": "utter", "pos": "adj", "ja": "完全な、まったくの"}, {"en": "address", "pos": "n", "ja": "住所、演説"}, {"en": "coming", "pos": "adj", "ja": "来るべき、次の、今度の"}, {"en": "ruin", "pos": "n", "ja": "破滅、廃墟"}, {"en": "the like", "pos": "n", "ja": "同類のもの"}, {"en": "the like of ~", "pos": "語法", "ja": "〜のようなもの"}, {"en": "civilian", "pos": "n", "ja": "一般市民、民間人"}, {"en": "meaningfully", "pos": "adv", "ja": "有意義に、意味深く"}, {"en": "specific", "pos": "adj", "ja": "特定の、具体的な"}, {"en": "forewarn", "pos": "v", "ja": "前もって警告する"}, {"en": "incendiary", "pos": "n/adj", "ja": "焼夷弾／焼夷性の"}, {"en": "on a regular basis", "pos": "idi", "ja": "定期的に、日常的に"}, {"en": "notice", "pos": "n", "ja": "通知、掲示、注意"}, {"en": "time", "pos": "v", "ja": "タイミングを合わせる、時間を計る"}, {"en": "historiography", "pos": "n", "ja": "歴史記述、歴史学"}, {"en": "policy", "pos": "n", "ja": "政策、方針"}, {"en": "conflict", "pos": "n", "ja": "争い、対立"}, {"en": "significant", "pos": "adj", "ja": "重要な、かなりの"}, {"en": "settlement", "pos": "n", "ja": "解決、合意"}, {"en": "impress", "pos": "v", "ja": "感銘を与える、印象づける"}, {"en": "diplomatic", "pos": "adj", "ja": "外交的な、外交の"}, {"en": "dictate", "pos": "v", "ja": "決定する、左右する、命令する"}, {"en": "consideration", "pos": "n", "ja": "考慮、思いやり"}, {"en": "Secretary of ~", "pos": "表現", "ja": "〜長官、〜大臣"}, {"en": "Kyoto be erased from ~", "pos": "文法", "ja": "（命令・要求の that 節で）should が省略され動詞の原形になる"}, {"en": "prove to be A", "pos": "idi", "ja": "Aであるとわかる"}, {"en": "dealings", "pos": "n", "ja": "取引、関係"}], "sections": [{"title": "英日｜① Singapore", "group": "英日", "items": [["invasion（n）", "侵略、侵攻　［v. invade］", 1, 0], ["subsequent（adj）", "その後の　［adv. subsequently］", 0, 1], ["horrific（adj）", "恐ろしい　［n. horror］", 0, 2], ["commit a crime（v-n）", "罪を犯す", 0, 3], ["surrender（v/n）", "降伏する／降伏", 1, 4], ["unconditionally（adv）", "無条件に　［adj. unconditional］", 1, 5], ["crown（n）", "王冠、王位", 0, 6], ["colony（n）", "植民地　［be colonized＝植民地化される］", 1, 7], ["The main question raised（文法）", "提起された主な疑問　［過去分詞 raised が後ろから名詞を修飾］", 0, 8], ["if it were not for ~ / if it had not been for ~（文法）", "もし〜がなければ／もし〜がなかったら　［仮定法］", 1, 9], ["dozen（adj/n）", "12個の、ダース、たくさんの　［発音注意！］", 1, 10]]}, {"title": "英日｜① Indonesia", "group": "英日", "items": [["occupation（n）", "占領", 1, 11], ["proclaim（v）", "宣言する", 1, 12], ["independence（n）", "独立", 0, 13], ["nationalist（adj/n）", "国家主義の・民族主義の／国家主義者　［自分の nation（国）が一番大事、ということ］", 0, 14], ["recall（v）", "思い出す、呼び戻す　［remember（覚えている）とは少し違う］", 1, 15], ["negotiation（n）", "交渉　［v. negotiate］", 1, 16], ["dialogue（n）", "対話", 0, 17], ["full-fledged A（adj）", "本格的なA　［「完成した」の意味で -ed が基本］", 0, 18], ["revolution（n）", "革命　［evolution＝進化］", 1, 19], ["opportunity（n）", "機会", 0, 20], ["Long story short, ~（idi）", "要するに　［口語で使われる］", 0, 21], ["coerce（v）", "強制する　［force の類語］", 1, 22], ["proclamation（n）", "宣言　［proclaim の名詞］", 0, 23], ["stepping stone（n）", "踏み石、手段、きっかけ　［何かに届くために必要な踏み台］", 0, 24], ["eventually（adv）", "結局は、最終的に", 1, 25], ["give emphasis on ~（n）", "〜を強調する　［v. emphasize ~］", 0, 26], ["suffering（n）", "苦しみ　［v. suffer］", 0, 27], ["consistent (with ~)（adj）", "（〜と）一致して", 1, 28], ["portrayal（n）", "描写　［v. portray］", 0, 29], ["portrayal of J as a ...（文法）", "Jを〜として描写すること　［→ see A as B］", 0, 30], ["cruel（adj）", "残酷な　［n. cruelty］", 1, 31], ["invader（n）", "侵略者　［インベーダーゲームも宇宙からの侵略者］", 0, 32]]}, {"title": "英日｜① Guam", "group": "英日", "items": [["conquer（v）", "征服する", 1, 33], ["mercilessly（adv）", "無慈悲に　［n. mercy＝慈悲］", 1, 34], ["labor（n）", "労働", 0, 35], ["rape（n/v）", "性的暴行（を加える）", 0, 36], ["comfort（n）", "慰め、快適さ", 0, 37], ["a comfort woman（n）", "慰安婦　［直截（ちょくせつ）的に sex slave と書く場合も］", 0, 38], ["torture（v/n）", "拷問する／拷問", 1, 39], ["whistle（v/n）", "口笛を吹く／口笛　［スペル注意！］", 1, 40], ["bow（v/n）", "お辞儀する／お辞儀　［発音注意。同じつづりで「弓」にもなるが発音が異なる］", 1, 41], ["pass by（idi）", "通り過ぎる、（時が）経つ　［adv. by：そばを］", 0, 42], ["shed a tear / tears（v-n）", "涙を流す　［shed – shed – shed］", 1, 43], ["There is N -ing/-en（文法）", "〜している（されている）Nがいる", 0, 44]]}, {"title": "英日｜① Germany", "group": "英日", "items": [["atrocity（n）", "残虐行為", 1, 45], ["A after A（語法）", "次から次へのA　［Aが同じ場合のみ。We ate lunch after class. は普通の「後に」］", 1, 46], ["regarding（前置詞）", "〜に関して", 1, 47], ["psychology（n）", "心理学", 0, 48], ["group pressure（n）", "集団圧力　［cf. peer pressure がより一般的］", 0, 49], ["fascism（n）", "ファシズム", 0, 50], ["involvement（n）", "関与、巻き込むこと　［v. involve］", 0, 51], ["topple（v）", "倒す、崩壊させる　［大きくそびえたっていた物がバタンと倒れるイメージ。建物や権力に使う］", 1, 52], ["democratic（adj）", "民主的な　［n. democracy］", 0, 53], ["cover（v）", "扱う　［「覆う」が普通だが、cover a topic など文脈で判断］", 0, 54], ["context（n）", "文脈　［context matters＝文脈は重要である］", 1, 55], ["In this/that context（idi）", "この（その）文脈では　［on ではない］", 0, 56], ["in general（idi）", "一般的に　［in generally にしないこと］", 0, 57], ["subject（n）", "主題、テーマ　［ここでは「主題」］", 0, 58]]}, {"title": "英日｜① Extra Reading: USA", "group": "英日", "items": [["technically（adv）", "厳密に言えば、専門的に　［口語では大半が「厳密にいえば」。technically speaking が由来］", 1, 59], ["radiation（n）", "放射線", 0, 60], ["necessary evil（表現）", "必要悪", 0, 61]]}, {"title": "英日｜② Introduction", "group": "英日", "items": [["decade（n）", "10年間　［100年、世紀＝century］", 0, 62], ["controversy（n）", "議論、論争　［adj. controversial］", 1, 63], ["misinformation（n）", "誤情報", 0, 64], ["anniversary（n）", "周年、記念日　［めでたくないものにも使う］", 0, 65], ["present（v）", "提示する、贈る、発表する　［名詞だけじゃないぞ］", 0, 66], ["opportunity（n）", "機会　［opportunity to A の形でよく使う］", 0, 67], ["myth（n）", "神話、作り話　［発音注意！Greek myth＝ギリシャ神話］", 1, 68]]}, {"title": "英日｜② Myth 1: The bomb ended the war.", "group": "英日", "items": [["surrender（n）", "降伏　［前回の文章では動詞で登場。名詞も動詞も形・発音は同じ］", 0, 69], ["virtually（adv）", "実質的に、ほとんど　［「仮想の」の意味もあるが、virtual＝「電子的」のイメージだけで覚えるのは危険］", 1, 70], ["default（n）", "普通、初期設定、デフォルト　［the default understanding＝共通認識（基本認識）］", 1, 71], ["conclude（v）", "結論づける　［n. conclusion］", 1, 72], ["unexpected（adj）", "予期しない　［expect＝期待する・予期する］", 0, 73], ["entry（n）", "参加、入場　［v. enter］", 0, 74], ["previously（adv）", "以前に　［adj. previous］", 1, 75], ["nonaggression（n）", "不可侵　［aggression＝侵略・攻撃］", 0, 76], ["pact（n）", "条約　［nonaggression pact＝不可侵条約］", 1, 77], ["negotiate（v）", "交渉する　［n. negotiation］", 0, 78]]}, {"title": "英日｜② Myth 2: The bomb saved half a million American lives.", "group": "英日", "items": [["post-（接頭辞）", "〜の後の、〜以後の", 0, 79], ["postwar（adj）", "戦後の", 0, 80], ["former（adj）", "前の、かつての、前者の　［former ⇔ latter］", 1, 81], ["military（n/adj）", "軍／軍事的な　［カタカナで「ミリタリー」と言うとファッション用語になる］", 0, 82], ["invasion（n）", "侵略　［invader＝侵略者］", 0, 83], ["figure（n）", "数字、人物、容姿　［図・姿など、様々な意味がある単語］", 0, 84], ["canonical（adj）", "規範的な、正典の　［canon＝正典］", 0, 85], ["seek（v）", "探し求める　［手を伸ばしながら追いかけるイメージ］", 0, 86], ["justify（v）", "正当化する　［justice＝正義］", 1, 87], ["be supported by A（語法）", "Aによって支持される（裏づけられる）　［be supported by data］", 0, 88], ["estimate（n）", "見積もり、評価", 0, 89], ["note（v）", "注意する、気付く、記す", 0, 90], ["committee（n）", "委員会", 0, 91], ["set（v）", "設置する、配置する、決める　［The invasion was set to begin Nov. 1.＝侵略は11月1日に行われることが決まった］", 0, 92], ["result in A（語法）", "結果としてAになる", 1, 93], ["casualty（n）", "死傷者、犠牲者　［複数形 casualties］", 1, 94], ["GI（n）", "米兵　［Government Issue の略だが「米兵」の俗称］", 0, 95], ["face（v）", "直面する", 0, 96], ["wrath（n）", "激怒、怒り　［The Seven Deadly Sins（7つの大罪）：pride, greed, lust, envy, gluttony, wrath, sloth］", 0, 97]]}, {"title": "英日｜② Myth 3: The only alternative to the bomb was an invasion of Japan.", "group": "英日", "items": [["alternative（n）", "代替案、代わりの選択肢　［The alternative to A is B.＝Aの代案はBである］", 1, 98], ["decision（n）", "決定、決心　［v. decide］", 0, 99], ["either-or / either/or（表現）", "二者択一（の）　［口語ではよく使うが、文面ではあまり使わない］", 0, 100], ["beyond（前置詞）", "〜を超えて、〜の向こうに　［To infinity and beyond!＝無限の更に向こうへ］", 1, 101], ["naval（adj）", "海軍の　［n. navy＝海軍］", 0, 102], ["blockade（n）", "封鎖、閉鎖　［block 由来の単語］", 0, 103], ["demonstration（n）", "デモ、実演、意思表示　［抗議活動の「デモ」という意味もある］", 0, 104], ["explode（v）", "爆発する　［感情が爆発する時も使える。His anger exploded.］", 0, 105], ["desert（adj）", "人の住まない、見捨てられた　［発音注意。名詞だと砂漠だが、desert island は「砂漠島」ではなく「無人島」］", 1, 106], ["observer（n）", "観察者　［v. observe］", 0, 107], ["option（n）", "選択肢、オプション　［もとは「付けなくてもいい選択肢」という意味］", 0, 108], ["reject（v）", "拒絶する　［refuse よりも強く・冷たい］", 1, 109], ["~, for there were ...（接続詞）", "というのは〜だからだ　［for S' V' の形。EBでやりました］", 1, 110], ["available（adj）", "手に入る、利用可能な　［色々な文脈で使う］", 1, 111], ["dud（n）", "不発弾　［湿気た花火に対して使ったりも］", 0, 112], ["accept（v）", "受け入れる", 0, 113], ["conditional（adj）", "条件つきの　［⇔ unconditional］", 1, 114], ["be concerned about A（表現）", "Aについて心配している", 0, 115], ["war criminal（n）", "戦争犯罪者", 0, 116], ["ultimately（adv）", "最終的に　［ultimate＝最後の・最終の・最高の］", 1, 117], ["clause（n）", "条項、節　［天皇の処遇に関する条項は日本の意向が尊重された、という文］", 0, 118], ["grant（v）", "与える、認める　［give よりも上下関係が明確。上から「与えてもらっている」］", 0, 119]]}, {"title": "英日｜② Myth 4: The Japanese were warned before the bomb was dropped.", "group": "英日", "items": [["warn（v）", "警告する　［n. warning］", 1, 120], ["demand（v）", "要求する　［want よりもかなり強め］", 0, 121], ["leaflet（n）", "ちらし、リーフレット　［冊子になると pamphlet］", 0, 122], ["prompt（adj）", "迅速な、即座の", 1, 123], ["utter（adj）", "完全な、まったくの　［utter chaos＝全くの大混乱、utter failure＝完全な敗北］", 1, 124], ["address（n）", "住所、演説　［動詞もあり、幅広い意味のある単語なので注意］", 0, 125], ["coming（adj）", "来るべき、次の、今度の　［the coming A / this coming A の形で使われるのが一般的］", 0, 126], ["ruin（n）", "破滅、廃墟　［v. ruin＝台無しにする］", 0, 127], ["the like（n）", "同類のもの　［like は「類似の」「様な」「好き」など様々な意味があるので注意］", 0, 128], ["the like of ~（語法）", "〜のようなもの", 0, 129], ["civilian（n）", "一般市民、民間人　［軍人や軍の物と比較して使う］", 1, 130], ["meaningfully（adv）", "有意義に、意味深く　［「意味のある（ちゃんとした）忠告をしたぞ」という文脈］", 0, 131], ["specific（adj）", "特定の、具体的な　［v. specify＝明確にする］", 1, 132], ["forewarn（v）", "前もって警告する　［warn（警告する）に fore-（前方の）が付いたもの］", 0, 133], ["incendiary（n/adj）", "焼夷弾／焼夷性の　［incendiary が bomb にかかる形容詞と考えることもできる］", 0, 134], ["on a regular basis（idi）", "定期的に、日常的に　［よく使う！］", 1, 135], ["notice（n）", "通知、掲示、注意　［v. notice＝気づく］", 0, 136]]}, {"title": "英日｜② Myth 5: The bomb was timed to gain a diplomatic advantage over Russia.", "group": "英日", "items": [["time（v）", "タイミングを合わせる、時間を計る　［名詞としっかり見分けよう］", 0, 137], ["historiography（n）", "歴史記述、歴史学　［単に history でOKの場合もある］", 0, 138], ["policy（n）", "政策、方針　［カタカナだと「主義」のように使う人もいるが、その訳は辞書には載ってない］", 0, 139], ["conflict（n）", "争い、対立　［v. conflict＝争う・相いれない・矛盾する］", 1, 140], ["significant（adj）", "重要な、かなりの", 1, 141], ["settlement（n）", "解決、合意　［peace settlement＝和約］", 0, 142], ["impress（v）", "感銘を与える、印象づける　［n. impression］", 0, 143], ["diplomatic（adj）", "外交的な、外交の　［n. diplomat＝外交官。もよく出るので覚えよう］", 1, 144], ["dictate（v）", "決定する、左右する、命令する　［物が主語でも使う。The weather will dictate our vacation plans.］", 1, 145], ["consideration（n）", "考慮、思いやり　［v. consider］", 0, 146], ["Secretary of ~（表現）", "〜長官、〜大臣　［secretary は「秘書」のほか「大臣」「長官」の意味もある幅広い単語］", 0, 147], ["Kyoto be erased from ~（文法）", "（命令・要求の that 節で）should が省略され動詞の原形になる　［Henry ordered that the city of Kyoto (should) be erased from the list.＝「京都はリストから除外すべきだ」と命じた］", 1, 148], ["prove to be A（idi）", "Aであるとわかる　［The test proved to be too difficult.＝試験が難しすぎることが分かった］", 1, 149], ["dealings（n）", "取引、関係", 0, 150]]}, {"title": "日英｜① Singapore", "group": "日英", "items": [["侵略、侵攻（n・i…）", "invasion　［v. invade］", 1, 0], ["その後の（adj・s…）", "subsequent　［adv. subsequently］", 0, 1], ["恐ろしい（adj・h…）", "horrific　［n. horror］", 0, 2], ["罪を犯す（v-n・c…）", "commit a crime", 0, 3], ["降伏する／降伏（v/n・s…）", "surrender", 1, 4], ["無条件に（adv・u…）", "unconditionally　［adj. unconditional］", 1, 5], ["王冠、王位（n・c…）", "crown", 0, 6], ["植民地（n・c…）", "colony　［be colonized＝植民地化される］", 1, 7], ["提起された主な疑問（文法・T…）", "The main question raised　［過去分詞 raised が後ろから名詞を修飾］", 0, 8], ["もし〜がなければ／もし〜がなかったら（文法・i…）", "if it were not for ~ / if it had not been for ~　［仮定法］", 1, 9], ["12個の、ダース、たくさんの（adj/n・d…）", "dozen　［発音注意！］", 1, 10]]}, {"title": "日英｜① Indonesia", "group": "日英", "items": [["占領（n・o…）", "occupation", 1, 11], ["宣言する（v・p…）", "proclaim", 1, 12], ["独立（n・i…）", "independence", 0, 13], ["国家主義の・民族主義の／国家主義者（adj/n・n…）", "nationalist　［自分の nation（国）が一番大事、ということ］", 0, 14], ["思い出す、呼び戻す（v・r…）", "recall　［remember（覚えている）とは少し違う］", 1, 15], ["交渉（n・n…）", "negotiation　［v. negotiate］", 1, 16], ["対話（n・d…）", "dialogue", 0, 17], ["本格的なA（adj・f…）", "full-fledged A　［「完成した」の意味で -ed が基本］", 0, 18], ["革命（n・r…）", "revolution　［evolution＝進化］", 1, 19], ["機会（n・o…）", "opportunity", 0, 20], ["要するに（idi・L…）", "Long story short, ~　［口語で使われる］", 0, 21], ["強制する（v・c…）", "coerce　［force の類語］", 1, 22], ["宣言（n・p…）", "proclamation　［proclaim の名詞］", 0, 23], ["踏み石、手段、きっかけ（n・s…）", "stepping stone　［何かに届くために必要な踏み台］", 0, 24], ["結局は、最終的に（adv・e…）", "eventually", 1, 25], ["〜を強調する（n・g…）", "give emphasis on ~　［v. emphasize ~］", 0, 26], ["苦しみ（n・s…）", "suffering　［v. suffer］", 0, 27], ["（〜と）一致して（adj・c…）", "consistent (with ~)", 1, 28], ["描写（n・p…）", "portrayal　［v. portray］", 0, 29], ["Jを〜として描写すること（文法・p…）", "portrayal of J as a ...　［→ see A as B］", 0, 30], ["残酷な（adj・c…）", "cruel　［n. cruelty］", 1, 31], ["侵略者（n・i…）", "invader　［インベーダーゲームも宇宙からの侵略者］", 0, 32]]}, {"title": "日英｜① Guam", "group": "日英", "items": [["征服する（v・c…）", "conquer", 1, 33], ["無慈悲に（adv・m…）", "mercilessly　［n. mercy＝慈悲］", 1, 34], ["労働（n・l…）", "labor", 0, 35], ["性的暴行（を加える）（n/v・r…）", "rape", 0, 36], ["慰め、快適さ（n・c…）", "comfort", 0, 37], ["慰安婦（n・a…）", "a comfort woman　［直截（ちょくせつ）的に sex slave と書く場合も］", 0, 38], ["拷問する／拷問（v/n・t…）", "torture", 1, 39], ["口笛を吹く／口笛（v/n・w…）", "whistle　［スペル注意！］", 1, 40], ["お辞儀する／お辞儀（v/n・b…）", "bow　［発音注意。同じつづりで「弓」にもなるが発音が異なる］", 1, 41], ["通り過ぎる、（時が）経つ（idi・p…）", "pass by　［adv. by：そばを］", 0, 42], ["涙を流す（v-n・s…）", "shed a tear / tears　［shed – shed – shed］", 1, 43], ["〜している（されている）Nがいる（文法・T…）", "There is N -ing/-en", 0, 44]]}, {"title": "日英｜① Germany", "group": "日英", "items": [["残虐行為（n・a…）", "atrocity", 1, 45], ["次から次へのA（語法・A…）", "A after A　［Aが同じ場合のみ。We ate lunch after class. は普通の「後に」］", 1, 46], ["〜に関して（前置詞・r…）", "regarding", 1, 47], ["心理学（n・p…）", "psychology", 0, 48], ["集団圧力（n・g…）", "group pressure　［cf. peer pressure がより一般的］", 0, 49], ["ファシズム（n・f…）", "fascism", 0, 50], ["関与、巻き込むこと（n・i…）", "involvement　［v. involve］", 0, 51], ["倒す、崩壊させる（v・t…）", "topple　［大きくそびえたっていた物がバタンと倒れるイメージ。建物や権力に使う］", 1, 52], ["民主的な（adj・d…）", "democratic　［n. democracy］", 0, 53], ["扱う（v・c…）", "cover　［「覆う」が普通だが、cover a topic など文脈で判断］", 0, 54], ["文脈（n・c…）", "context　［context matters＝文脈は重要である］", 1, 55], ["この（その）文脈では（idi・I…）", "In this/that context　［on ではない］", 0, 56], ["一般的に（idi・i…）", "in general　［in generally にしないこと］", 0, 57], ["主題、テーマ（n・s…）", "subject　［ここでは「主題」］", 0, 58]]}, {"title": "日英｜① Extra Reading: USA", "group": "日英", "items": [["厳密に言えば、専門的に（adv・t…）", "technically　［口語では大半が「厳密にいえば」。technically speaking が由来］", 1, 59], ["放射線（n・r…）", "radiation", 0, 60], ["必要悪（表現・n…）", "necessary evil", 0, 61]]}, {"title": "日英｜② Introduction", "group": "日英", "items": [["10年間（n・d…）", "decade　［100年、世紀＝century］", 0, 62], ["議論、論争（n・c…）", "controversy　［adj. controversial］", 1, 63], ["誤情報（n・m…）", "misinformation", 0, 64], ["周年、記念日（n・a…）", "anniversary　［めでたくないものにも使う］", 0, 65], ["提示する、贈る、発表する（v・p…）", "present　［名詞だけじゃないぞ］", 0, 66], ["機会（n・o…）", "opportunity　［opportunity to A の形でよく使う］", 0, 67], ["神話、作り話（n・m…）", "myth　［発音注意！Greek myth＝ギリシャ神話］", 1, 68]]}, {"title": "日英｜② Myth 1: The bomb ended the war.", "group": "日英", "items": [["降伏（n・s…）", "surrender　［前回の文章では動詞で登場。名詞も動詞も形・発音は同じ］", 0, 69], ["実質的に、ほとんど（adv・v…）", "virtually　［「仮想の」の意味もあるが、virtual＝「電子的」のイメージだけで覚えるのは危険］", 1, 70], ["普通、初期設定、デフォルト（n・d…）", "default　［the default understanding＝共通認識（基本認識）］", 1, 71], ["結論づける（v・c…）", "conclude　［n. conclusion］", 1, 72], ["予期しない（adj・u…）", "unexpected　［expect＝期待する・予期する］", 0, 73], ["参加、入場（n・e…）", "entry　［v. enter］", 0, 74], ["以前に（adv・p…）", "previously　［adj. previous］", 1, 75], ["不可侵（n・n…）", "nonaggression　［aggression＝侵略・攻撃］", 0, 76], ["条約（n・p…）", "pact　［nonaggression pact＝不可侵条約］", 1, 77], ["交渉する（v・n…）", "negotiate　［n. negotiation］", 0, 78]]}, {"title": "日英｜② Myth 2: The bomb saved half a million American lives.", "group": "日英", "items": [["〜の後の、〜以後の（接頭辞・p…）", "post-", 0, 79], ["戦後の（adj・p…）", "postwar", 0, 80], ["前の、かつての、前者の（adj・f…）", "former　［former ⇔ latter］", 1, 81], ["軍／軍事的な（n/adj・m…）", "military　［カタカナで「ミリタリー」と言うとファッション用語になる］", 0, 82], ["侵略（n・i…）", "invasion　［invader＝侵略者］", 0, 83], ["数字、人物、容姿（n・f…）", "figure　［図・姿など、様々な意味がある単語］", 0, 84], ["規範的な、正典の（adj・c…）", "canonical　［canon＝正典］", 0, 85], ["探し求める（v・s…）", "seek　［手を伸ばしながら追いかけるイメージ］", 0, 86], ["正当化する（v・j…）", "justify　［justice＝正義］", 1, 87], ["Aによって支持される（裏づけられる）（語法・b…）", "be supported by A　［be supported by data］", 0, 88], ["見積もり、評価（n・e…）", "estimate", 0, 89], ["注意する、気付く、記す（v・n…）", "note", 0, 90], ["委員会（n・c…）", "committee", 0, 91], ["設置する、配置する、決める（v・s…）", "set　［The invasion was set to begin Nov. 1.＝侵略は11月1日に行われることが決まった］", 0, 92], ["結果としてAになる（語法・r…）", "result in A", 1, 93], ["死傷者、犠牲者（n・c…）", "casualty　［複数形 casualties］", 1, 94], ["米兵（n・G…）", "GI　［Government Issue の略だが「米兵」の俗称］", 0, 95], ["直面する（v・f…）", "face", 0, 96], ["激怒、怒り（n・w…）", "wrath　［The Seven Deadly Sins（7つの大罪）：pride, greed, lust, envy, gluttony, wrath, sloth］", 0, 97]]}, {"title": "日英｜② Myth 3: The only alternative to the bomb was an invasion of Japan.", "group": "日英", "items": [["代替案、代わりの選択肢（n・a…）", "alternative　［The alternative to A is B.＝Aの代案はBである］", 1, 98], ["決定、決心（n・d…）", "decision　［v. decide］", 0, 99], ["二者択一（の）（表現・e…）", "either-or / either/or　［口語ではよく使うが、文面ではあまり使わない］", 0, 100], ["〜を超えて、〜の向こうに（前置詞・b…）", "beyond　［To infinity and beyond!＝無限の更に向こうへ］", 1, 101], ["海軍の（adj・n…）", "naval　［n. navy＝海軍］", 0, 102], ["封鎖、閉鎖（n・b…）", "blockade　［block 由来の単語］", 0, 103], ["デモ、実演、意思表示（n・d…）", "demonstration　［抗議活動の「デモ」という意味もある］", 0, 104], ["爆発する（v・e…）", "explode　［感情が爆発する時も使える。His anger exploded.］", 0, 105], ["人の住まない、見捨てられた（adj・d…）", "desert　［発音注意。名詞だと砂漠だが、desert island は「砂漠島」ではなく「無人島」］", 1, 106], ["観察者（n・o…）", "observer　［v. observe］", 0, 107], ["選択肢、オプション（n・o…）", "option　［もとは「付けなくてもいい選択肢」という意味］", 0, 108], ["拒絶する（v・r…）", "reject　［refuse よりも強く・冷たい］", 1, 109], ["というのは〜だからだ（接続詞・f…）", "~, for there were ...　［for S' V' の形。EBでやりました］", 1, 110], ["手に入る、利用可能な（adj・a…）", "available　［色々な文脈で使う］", 1, 111], ["不発弾（n・d…）", "dud　［湿気た花火に対して使ったりも］", 0, 112], ["受け入れる（v・a…）", "accept", 0, 113], ["条件つきの（adj・c…）", "conditional　［⇔ unconditional］", 1, 114], ["Aについて心配している（表現・b…）", "be concerned about A", 0, 115], ["戦争犯罪者（n・w…）", "war criminal", 0, 116], ["最終的に（adv・u…）", "ultimately　［ultimate＝最後の・最終の・最高の］", 1, 117], ["条項、節（n・c…）", "clause　［天皇の処遇に関する条項は日本の意向が尊重された、という文］", 0, 118], ["与える、認める（v・g…）", "grant　［give よりも上下関係が明確。上から「与えてもらっている」］", 0, 119]]}, {"title": "日英｜② Myth 4: The Japanese were warned before the bomb was dropped.", "group": "日英", "items": [["警告する（v・w…）", "warn　［n. warning］", 1, 120], ["要求する（v・d…）", "demand　［want よりもかなり強め］", 0, 121], ["ちらし、リーフレット（n・l…）", "leaflet　［冊子になると pamphlet］", 0, 122], ["迅速な、即座の（adj・p…）", "prompt", 1, 123], ["完全な、まったくの（adj・u…）", "utter　［utter chaos＝全くの大混乱、utter failure＝完全な敗北］", 1, 124], ["住所、演説（n・a…）", "address　［動詞もあり、幅広い意味のある単語なので注意］", 0, 125], ["来るべき、次の、今度の（adj・c…）", "coming　［the coming A / this coming A の形で使われるのが一般的］", 0, 126], ["破滅、廃墟（n・r…）", "ruin　［v. ruin＝台無しにする］", 0, 127], ["同類のもの（n・t…）", "the like　［like は「類似の」「様な」「好き」など様々な意味があるので注意］", 0, 128], ["〜のようなもの（語法・t…）", "the like of ~", 0, 129], ["一般市民、民間人（n・c…）", "civilian　［軍人や軍の物と比較して使う］", 1, 130], ["有意義に、意味深く（adv・m…）", "meaningfully　［「意味のある（ちゃんとした）忠告をしたぞ」という文脈］", 0, 131], ["特定の、具体的な（adj・s…）", "specific　［v. specify＝明確にする］", 1, 132], ["前もって警告する（v・f…）", "forewarn　［warn（警告する）に fore-（前方の）が付いたもの］", 0, 133], ["焼夷弾／焼夷性の（n/adj・i…）", "incendiary　［incendiary が bomb にかかる形容詞と考えることもできる］", 0, 134], ["定期的に、日常的に（idi・o…）", "on a regular basis　［よく使う！］", 1, 135], ["通知、掲示、注意（n・n…）", "notice　［v. notice＝気づく］", 0, 136]]}, {"title": "日英｜② Myth 5: The bomb was timed to gain a diplomatic advantage over Russia.", "group": "日英", "items": [["タイミングを合わせる、時間を計る（v・t…）", "time　［名詞としっかり見分けよう］", 0, 137], ["歴史記述、歴史学（n・h…）", "historiography　［単に history でOKの場合もある］", 0, 138], ["政策、方針（n・p…）", "policy　［カタカナだと「主義」のように使う人もいるが、その訳は辞書には載ってない］", 0, 139], ["争い、対立（n・c…）", "conflict　［v. conflict＝争う・相いれない・矛盾する］", 1, 140], ["重要な、かなりの（adj・s…）", "significant", 1, 141], ["解決、合意（n・s…）", "settlement　［peace settlement＝和約］", 0, 142], ["感銘を与える、印象づける（v・i…）", "impress　［n. impression］", 0, 143], ["外交的な、外交の（adj・d…）", "diplomatic　［n. diplomat＝外交官。もよく出るので覚えよう］", 1, 144], ["決定する、左右する、命令する（v・d…）", "dictate　［物が主語でも使う。The weather will dictate our vacation plans.］", 1, 145], ["考慮、思いやり（n・c…）", "consideration　［v. consider］", 0, 146], ["〜長官、〜大臣（表現・S…）", "Secretary of ~　［secretary は「秘書」のほか「大臣」「長官」の意味もある幅広い単語］", 0, 147], ["（命令・要求の that 節で）should が省略され動詞の原形になる（文法・K…）", "Kyoto be erased from ~　［Henry ordered that the city of Kyoto (should) be erased from the list.＝「京都はリストから除外すべきだ」と命じた］", 1, 148], ["Aであるとわかる（idi・p…）", "prove to be A　［The test proved to be too difficult.＝試験が難しすぎることが分かった］", 1, 149], ["取引、関係（n・d…）", "dealings", 0, 150]]}, {"title": "空欄補充｜① Singapore", "group": "空欄補充", "items": [["Japan's ( i＿＿＿ ) of Singapore began in 1941.\n日本のシンガポール侵攻は1941年に始まった。", "invasion", 1, 0], ["The war and the ( s＿＿＿ ) occupation changed the country.\n戦争とその後の占領がその国を変えた。", "subsequent", 0, 1], ["Many ( h＿＿＿ ) crimes were committed during the war.\n戦争中に多くの恐ろしい犯罪が行われた。", "horrific", 0, 2], ["The soldiers ( c＿＿＿ ) terrible crimes.\n兵士たちはひどい罪を犯した。", "committed（commit a crime）", 0, 3], ["The British army ( s＿＿＿ ) to Japan in 1942.\nイギリス軍は1942年に日本に降伏した。", "surrendered（surrender）", 1, 4], ["Japan surrendered ( u＿＿＿ ) in 1945.\n日本は1945年に無条件で降伏した。", "unconditionally", 1, 5], ["The queen wore a golden ( c＿＿＿ ).\n女王は金の王冠をかぶっていた。", "crown", 0, 6], ["Singapore was a British ( c＿＿＿ ) at that time.\n当時シンガポールはイギリスの植民地だった。", "colony", 1, 7], ["The main question ( r＿＿＿ ) in the article is about the war.\nその記事で提起された主な疑問は戦争についてだ。", "raised（The main question raised）", 0, 8], ["If it ( w＿＿＿ ) not for your help, I would fail.\nもしあなたの助けがなければ、私は失敗するだろう。", "were（if it were not for ~ / if it had not been for ~）", 1, 9], ["I bought a ( d＿＿＿ ) eggs.\n私は卵を1ダース買った。", "dozen", 1, 10]]}, {"title": "空欄補充｜① Indonesia", "group": "空欄補充", "items": [["The Japanese ( o＿＿＿ ) of Indonesia lasted until 1945.\n日本によるインドネシア占領は1945年まで続いた。", "occupation", 1, 11], ["Indonesia ( p＿＿＿ ) its independence in 1945.\nインドネシアは1945年に独立を宣言した。", "proclaimed（proclaim）", 1, 12], ["The country fought for its ( i＿＿＿ ).\nその国は独立のために戦った。", "independence", 0, 13], ["He was a ( n＿＿＿ ) leader who wanted independence.\n彼は独立を望む民族主義の指導者だった。", "nationalist", 0, 14], ["I can't ( r＿＿＿ ) his name.\n彼の名前を思い出せない。", "recall", 1, 15], ["After long ( n＿＿＿ ), they reached an agreement.\n長い交渉の末、彼らは合意に達した。", "negotiations（negotiation）", 1, 16], ["Peace needs ( d＿＿＿ ) between the two countries.\n平和には二国間の対話が必要だ。", "dialogue", 0, 17], ["The fighting became a ( f＿＿＿ ) war.\nその戦闘は本格的な戦争になった。", "full-fledged（full-fledged A）", 0, 18], ["The ( r＿＿＿ ) changed the government.\nその革命は政府を変えた。", "revolution", 1, 19], ["This trip is a good ( o＿＿＿ ) to learn history.\nこの旅は歴史を学ぶよい機会だ。", "opportunity", 0, 20], ["Long story ( s＿＿＿ ), we missed the train.\n要するに、私たちは電車に乗り遅れた。", "short（Long story short, ~）", 0, 21], ["People were ( c＿＿＿ ) into working for the army.\n人々は軍のために働くよう強制された。", "coerced（coerce）", 1, 22], ["The ( p＿＿＿ ) of independence was read aloud.\n独立宣言が読み上げられた。", "proclamation", 0, 23], ["The war was a ( s＿＿＿ ) stone to independence.\nその戦争は独立へのきっかけだった。", "stepping（stepping stone）", 0, 24], ["They ( e＿＿＿ ) won their freedom.\n彼らは最終的に自由を勝ち取った。", "eventually", 1, 25], ["The teacher gave special ( e＿＿＿ ) on this point.\n先生はこの点を特に強調した。", "emphasis（give emphasis on ~）", 0, 26], ["The war caused great ( s＿＿＿ ).\nその戦争は大きな苦しみをもたらした。", "suffering", 0, 27], ["His story is ( c＿＿＿ ) with the facts.\n彼の話は事実と一致している。", "consistent（consistent (with ~)）", 1, 28], ["The movie's ( p＿＿＿ ) of the war was realistic.\nその映画の戦争の描写は現実的だった。", "portrayal", 0, 29], ["The book's portrayal of Japan ( a＿＿＿ ) a liberator is controversial.\nその本が日本を解放者として描いていることには議論がある。", "as（portrayal of J as a ...）", 0, 30], ["The prisoners received ( c＿＿＿ ) treatment.\n捕虜たちは残酷な扱いを受けた。", "cruel", 1, 31], ["The people fought against the ( i＿＿＿ ).\n人々は侵略者と戦った。", "invaders（invader）", 0, 32]]}, {"title": "空欄補充｜① Guam", "group": "空欄補充", "items": [["The army ( c＿＿＿ ) the island in a few days.\n軍は数日でその島を征服した。", "conquered（conquer）", 1, 33], ["The prisoners were beaten ( m＿＿＿ ).\n捕虜たちは無慈悲に殴られた。", "mercilessly", 1, 34], ["Many people were forced into hard ( l＿＿＿ ).\n多くの人がつらい労働を強いられた。", "labor", 0, 35], ["Her words gave me ( c＿＿＿ ).\n彼女の言葉は私に慰めを与えた。", "comfort", 0, 37], ["Some prisoners were ( t＿＿＿ ).\n何人かの捕虜は拷問を受けた。", "tortured（torture）", 1, 39], ["He ( w＿＿＿ ) a happy song.\n彼は楽しい歌を口笛で吹いた。", "whistled（whistle）", 1, 40], ["In Japan, people ( b＿＿＿ ) when they meet.\n日本では人は会うとお辞儀をする。", "bow", 1, 41], ["Many years have passed ( b＿＿＿ ) since the war.\n戦争から長い年月が経った。", "by（pass by）", 0, 42], ["She ( s＿＿＿ ) tears when she heard the story.\n彼女はその話を聞いて涙を流した。", "shed（shed a tear / tears）", 1, 43], ["There is a man ( w＿＿＿ ) at the door.\nドアのところで待っている男性がいる。", "waiting（There is N -ing/-en）", 0, 44]]}, {"title": "空欄補充｜① Germany", "group": "空欄補充", "items": [["The ( a＿＿＿ ) of the war must not be forgotten.\n戦争の残虐行為は忘れられてはならない。", "atrocities（atrocity）", 1, 45], ["He told lie after ( l＿＿＿ ).\n彼は次から次へとうそをついた。", "lie（A after A）", 1, 46], ["I have a question ( r＿＿＿ ) the test.\nテストに関して質問があります。", "regarding", 1, 47], ["She studies the ( p＿＿＿ ) of group behavior.\n彼女は集団行動の心理学を研究している。", "psychology", 0, 48], ["Many people followed orders because of group ( p＿＿＿ ).\n多くの人が集団圧力のために命令に従った。", "pressure（group pressure）", 0, 49], ["( F＿＿＿ ) spread in Europe in the 1930s.\n1930年代、ヨーロッパでファシズムが広がった。", "Fascism", 0, 50], ["The country denied its ( i＿＿＿ ) in the crimes.\nその国は犯罪への関与を否定した。", "involvement", 0, 51], ["The people ( t＿＿＿ ) the dictator.\n人々は独裁者を倒した。", "toppled（topple）", 1, 52], ["After the war, the country became ( d＿＿＿ ).\n戦後、その国は民主的になった。", "democratic", 0, 53], ["Today's class will ( c＿＿＿ ) the history of Germany.\n今日の授業ではドイツの歴史を扱う。", "cover", 0, 54], ["You should guess the meaning from the ( c＿＿＿ ).\n文脈から意味を推測するべきだ。", "context", 1, 55], ["( I＿＿＿ ) this context, the word means \"to deal with.\"\nこの文脈では、その語は「扱う」を意味する。", "In（In this/that context）", 0, 56], ["In ( g＿＿＿ ), people want peace.\n一般的に、人々は平和を望む。", "general（in general）", 0, 57], ["The ( s＿＿＿ ) of this essay is war memory.\nこの作文の主題は戦争の記憶だ。", "subject", 0, 58]]}, {"title": "空欄補充｜① Extra Reading: USA", "group": "空欄補充", "items": [["( T＿＿＿ ), you are correct.\n厳密に言えば、あなたは正しい。", "Technically", 1, 59], ["Many people suffered from ( r＿＿＿ ) after the bombing.\n原爆投下の後、多くの人が放射線に苦しんだ。", "radiation", 0, 60], ["Some people called the bomb a necessary ( e＿＿＿ ).\n原爆を必要悪と呼ぶ人もいた。", "evil（necessary evil）", 0, 61]]}, {"title": "空欄補充｜② Introduction", "group": "空欄補充", "items": [["The war ended eight ( d＿＿＿ ) ago.\nその戦争は80年前に終わった。", "decades（decade）", 0, 62], ["There is still ( c＿＿＿ ) about the atomic bomb.\n原爆についてはいまだに論争がある。", "controversy", 1, 63], ["The internet is full of ( m＿＿＿ ).\nインターネットは誤情報であふれている。", "misinformation", 0, 64], ["Today is the ( a＿＿＿ ) of the end of the war.\n今日は終戦の記念日だ。", "anniversary", 0, 65], ["The writer ( p＿＿＿ ) five myths about the bomb.\n筆者は原爆についての5つの神話を提示している。", "presents（present）", 0, 66], ["This anniversary is an ( o＿＿＿ ) to think about peace.\nこの記念日は平和について考える機会だ。", "opportunity", 0, 67], ["The article explains five ( m＿＿＿ ) about the atomic bomb.\nその記事は原爆についての5つの神話を説明している。", "myths（myth）", 1, 68]]}, {"title": "空欄補充｜② Myth 1: The bomb ended the war.", "group": "空欄補充", "items": [["Japan announced its ( s＿＿＿ ) on August 15.\n日本は8月15日に降伏を発表した。", "surrender", 0, 69], ["The war was ( v＿＿＿ ) over by then.\nその頃には戦争は実質的に終わっていた。", "virtually", 1, 70], ["That is the ( d＿＿＿ ) understanding in the U.S.\nそれがアメリカでの共通認識だ。", "default", 1, 71], ["Historians ( c＿＿＿ ) that the bomb was not the only reason.\n歴史家たちは原爆が唯一の理由ではなかったと結論づけている。", "conclude", 1, 72], ["The news was completely ( u＿＿＿ ).\nその知らせはまったく予想外だった。", "unexpected", 0, 73], ["The Soviet ( e＿＿＿ ) into the war shocked Japan.\nソ連の参戦は日本に衝撃を与えた。", "entry", 0, 74], ["Japan had ( p＿＿＿ ) signed a pact with the Soviet Union.\n日本は以前にソ連と条約を結んでいた。", "previously", 1, 75], ["They signed a ( n＿＿＿ ) pact.\n彼らは不可侵条約を結んだ。", "nonaggression", 0, 76], ["The two countries signed a nonaggression ( p＿＿＿ ).\n二国は不可侵条約を結んだ。", "pact", 1, 77], ["Japan hoped to ( n＿＿＿ ) peace through the Soviet Union.\n日本はソ連を通じて和平を交渉したいと望んだ。", "negotiate", 0, 78]]}, {"title": "空欄補充｜② Myth 2: The bomb saved half a million American lives.", "group": "空欄補充", "items": [["Japan grew rapidly in the ( p＿＿＿ ) years.\n日本は戦後の数年で急成長した。", "postwar", 0, 80], ["He is a ( f＿＿＿ ) soldier.\n彼は元兵士だ。", "former", 1, 81], ["The ( m＿＿＿ ) wanted to continue the war.\n軍は戦争を続けたがった。", "military", 0, 82], ["The U.S. planned an ( i＿＿＿ ) of Japan.\nアメリカは日本への侵攻を計画した。", "invasion", 0, 83], ["The ( f＿＿＿ ) of half a million lives is often quoted.\n50万人の命という数字はよく引用される。", "figure", 0, 84], ["This became the ( c＿＿＿ ) explanation of the bombing.\nこれが原爆投下の定番の説明になった。", "canonical", 0, 85], ["They ( s＿＿＿ ) the truth about the war.\n彼らは戦争の真実を探し求めている。", "seek", 0, 86], ["Can we ( j＿＿＿ ) the use of the bomb?\n原爆の使用を正当化できるだろうか。", "justify", 1, 87], ["This idea is not ( s＿＿＿ ) by data.\nこの考えはデータに裏づけられていない。", "supported（be supported by A）", 0, 88], ["The ( e＿＿＿ ) of casualties was much lower.\n死傷者の見積もりはずっと少なかった。", "estimate", 0, 89], ["Please ( n＿＿＿ ) that the store closes early.\n店は早く閉まることにご注意ください。", "note", 0, 90], ["A ( c＿＿＿ ) studied the invasion plan.\n委員会が侵攻計画を検討した。", "committee", 0, 91], ["The invasion was ( s＿＿＿ ) to begin on November 1.\n侵攻は11月1日に始まることが決まっていた。", "set", 0, 92], ["The invasion would ( r＿＿＿ ) in many deaths.\nその侵攻は多くの死者を出す結果になっただろう。", "result（result in A）", 1, 93], ["The battle caused heavy ( c＿＿＿ ).\nその戦いで多くの死傷者が出た。", "casualties（casualty）", 1, 94], ["Japan ( f＿＿＿ ) a difficult choice.\n日本は難しい選択に直面した。", "faced（face）", 0, 96], ["The people feared the ( w＿＿＿ ) of the gods.\n人々は神々の怒りを恐れた。", "wrath", 0, 97]]}, {"title": "空欄補充｜② Myth 3: The only alternative to the bomb was an invasion of Japan.", "group": "空欄補充", "items": [["The only ( a＿＿＿ ) to the bomb was an invasion of Japan.\n原爆に代わる唯一の選択肢は日本への侵攻だった。", "alternative", 1, 98], ["It was a difficult ( d＿＿＿ ).\nそれは難しい決断だった。", "decision", 0, 99], ["It is not an either-( o＿＿＿ ) choice.\nそれは二者択一の選択ではない。", "or（either-or / either/or）", 0, 100], ["This problem is ( b＿＿＿ ) my understanding.\nこの問題は私の理解を超えている。", "beyond", 1, 101], ["A ( n＿＿＿ ) blockade could stop supplies to Japan.\n海上封鎖は日本への物資を止めることができた。", "naval", 0, 102], ["The ( b＿＿＿ ) cut off food and oil.\n封鎖が食料と石油を断った。", "blockade", 0, 103], ["Some scientists wanted a ( d＿＿＿ ) of the bomb on an empty island.\n原爆を無人島で実演してみせることを望む科学者もいた。", "demonstration", 0, 104], ["His anger ( e＿＿＿ ).\n彼の怒りが爆発した。", "exploded（explode）", 0, 105], ["They talked about testing it on a ( d＿＿＿ ) island.\n彼らはそれを無人島で試すことを話し合った。", "desert", 1, 106], ["Japanese ( o＿＿＿ ) could watch the test.\n日本の立会人がその実験を見ることができた。", "observers（observer）", 0, 107], ["We had no other ( o＿＿＿ ).\nほかに選択肢はなかった。", "option", 0, 108], ["The plan was ( r＿＿＿ ).\nその計画は拒絶された。", "rejected（reject）", 1, 109], ["We could not test it, ( f＿＿＿ ) there were only two bombs.\n実験はできなかった。というのも爆弾は2つしかなかったからだ。", "for（~, for there were ...）", 1, 110], ["Only two bombs were ( a＿＿＿ ) at that time.\nその時点で使える爆弾は2つしかなかった。", "available", 1, 111], ["What if the bomb was a ( d＿＿＿ )?\nその爆弾が不発だったらどうするのか。", "dud", 0, 112], ["Japan finally ( a＿＿＿ ) the terms.\n日本はついに条件を受け入れた。", "accepted（accept）", 0, 113], ["Japan wanted a ( c＿＿＿ ) surrender.\n日本は条件つきの降伏を望んだ。", "conditional", 1, 114], ["Japan was ( c＿＿＿ ) about the emperor.\n日本は天皇のことを心配していた。", "concerned（be concerned about A）", 0, 115], ["Some leaders were tried as war ( c＿＿＿ ).\n何人かの指導者は戦争犯罪者として裁かれた。", "criminals（war criminal）", 0, 116], ["( U＿＿＿ ), the emperor kept his position.\n最終的に、天皇はその地位を保った。", "Ultimately", 1, 117], ["The ( c＿＿＿ ) about the emperor was important to Japan.\n天皇に関する条項は日本にとって重要だった。", "clause", 0, 118], ["The government ( g＿＿＿ ) them permission.\n政府は彼らに許可を与えた。", "granted（grant）", 0, 119]]}, {"title": "空欄補充｜② Myth 4: The Japanese were warned before the bomb was dropped.", "group": "空欄補充", "items": [["The teacher ( w＿＿＿ ) us not to be late.\n先生は私たちに遅れないよう警告した。", "warned（warn）", 1, 120], ["The Allies ( d＿＿＿ ) Japan's surrender.\n連合国は日本の降伏を要求した。", "demanded（demand）", 0, 121], ["Planes dropped ( l＿＿＿ ) over the cities.\n飛行機が都市の上空にちらしをまいた。", "leaflets（leaflet）", 0, 122], ["We need a ( p＿＿＿ ) answer.\n私たちには即座の返事が必要だ。", "prompt", 1, 123], ["The city was in ( u＿＿＿ ) chaos.\nその都市は全くの大混乱だった。", "utter", 1, 124], ["The president gave a radio ( a＿＿＿ ).\n大統領はラジオ演説を行った。", "address", 0, 125], ["We have a test this ( c＿＿＿ ) Monday.\n今度の月曜日にテストがある。", "coming", 0, 126], ["The city lay in ( r＿＿＿ ).\nその都市は廃墟と化していた。", "ruins（ruin）", 0, 127], ["They bombed factories, bridges, and the ( l＿＿＿ ).\n彼らは工場や橋などを爆撃した。", "like（the like）", 0, 128], ["We had never seen the ( l＿＿＿ ) of it.\n私たちはそのようなものを見たことがなかった。", "like（the like of ~）", 0, 129], ["Many ( c＿＿＿ ) died in the bombing.\n原爆投下で多くの民間人が亡くなった。", "civilians（civilian）", 1, 130], ["The people were never ( m＿＿＿ ) warned.\n人々は意味のある形で警告されたことはなかった。", "meaningfully", 0, 131], ["Can you give me a ( s＿＿＿ ) example?\n具体的な例を挙げてくれますか。", "specific", 1, 132], ["The people were not ( f＿＿＿ ) about the attack.\n人々はその攻撃について前もって警告されていなかった。", "forewarned（forewarn）", 0, 133], ["Tokyo was attacked with ( i＿＿＿ ) bombs.\n東京は焼夷弾で攻撃された。", "incendiary", 0, 134], ["Cities were bombed on a regular ( b＿＿＿ ).\n都市は日常的に爆撃された。", "basis（on a regular basis）", 1, 135], ["A ( n＿＿＿ ) was put up on the wall.\n壁に掲示が貼られた。", "notice", 0, 136]]}, {"title": "空欄補充｜② Myth 5: The bomb was timed to gain a diplomatic advantage over Russia.", "group": "空欄補充", "items": [["The bomb was ( t＿＿＿ ) to gain an advantage over Russia.\n原爆はロシアに対して優位に立てるようタイミングを計られた。", "timed（time）", 0, 137], ["This book is about the ( h＿＿＿ ) of the atomic bomb.\nこの本は原爆についての歴史記述を扱っている。", "historiography", 0, 138], ["The government changed its foreign ( p＿＿＿ ).\n政府は外交政策を変えた。", "policy", 0, 139], ["The ( c＿＿＿ ) between the two countries grew.\n二国間の対立が深まった。", "conflict", 1, 140], ["It was a ( s＿＿＿ ) event in history.\nそれは歴史上重要な出来事だった。", "significant", 1, 141], ["They reached a peace ( s＿＿＿ ).\n彼らは和平の合意に達した。", "settlement", 0, 142], ["The U.S. wanted to ( i＿＿＿ ) the Soviet Union.\nアメリカはソ連に強い印象を与えたかった。", "impress", 0, 143], ["They solved the problem through ( d＿＿＿ ) talks.\n彼らは外交交渉で問題を解決した。", "diplomatic", 1, 144], ["The weather will ( d＿＿＿ ) our vacation plans.\n天気が休暇の予定を左右するだろう。", "dictate", 1, 145], ["Cost was an important ( c＿＿＿ ).\n費用は重要な考慮事項だった。", "consideration", 0, 146], ["Henry Stimson was the Secretary ( o＿＿＿ ) War.\nヘンリー・スティムソンは陸軍長官だった。", "of（Secretary of ~）", 0, 147], ["Henry ordered that the city of Kyoto ( b＿＿＿ ) erased from the list.\nヘンリーは京都市をリストから除外するよう命じた。", "be（Kyoto be erased from ~）", 1, 148], ["The test ( p＿＿＿ ) to be too difficult.\nその試験は難しすぎることがわかった。", "proved（prove to be A）", 1, 149], ["The U.S. had difficult ( d＿＿＿ ) with the Soviet Union.\nアメリカはソ連と難しい関係にあった。", "dealings", 0, 150]]}]};
+const KEY = "drill:" + DRILL.id;
+const app = document.getElementById("app");
+
+let marks = {};
+try { marks = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { marks = {}; }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(marks)); } catch (e) {} }
+
+const items = [];
+DRILL.sections.forEach((s, si) => s.items.forEach(([q, a, imp, w]) =>
+  items.push({ n: items.length + 1, si, q, a, star: !!imp, group: s.group || "", w: w ?? null })));
+// 単語集のページ（vocab あり）は、×をつけた問題を単語ごとにまとめて「間違えた単語集」にする
+const VOCAB = DRILL.vocab || [];
+const wrongWords = () => [...new Set(items.filter(it => it.w !== null && marks[it.n] === "ng").map(it => it.w))].sort((a, b) => a - b);
+const groups = [...new Set(DRILL.sections.map(s => s.group).filter(Boolean))];
+const groupNote = g => (DRILL.group_notes || {})[g] || "";
+
+function el(tag, attrs, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (k === "class") e.className = v;
+    else if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
+    else if (v === true) e.setAttribute(k, "");
+    else if (v !== false && v != null) e.setAttribute(k, v);
+  }
+  for (const c of kids.flat()) if (c != null && c !== false) e.append(c);
+  return e;
+}
+const count = (list, v) => list.filter(it => v === "todo" ? !marks[it.n] : marks[it.n] === v).length;
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function meter(list) {
+  const ok = count(list, "ok") / list.length * 100, ng = count(list, "ng") / list.length * 100;
+  return el("div", { class: "meter", "aria-hidden": "true" },
+    el("i", { class: "m-ok", style: `width:${ok}%` }), el("i", { class: "m-ng", style: `width:${ng}%` }));
+}
+function daysLeft() {
+  const now = new Date(Date.now() + 9 * 3600e3);              // 日本時間
+  const today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+  const [y, m, d] = DRILL.exam_date.split("-").map(Number);
+  return Math.round((Date.UTC(y, m - 1, d) - today) / 864e5);
+}
+const backBar = extra => el("div", { class: "top" },
+  el("button", { class: "back", type: "button", onclick: home }, "← メニュー"), extra || null);
+function show(...nodes) { app.replaceChildren(...nodes); window.scrollTo(0, 0); }
+
+/* ── メニュー ───────────────────────────── */
+let confirmReset = false;
+function home() {
+  quiz = null;
+  const ok = count(items, "ok"), ng = count(items, "ng"), todo = count(items, "todo");
+  const stars = items.filter(it => it.star);
+  const dl = daysLeft();
+  const title = el("h1", null);
+  DRILL.title.split(/\s+/).forEach((p, i) => { if (i) title.append(" "); title.append(el("span", { class: "seg" }, p)); });
+  const mode = (label, sub, onclick, opts = {}) =>
+    el("button", { class: "mode" + (opts.primary ? " primary" : "") + (opts.wide ? " wide" : "") + (opts.cls ? " " + opts.cls : ""), type: "button", disabled: !!opts.disabled, onclick },
+      el("span", { class: "label" }, label), el("span", { class: "sub" }, sub));
+
+  show(
+    el("header", null,
+      el("div", { class: "eyebrow" }, DRILL.course), title,
+      el("div", { class: "exam" },
+        el("span", null, "試験 ", el("strong", null, DRILL.exam)),
+        el("span", { class: "days" }, dl > 0 ? `あと${dl}日` : dl === 0 ? "今日が試験" : "試験は終了"),
+        el("span", null, `全${items.length}問`))),
+    el("div", { class: "progress" },
+      el("div", { class: "stats" },
+        el("span", { class: "s-ok" }, "○ ", el("b", null, ok)),
+        el("span", { class: "s-ng" }, "× ", el("b", null, ng)),
+        el("span", { class: "s-todo" }, "未回答 ", el("b", null, todo))),
+      meter(items)),
+    el("div", { class: "modes" + (VOCAB.length ? " vocab" : "") },
+      mode("単元別", `${DRILL.sections.length}単元から選ぶ`, units, { primary: true }),
+      mode("ランダム", "10問・20問・全部", randomPick),
+      VOCAB.length
+        ? mode("間違えた単語集", wrongWords().length ? `${wrongWords().length}語・×をつけた単語をまとめて復習` : "まだありません（×をつけた単語がここにたまる）", wrongList, { disabled: !wrongWords().length, wide: true, cls: "wrong" })
+        : mode("間違えた問題", ng ? `× が ${ng}問` : "まだありません",
+            () => start("間違えた問題の復習", shuffle(items.filter(it => marks[it.n] === "ng"))), { disabled: !ng }),
+      mode("★ 重要問題", `${stars.length}問`, () => start("★ 重要問題", stars)),
+      mode("未回答だけ", todo ? `残り ${todo}問` : "全部解きました",
+        () => start("まだ解いていない問題", items.filter(it => !marks[it.n])), { disabled: !todo }),
+      mode("まとめ一覧", "答えつきで見直す", sheet),
+      groups.map(g => {
+        const list = items.filter(it => it.group === g);
+        return mode(g, `${list.length}問${groupNote(g) ? "・" + groupNote(g) : ""}`, () => start(g, list), { wide: true });
+      })),
+    el("div", { class: "under" },
+      el("details", null, el("summary", null, "使い方"),
+        el("p", null, "1問ずつ問題が出ます。答えを考えてから「答えを見る」を押し、合っていたら ○、まちがえたら × を押すと次へ進みます。×をつけた問題は「間違えた問題」でまとめて解き直せます。○×の記録はこの端末のブラウザにだけ残ります。")),
+      confirmReset
+        ? el("div", { class: "confirm" }, "○×の記録をすべて消しますか？",
+            el("button", { class: "chip", type: "button", onclick: () => { marks = {}; save(); confirmReset = false; home(); } }, "消す"),
+            el("button", { class: "chip", type: "button", onclick: () => { confirmReset = false; home(); } }, "やめる"))
+        : el("button", { class: "link", type: "button", disabled: ok + ng === 0, onclick: () => { confirmReset = true; home(); } }, "記録を消す")),
+    el("footer", null, el("div", null, `出典: ${DRILL.source}`), el("div", null, `更新: ${DRILL.updated}`)));
+}
+
+/* ── 単元を選ぶ ─────────────────────────── */
+function units() {
+  show(backBar(), el("h2", null, "単元を選ぶ"),
+    el("div", { class: "choices" }, DRILL.sections.map((s, si) => {
+      const list = items.filter(it => it.si === si);
+      const head = s.group && s.group !== (DRILL.sections[si - 1] || {}).group
+        ? el("h3", { class: "ghead" }, s.group) : null;
+      return [head, el("button", { class: "choice", type: "button", onclick: () => start(s.title, list) },
+        el("span", { class: "c-title" }, s.title),
+        el("span", { class: "c-meta" }, `○ ${count(list, "ok")} / ${list.length}問`),
+        meter(list))];
+    })));
+}
+
+/* ── ランダムの問題数 ───────────────────── */
+function randomPick() {
+  const opts = [[10, "10問"], [20, "20問"], [items.length, `全部（${items.length}問）`]];
+  show(backBar(), el("h2", null, "ランダムで何問？"),
+    el("div", { class: "choices" }, opts.map(([n, label]) =>
+      el("button", { class: "choice", type: "button", onclick: () => start(`ランダム ${label}`, shuffle(items).slice(0, n)) },
+        el("span", { class: "c-title" }, label),
+        el("span", { class: "c-meta" }, "全単元からまぜて出題")))));
+}
+
+/* ── 1問ずつ解く ────────────────────────── */
+let quiz = null;
+function start(name, list) {
+  if (!list.length) return home();
+  quiz = { name, list, i: 0, open: false, got: {} };
+  card();
+}
+function card() {
+  const { name, list, i } = quiz, it = list[i], mk = marks[it.n];
+  const body = [
+    el("div", { class: "meta" },
+      el("span", null, `No.${it.n}`),
+      it.star ? el("span", { class: "badge b-star" }, "★重要") : null,
+      mk === "ng" ? el("span", { class: "badge b-ng" }, "前回 ×") : mk === "ok" ? el("span", { class: "badge b-ok" }, "前回 ○") : null,
+      el("span", null, DRILL.sections[it.si].title)),
+    el("div", { class: "qtext" }, it.q),
+  ];
+  if (quiz.open) {
+    body.push(el("div", { class: "answer" }, it.a),
+      el("div", { class: "judge" },
+        el("button", { class: "j-ok", type: "button", onclick: () => judge("ok") }, "○ 合ってた"),
+        el("button", { class: "j-ng", type: "button", onclick: () => judge("ng") }, "× まちがえた")));
+  } else {
+    body.push(el("button", { class: "reveal", type: "button", id: "reveal", onclick: () => { quiz.open = true; card(); } }, "答えを見る"));
+  }
+  show(
+    backBar(el("span", { class: "count" }, `${i + 1} / ${list.length}`)),
+    el("div", { class: "bar", "aria-hidden": "true" }, el("i", { style: `width:${(i / list.length) * 100}%` })),
+    el("div", { class: "where" }, name),
+    el("div", { class: "card" }, body),
+    el("div", { class: "nav" },
+      el("button", { type: "button", disabled: i === 0, onclick: () => go(-1) }, "← 前の問題"),
+      el("button", { type: "button", onclick: () => go(1) }, i + 1 < list.length ? "とばす →" : "おわる →")),
+    el("div", { class: "keys" }, "キーボード: スペース＝答えを見る　1＝○　2＝×"));
+}
+function judge(v) {
+  const it = quiz.list[quiz.i];
+  marks[it.n] = v; quiz.got[it.n] = v; save();
+  go(1);
+}
+function go(d) {
+  quiz.i = Math.max(0, quiz.i + d); quiz.open = false;
+  if (quiz.i >= quiz.list.length) return result();
+  card();
+}
+document.addEventListener("keydown", e => {
+  if (!quiz || e.altKey || e.ctrlKey || e.metaKey) return;
+  if (e.key === " " && !quiz.open) { e.preventDefault(); quiz.open = true; card(); }
+  else if (quiz.open && e.key === "1") judge("ok");
+  else if (quiz.open && e.key === "2") judge("ng");
+});
+
+/* ── 結果 ──────────────────────────────── */
+function result() {
+  const { name, list, got } = quiz;
+  quiz = null;
+  const ok = list.filter(it => got[it.n] === "ok").length;
+  const wrong = list.filter(it => got[it.n] === "ng");
+  const skipped = list.length - ok - wrong.length;
+  show(backBar(),
+    el("div", { class: "result" },
+      el("div", null, name),
+      el("div", { class: "big" }, `${ok} / ${list.length}`),
+      el("div", { class: "stats" },
+        el("span", { class: "s-ok" }, "○ ", el("b", null, ok)),
+        el("span", { class: "s-ng" }, "× ", el("b", null, wrong.length)),
+        skipped ? el("span", { class: "s-todo" }, "とばした ", el("b", null, skipped)) : null),
+      el("div", { class: "actions" },
+        wrong.length ? el("button", { class: "btn main", type: "button", onclick: () => start(`${name}（×の解き直し）`, wrong) }, `× の ${wrong.length}問をもう一度`) : null,
+        el("button", { class: wrong.length ? "btn" : "btn main", type: "button", onclick: () => start(name, list) }, "同じ問題をもう一度"),
+        el("button", { class: "btn", type: "button", onclick: home }, "メニューに戻る"))));
+}
+
+/* ── 間違えた単語集（単語集のページだけ） ── */
+function wrongList() {
+  const ids = wrongWords();
+  if (!ids.length) return home();
+  const inWrong = it => it.w !== null && ids.includes(it.w);
+  const drill = g => items.filter(it => it.group === g && inWrong(it));
+  show(backBar(el("span", { class: "count" }, `${ids.length}語`)),
+    el("h2", null, "間違えた単語集"),
+    el("p", { class: "count", style: "margin:0" }, "どこかのモードで×をつけた単語です。解き直して○にすると、このリストから消えます。"),
+    el("div", { class: "actions" },
+      groups.filter(g => drill(g).length).map((g, i) =>
+        el("button", { class: i ? "btn" : "btn main", type: "button", onclick: () => start(`間違えた単語（${g}）`, shuffle(drill(g))) },
+          `${g}で解き直す（${drill(g).length}問）`))),
+    el("ol", { class: "rows" }, ids.map(id => {
+      const v = VOCAB[id];
+      return el("li", { class: "ng" },
+        el("span", { class: "no" }, `${id + 1}`),
+        el("div", { class: "qa" }, el("div", { class: "q" }, `${v.en}（${v.pos}）`), el("div", { class: "a" }, v.ja)));
+    })));
+}
+
+/* ── まとめ一覧 ─────────────────────────── */
+const view = { unit: -1, hide: false, star: false, ng: false };
+function sheet() {
+  const chip = (label, on, fn) => el("button", { class: "chip", type: "button", "aria-pressed": String(on), onclick: () => { fn(); sheet(); } }, label);
+  const groups = DRILL.sections.map((s, si) => {
+    if (view.unit !== -1 && view.unit !== si) return null;
+    const list = items.filter(it => it.si === si && (!view.star || it.star) && (!view.ng || marks[it.n] === "ng"));
+    if (!list.length) return null;
+    return el("section", null, el("h3", null, s.title),
+      el("ol", { class: "rows" }, list.map(it => {
+        const a = el("div", { class: "a" + (view.hide ? " hide" : "") }, it.a);
+        if (view.hide) a.addEventListener("click", () => a.classList.toggle("hide"));
+        return el("li", { class: marks[it.n] || "" },
+          el("span", { class: "no" }, it.star ? el("span", { class: "st" }, "★") : null, it.n),
+          el("div", { class: "qa" }, el("div", { class: "q" }, it.q), a));
+      })));
+  }).filter(Boolean);
+  const y = window.scrollY;
+  show(backBar(), el("h2", null, "まとめ一覧"),
+    el("div", { class: "filters" },
+      chip("全単元", view.unit === -1, () => view.unit = -1),
+      DRILL.sections.map((s, si) => chip(`単元${si + 1}`, view.unit === si, () => view.unit = si))),
+    el("div", { class: "filters" },
+      chip("★だけ", view.star, () => view.star = !view.star),
+      chip("×だけ", view.ng, () => view.ng = !view.ng),
+      chip("答えをかくす", view.hide, () => view.hide = !view.hide)),
+    view.hide ? el("p", { class: "count", style: "margin:0" }, "かくした答えは、タップすると表示されます。") : null,
+    groups.length ? el("div", { class: "sheet" }, groups) : el("p", { class: "empty" }, "あてはまる問題はありません。"));
+  window.scrollTo(0, y);
+}
+
+home();
+</script>

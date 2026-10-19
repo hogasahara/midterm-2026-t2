@@ -1,0 +1,218 @@
+{
+  "kind": "vocab",
+  "title": "EA単語ドリル　単語集①・Five Myths About The Atomic Bomb",
+  "subject": "English A",
+  "exam": "10/22（木）① 8:45",
+  "source": "授業の単語集（単語集① Singapore〜Germany・Extra Reading USA／Term 2 Topic 2 Five Myths About The Atomic Bomb）",
+  "share_source": "授業の単語集（Term 2）",
+  "date": "2026-10-19",
+  "note": "words は [英語, 品詞, 意味, メモ, 重要(1/0), 空欄補充の例文({}が空欄), 例文の訳, 空欄に入る形]。例文は教材にないものを Claude が作った（備考欄の例文はそのまま使用）",
+  "units": [
+    {
+      "unit": "① Singapore",
+      "words": [
+        ["invasion", "n", "侵略、侵攻", "v. invade", 1, "Japan's {} of Singapore began in 1941.", "日本のシンガポール侵攻は1941年に始まった。", "invasion"],
+        ["subsequent", "adj", "その後の", "adv. subsequently", 0, "The war and the {} occupation changed the country.", "戦争とその後の占領がその国を変えた。", "subsequent"],
+        ["horrific", "adj", "恐ろしい", "n. horror", 0, "Many {} crimes were committed during the war.", "戦争中に多くの恐ろしい犯罪が行われた。", "horrific"],
+        ["commit a crime", "v-n", "罪を犯す", "", 0, "The soldiers {} terrible crimes.", "兵士たちはひどい罪を犯した。", "committed"],
+        ["surrender", "v/n", "降伏する／降伏", "", 1, "The British army {} to Japan in 1942.", "イギリス軍は1942年に日本に降伏した。", "surrendered"],
+        ["unconditionally", "adv", "無条件に", "adj. unconditional", 1, "Japan surrendered {} in 1945.", "日本は1945年に無条件で降伏した。", "unconditionally"],
+        ["crown", "n", "王冠、王位", "", 0, "The queen wore a golden {}.", "女王は金の王冠をかぶっていた。", "crown"],
+        ["colony", "n", "植民地", "be colonized＝植民地化される", 1, "Singapore was a British {} at that time.", "当時シンガポールはイギリスの植民地だった。", "colony"],
+        ["The main question raised", "文法", "提起された主な疑問", "過去分詞 raised が後ろから名詞を修飾", 0, "The main question {} in the article is about the war.", "その記事で提起された主な疑問は戦争についてだ。", "raised"],
+        ["if it were not for ~ / if it had not been for ~", "文法", "もし〜がなければ／もし〜がなかったら", "仮定法", 1, "If it {} not for your help, I would fail.", "もしあなたの助けがなければ、私は失敗するだろう。", "were"],
+        ["dozen", "adj/n", "12個の、ダース、たくさんの", "発音注意！", 1, "I bought a {} eggs.", "私は卵を1ダース買った。", "dozen"]
+      ]
+    },
+    {
+      "unit": "① Indonesia",
+      "words": [
+        ["occupation", "n", "占領", "", 1, "The Japanese {} of Indonesia lasted until 1945.", "日本によるインドネシア占領は1945年まで続いた。", "occupation"],
+        ["proclaim", "v", "宣言する", "", 1, "Indonesia {} its independence in 1945.", "インドネシアは1945年に独立を宣言した。", "proclaimed"],
+        ["independence", "n", "独立", "", 0, "The country fought for its {}.", "その国は独立のために戦った。", "independence"],
+        ["nationalist", "adj/n", "国家主義の・民族主義の／国家主義者", "自分の nation（国）が一番大事、ということ", 0, "He was a {} leader who wanted independence.", "彼は独立を望む民族主義の指導者だった。", "nationalist"],
+        ["recall", "v", "思い出す、呼び戻す", "remember（覚えている）とは少し違う", 1, "I can't {} his name.", "彼の名前を思い出せない。", "recall"],
+        ["negotiation", "n", "交渉", "v. negotiate", 1, "After long {}, they reached an agreement.", "長い交渉の末、彼らは合意に達した。", "negotiations"],
+        ["dialogue", "n", "対話", "", 0, "Peace needs {} between the two countries.", "平和には二国間の対話が必要だ。", "dialogue"],
+        ["full-fledged A", "adj", "本格的なA", "「完成した」の意味で -ed が基本", 0, "The fighting became a {} war.", "その戦闘は本格的な戦争になった。", "full-fledged"],
+        ["revolution", "n", "革命", "evolution＝進化", 1, "The {} changed the government.", "その革命は政府を変えた。", "revolution"],
+        ["opportunity", "n", "機会", "", 0, "This trip is a good {} to learn history.", "この旅は歴史を学ぶよい機会だ。", "opportunity"],
+        ["Long story short, ~", "idi", "要するに", "口語で使われる", 0, "Long story {}, we missed the train.", "要するに、私たちは電車に乗り遅れた。", "short"],
+        ["coerce", "v", "強制する", "force の類語", 1, "People were {} into working for the army.", "人々は軍のために働くよう強制された。", "coerced"],
+        ["proclamation", "n", "宣言", "proclaim の名詞", 0, "The {} of independence was read aloud.", "独立宣言が読み上げられた。", "proclamation"],
+        ["stepping stone", "n", "踏み石、手段、きっかけ", "何かに届くために必要な踏み台", 0, "The war was a {} stone to independence.", "その戦争は独立へのきっかけだった。", "stepping"],
+        ["eventually", "adv", "結局は、最終的に", "", 1, "They {} won their freedom.", "彼らは最終的に自由を勝ち取った。", "eventually"],
+        ["give emphasis on ~", "n", "〜を強調する", "v. emphasize ~", 0, "The teacher gave special {} on this point.", "先生はこの点を特に強調した。", "emphasis"],
+        ["suffering", "n", "苦しみ", "v. suffer", 0, "The war caused great {}.", "その戦争は大きな苦しみをもたらした。", "suffering"],
+        ["consistent (with ~)", "adj", "（〜と）一致して", "", 1, "His story is {} with the facts.", "彼の話は事実と一致している。", "consistent"],
+        ["portrayal", "n", "描写", "v. portray", 0, "The movie's {} of the war was realistic.", "その映画の戦争の描写は現実的だった。", "portrayal"],
+        ["portrayal of J as a ...", "文法", "Jを〜として描写すること", "→ see A as B", 0, "The book's portrayal of Japan {} a liberator is controversial.", "その本が日本を解放者として描いていることには議論がある。", "as"],
+        ["cruel", "adj", "残酷な", "n. cruelty", 1, "The prisoners received {} treatment.", "捕虜たちは残酷な扱いを受けた。", "cruel"],
+        ["invader", "n", "侵略者", "インベーダーゲームも宇宙からの侵略者", 0, "The people fought against the {}.", "人々は侵略者と戦った。", "invaders"]
+      ]
+    },
+    {
+      "unit": "① Guam",
+      "words": [
+        ["conquer", "v", "征服する", "", 1, "The army {} the island in a few days.", "軍は数日でその島を征服した。", "conquered"],
+        ["mercilessly", "adv", "無慈悲に", "n. mercy＝慈悲", 1, "The prisoners were beaten {}.", "捕虜たちは無慈悲に殴られた。", "mercilessly"],
+        ["labor", "n", "労働", "", 0, "Many people were forced into hard {}.", "多くの人がつらい労働を強いられた。", "labor"],
+        ["rape", "n/v", "性的暴行（を加える）", "", 0, null, null, null],
+        ["comfort", "n", "慰め、快適さ", "", 0, "Her words gave me {}.", "彼女の言葉は私に慰めを与えた。", "comfort"],
+        ["a comfort woman", "n", "慰安婦", "直截（ちょくせつ）的に sex slave と書く場合も", 0, null, null, null],
+        ["torture", "v/n", "拷問する／拷問", "", 1, "Some prisoners were {}.", "何人かの捕虜は拷問を受けた。", "tortured"],
+        ["whistle", "v/n", "口笛を吹く／口笛", "スペル注意！", 1, "He {} a happy song.", "彼は楽しい歌を口笛で吹いた。", "whistled"],
+        ["bow", "v/n", "お辞儀する／お辞儀", "発音注意。同じつづりで「弓」にもなるが発音が異なる", 1, "In Japan, people {} when they meet.", "日本では人は会うとお辞儀をする。", "bow"],
+        ["pass by", "idi", "通り過ぎる、（時が）経つ", "adv. by：そばを", 0, "Many years have passed {} since the war.", "戦争から長い年月が経った。", "by"],
+        ["shed a tear / tears", "v-n", "涙を流す", "shed – shed – shed", 1, "She {} tears when she heard the story.", "彼女はその話を聞いて涙を流した。", "shed"],
+        ["There is N -ing/-en", "文法", "〜している（されている）Nがいる", "", 0, "There is a man {} at the door.", "ドアのところで待っている男性がいる。", "waiting"]
+      ]
+    },
+    {
+      "unit": "① Germany",
+      "words": [
+        ["atrocity", "n", "残虐行為", "", 1, "The {} of the war must not be forgotten.", "戦争の残虐行為は忘れられてはならない。", "atrocities"],
+        ["A after A", "語法", "次から次へのA", "Aが同じ場合のみ。We ate lunch after class. は普通の「後に」", 1, "He told lie after {}.", "彼は次から次へとうそをついた。", "lie"],
+        ["regarding", "前置詞", "〜に関して", "", 1, "I have a question {} the test.", "テストに関して質問があります。", "regarding"],
+        ["psychology", "n", "心理学", "", 0, "She studies the {} of group behavior.", "彼女は集団行動の心理学を研究している。", "psychology"],
+        ["group pressure", "n", "集団圧力", "cf. peer pressure がより一般的", 0, "Many people followed orders because of group {}.", "多くの人が集団圧力のために命令に従った。", "pressure"],
+        ["fascism", "n", "ファシズム", "", 0, "{} spread in Europe in the 1930s.", "1930年代、ヨーロッパでファシズムが広がった。", "Fascism"],
+        ["involvement", "n", "関与、巻き込むこと", "v. involve", 0, "The country denied its {} in the crimes.", "その国は犯罪への関与を否定した。", "involvement"],
+        ["topple", "v", "倒す、崩壊させる", "大きくそびえたっていた物がバタンと倒れるイメージ。建物や権力に使う", 1, "The people {} the dictator.", "人々は独裁者を倒した。", "toppled"],
+        ["democratic", "adj", "民主的な", "n. democracy", 0, "After the war, the country became {}.", "戦後、その国は民主的になった。", "democratic"],
+        ["cover", "v", "扱う", "「覆う」が普通だが、cover a topic など文脈で判断", 0, "Today's class will {} the history of Germany.", "今日の授業ではドイツの歴史を扱う。", "cover"],
+        ["context", "n", "文脈", "context matters＝文脈は重要である", 1, "You should guess the meaning from the {}.", "文脈から意味を推測するべきだ。", "context"],
+        ["In this/that context", "idi", "この（その）文脈では", "on ではない", 0, "{} this context, the word means \"to deal with.\"", "この文脈では、その語は「扱う」を意味する。", "In"],
+        ["in general", "idi", "一般的に", "in generally にしないこと", 0, "In {}, people want peace.", "一般的に、人々は平和を望む。", "general"],
+        ["subject", "n", "主題、テーマ", "ここでは「主題」", 0, "The {} of this essay is war memory.", "この作文の主題は戦争の記憶だ。", "subject"]
+      ]
+    },
+    {
+      "unit": "① Extra Reading: USA",
+      "words": [
+        ["technically", "adv", "厳密に言えば、専門的に", "口語では大半が「厳密にいえば」。technically speaking が由来", 1, "{}, you are correct.", "厳密に言えば、あなたは正しい。", "Technically"],
+        ["radiation", "n", "放射線", "", 0, "Many people suffered from {} after the bombing.", "原爆投下の後、多くの人が放射線に苦しんだ。", "radiation"],
+        ["necessary evil", "表現", "必要悪", "", 0, "Some people called the bomb a necessary {}.", "原爆を必要悪と呼ぶ人もいた。", "evil"]
+      ]
+    },
+    {
+      "unit": "② Introduction",
+      "words": [
+        ["decade", "n", "10年間", "100年、世紀＝century", 0, "The war ended eight {} ago.", "その戦争は80年前に終わった。", "decades"],
+        ["controversy", "n", "議論、論争", "adj. controversial", 1, "There is still {} about the atomic bomb.", "原爆についてはいまだに論争がある。", "controversy"],
+        ["misinformation", "n", "誤情報", "", 0, "The internet is full of {}.", "インターネットは誤情報であふれている。", "misinformation"],
+        ["anniversary", "n", "周年、記念日", "めでたくないものにも使う", 0, "Today is the {} of the end of the war.", "今日は終戦の記念日だ。", "anniversary"],
+        ["present", "v", "提示する、贈る、発表する", "名詞だけじゃないぞ", 0, "The writer {} five myths about the bomb.", "筆者は原爆についての5つの神話を提示している。", "presents"],
+        ["opportunity", "n", "機会", "opportunity to A の形でよく使う", 0, "This anniversary is an {} to think about peace.", "この記念日は平和について考える機会だ。", "opportunity"],
+        ["myth", "n", "神話、作り話", "発音注意！Greek myth＝ギリシャ神話", 1, "The article explains five {} about the atomic bomb.", "その記事は原爆についての5つの神話を説明している。", "myths"]
+      ]
+    },
+    {
+      "unit": "② Myth 1: The bomb ended the war.",
+      "words": [
+        ["surrender", "n", "降伏", "前回の文章では動詞で登場。名詞も動詞も形・発音は同じ", 0, "Japan announced its {} on August 15.", "日本は8月15日に降伏を発表した。", "surrender"],
+        ["virtually", "adv", "実質的に、ほとんど", "「仮想の」の意味もあるが、virtual＝「電子的」のイメージだけで覚えるのは危険", 1, "The war was {} over by then.", "その頃には戦争は実質的に終わっていた。", "virtually"],
+        ["default", "n", "普通、初期設定、デフォルト", "the default understanding＝共通認識（基本認識）", 1, "That is the {} understanding in the U.S.", "それがアメリカでの共通認識だ。", "default"],
+        ["conclude", "v", "結論づける", "n. conclusion", 1, "Historians {} that the bomb was not the only reason.", "歴史家たちは原爆が唯一の理由ではなかったと結論づけている。", "conclude"],
+        ["unexpected", "adj", "予期しない", "expect＝期待する・予期する", 0, "The news was completely {}.", "その知らせはまったく予想外だった。", "unexpected"],
+        ["entry", "n", "参加、入場", "v. enter", 0, "The Soviet {} into the war shocked Japan.", "ソ連の参戦は日本に衝撃を与えた。", "entry"],
+        ["previously", "adv", "以前に", "adj. previous", 1, "Japan had {} signed a pact with the Soviet Union.", "日本は以前にソ連と条約を結んでいた。", "previously"],
+        ["nonaggression", "n", "不可侵", "aggression＝侵略・攻撃", 0, "They signed a {} pact.", "彼らは不可侵条約を結んだ。", "nonaggression"],
+        ["pact", "n", "条約", "nonaggression pact＝不可侵条約", 1, "The two countries signed a nonaggression {}.", "二国は不可侵条約を結んだ。", "pact"],
+        ["negotiate", "v", "交渉する", "n. negotiation", 0, "Japan hoped to {} peace through the Soviet Union.", "日本はソ連を通じて和平を交渉したいと望んだ。", "negotiate"]
+      ]
+    },
+    {
+      "unit": "② Myth 2: The bomb saved half a million American lives.",
+      "words": [
+        ["post-", "接頭辞", "〜の後の、〜以後の", "", 0, null, null, null],
+        ["postwar", "adj", "戦後の", "", 0, "Japan grew rapidly in the {} years.", "日本は戦後の数年で急成長した。", "postwar"],
+        ["former", "adj", "前の、かつての、前者の", "former ⇔ latter", 1, "He is a {} soldier.", "彼は元兵士だ。", "former"],
+        ["military", "n/adj", "軍／軍事的な", "カタカナで「ミリタリー」と言うとファッション用語になる", 0, "The {} wanted to continue the war.", "軍は戦争を続けたがった。", "military"],
+        ["invasion", "n", "侵略", "invader＝侵略者", 0, "The U.S. planned an {} of Japan.", "アメリカは日本への侵攻を計画した。", "invasion"],
+        ["figure", "n", "数字、人物、容姿", "図・姿など、様々な意味がある単語", 0, "The {} of half a million lives is often quoted.", "50万人の命という数字はよく引用される。", "figure"],
+        ["canonical", "adj", "規範的な、正典の", "canon＝正典", 0, "This became the {} explanation of the bombing.", "これが原爆投下の定番の説明になった。", "canonical"],
+        ["seek", "v", "探し求める", "手を伸ばしながら追いかけるイメージ", 0, "They {} the truth about the war.", "彼らは戦争の真実を探し求めている。", "seek"],
+        ["justify", "v", "正当化する", "justice＝正義", 1, "Can we {} the use of the bomb?", "原爆の使用を正当化できるだろうか。", "justify"],
+        ["be supported by A", "語法", "Aによって支持される（裏づけられる）", "be supported by data", 0, "This idea is not {} by data.", "この考えはデータに裏づけられていない。", "supported"],
+        ["estimate", "n", "見積もり、評価", "", 0, "The {} of casualties was much lower.", "死傷者の見積もりはずっと少なかった。", "estimate"],
+        ["note", "v", "注意する、気付く、記す", "", 0, "Please {} that the store closes early.", "店は早く閉まることにご注意ください。", "note"],
+        ["committee", "n", "委員会", "", 0, "A {} studied the invasion plan.", "委員会が侵攻計画を検討した。", "committee"],
+        ["set", "v", "設置する、配置する、決める", "The invasion was set to begin Nov. 1.＝侵略は11月1日に行われることが決まった", 0, "The invasion was {} to begin on November 1.", "侵攻は11月1日に始まることが決まっていた。", "set"],
+        ["result in A", "語法", "結果としてAになる", "", 1, "The invasion would {} in many deaths.", "その侵攻は多くの死者を出す結果になっただろう。", "result"],
+        ["casualty", "n", "死傷者、犠牲者", "複数形 casualties", 1, "The battle caused heavy {}.", "その戦いで多くの死傷者が出た。", "casualties"],
+        ["GI", "n", "米兵", "Government Issue の略だが「米兵」の俗称", 0, null, null, null],
+        ["face", "v", "直面する", "", 0, "Japan {} a difficult choice.", "日本は難しい選択に直面した。", "faced"],
+        ["wrath", "n", "激怒、怒り", "The Seven Deadly Sins（7つの大罪）：pride, greed, lust, envy, gluttony, wrath, sloth", 0, "The people feared the {} of the gods.", "人々は神々の怒りを恐れた。", "wrath"]
+      ]
+    },
+    {
+      "unit": "② Myth 3: The only alternative to the bomb was an invasion of Japan.",
+      "words": [
+        ["alternative", "n", "代替案、代わりの選択肢", "The alternative to A is B.＝Aの代案はBである", 1, "The only {} to the bomb was an invasion of Japan.", "原爆に代わる唯一の選択肢は日本への侵攻だった。", "alternative"],
+        ["decision", "n", "決定、決心", "v. decide", 0, "It was a difficult {}.", "それは難しい決断だった。", "decision"],
+        ["either-or / either/or", "表現", "二者択一（の）", "口語ではよく使うが、文面ではあまり使わない", 0, "It is not an either-{} choice.", "それは二者択一の選択ではない。", "or"],
+        ["beyond", "前置詞", "〜を超えて、〜の向こうに", "To infinity and beyond!＝無限の更に向こうへ", 1, "This problem is {} my understanding.", "この問題は私の理解を超えている。", "beyond"],
+        ["naval", "adj", "海軍の", "n. navy＝海軍", 0, "A {} blockade could stop supplies to Japan.", "海上封鎖は日本への物資を止めることができた。", "naval"],
+        ["blockade", "n", "封鎖、閉鎖", "block 由来の単語", 0, "The {} cut off food and oil.", "封鎖が食料と石油を断った。", "blockade"],
+        ["demonstration", "n", "デモ、実演、意思表示", "抗議活動の「デモ」という意味もある", 0, "Some scientists wanted a {} of the bomb on an empty island.", "原爆を無人島で実演してみせることを望む科学者もいた。", "demonstration"],
+        ["explode", "v", "爆発する", "感情が爆発する時も使える。His anger exploded.", 0, "His anger {}.", "彼の怒りが爆発した。", "exploded"],
+        ["desert", "adj", "人の住まない、見捨てられた", "発音注意。名詞だと砂漠だが、desert island は「砂漠島」ではなく「無人島」", 1, "They talked about testing it on a {} island.", "彼らはそれを無人島で試すことを話し合った。", "desert"],
+        ["observer", "n", "観察者", "v. observe", 0, "Japanese {} could watch the test.", "日本の立会人がその実験を見ることができた。", "observers"],
+        ["option", "n", "選択肢、オプション", "もとは「付けなくてもいい選択肢」という意味", 0, "We had no other {}.", "ほかに選択肢はなかった。", "option"],
+        ["reject", "v", "拒絶する", "refuse よりも強く・冷たい", 1, "The plan was {}.", "その計画は拒絶された。", "rejected"],
+        ["~, for there were ...", "接続詞", "というのは〜だからだ", "for S' V' の形。EBでやりました", 1, "We could not test it, {} there were only two bombs.", "実験はできなかった。というのも爆弾は2つしかなかったからだ。", "for"],
+        ["available", "adj", "手に入る、利用可能な", "色々な文脈で使う", 1, "Only two bombs were {} at that time.", "その時点で使える爆弾は2つしかなかった。", "available"],
+        ["dud", "n", "不発弾", "湿気た花火に対して使ったりも", 0, "What if the bomb was a {}?", "その爆弾が不発だったらどうするのか。", "dud"],
+        ["accept", "v", "受け入れる", "", 0, "Japan finally {} the terms.", "日本はついに条件を受け入れた。", "accepted"],
+        ["conditional", "adj", "条件つきの", "⇔ unconditional", 1, "Japan wanted a {} surrender.", "日本は条件つきの降伏を望んだ。", "conditional"],
+        ["be concerned about A", "表現", "Aについて心配している", "", 0, "Japan was {} about the emperor.", "日本は天皇のことを心配していた。", "concerned"],
+        ["war criminal", "n", "戦争犯罪者", "", 0, "Some leaders were tried as war {}.", "何人かの指導者は戦争犯罪者として裁かれた。", "criminals"],
+        ["ultimately", "adv", "最終的に", "ultimate＝最後の・最終の・最高の", 1, "{}, the emperor kept his position.", "最終的に、天皇はその地位を保った。", "Ultimately"],
+        ["clause", "n", "条項、節", "天皇の処遇に関する条項は日本の意向が尊重された、という文", 0, "The {} about the emperor was important to Japan.", "天皇に関する条項は日本にとって重要だった。", "clause"],
+        ["grant", "v", "与える、認める", "give よりも上下関係が明確。上から「与えてもらっている」", 0, "The government {} them permission.", "政府は彼らに許可を与えた。", "granted"]
+      ]
+    },
+    {
+      "unit": "② Myth 4: The Japanese were warned before the bomb was dropped.",
+      "words": [
+        ["warn", "v", "警告する", "n. warning", 1, "The teacher {} us not to be late.", "先生は私たちに遅れないよう警告した。", "warned"],
+        ["demand", "v", "要求する", "want よりもかなり強め", 0, "The Allies {} Japan's surrender.", "連合国は日本の降伏を要求した。", "demanded"],
+        ["leaflet", "n", "ちらし、リーフレット", "冊子になると pamphlet", 0, "Planes dropped {} over the cities.", "飛行機が都市の上空にちらしをまいた。", "leaflets"],
+        ["prompt", "adj", "迅速な、即座の", "", 1, "We need a {} answer.", "私たちには即座の返事が必要だ。", "prompt"],
+        ["utter", "adj", "完全な、まったくの", "utter chaos＝全くの大混乱、utter failure＝完全な敗北", 1, "The city was in {} chaos.", "その都市は全くの大混乱だった。", "utter"],
+        ["address", "n", "住所、演説", "動詞もあり、幅広い意味のある単語なので注意", 0, "The president gave a radio {}.", "大統領はラジオ演説を行った。", "address"],
+        ["coming", "adj", "来るべき、次の、今度の", "the coming A / this coming A の形で使われるのが一般的", 0, "We have a test this {} Monday.", "今度の月曜日にテストがある。", "coming"],
+        ["ruin", "n", "破滅、廃墟", "v. ruin＝台無しにする", 0, "The city lay in {}.", "その都市は廃墟と化していた。", "ruins"],
+        ["the like", "n", "同類のもの", "like は「類似の」「様な」「好き」など様々な意味があるので注意", 0, "They bombed factories, bridges, and the {}.", "彼らは工場や橋などを爆撃した。", "like"],
+        ["the like of ~", "語法", "〜のようなもの", "", 0, "We had never seen the {} of it.", "私たちはそのようなものを見たことがなかった。", "like"],
+        ["civilian", "n", "一般市民、民間人", "軍人や軍の物と比較して使う", 1, "Many {} died in the bombing.", "原爆投下で多くの民間人が亡くなった。", "civilians"],
+        ["meaningfully", "adv", "有意義に、意味深く", "「意味のある（ちゃんとした）忠告をしたぞ」という文脈", 0, "The people were never {} warned.", "人々は意味のある形で警告されたことはなかった。", "meaningfully"],
+        ["specific", "adj", "特定の、具体的な", "v. specify＝明確にする", 1, "Can you give me a {} example?", "具体的な例を挙げてくれますか。", "specific"],
+        ["forewarn", "v", "前もって警告する", "warn（警告する）に fore-（前方の）が付いたもの", 0, "The people were not {} about the attack.", "人々はその攻撃について前もって警告されていなかった。", "forewarned"],
+        ["incendiary", "n/adj", "焼夷弾／焼夷性の", "incendiary が bomb にかかる形容詞と考えることもできる", 0, "Tokyo was attacked with {} bombs.", "東京は焼夷弾で攻撃された。", "incendiary"],
+        ["on a regular basis", "idi", "定期的に、日常的に", "よく使う！", 1, "Cities were bombed on a regular {}.", "都市は日常的に爆撃された。", "basis"],
+        ["notice", "n", "通知、掲示、注意", "v. notice＝気づく", 0, "A {} was put up on the wall.", "壁に掲示が貼られた。", "notice"]
+      ]
+    },
+    {
+      "unit": "② Myth 5: The bomb was timed to gain a diplomatic advantage over Russia.",
+      "words": [
+        ["time", "v", "タイミングを合わせる、時間を計る", "名詞としっかり見分けよう", 0, "The bomb was {} to gain an advantage over Russia.", "原爆はロシアに対して優位に立てるようタイミングを計られた。", "timed"],
+        ["historiography", "n", "歴史記述、歴史学", "単に history でOKの場合もある", 0, "This book is about the {} of the atomic bomb.", "この本は原爆についての歴史記述を扱っている。", "historiography"],
+        ["policy", "n", "政策、方針", "カタカナだと「主義」のように使う人もいるが、その訳は辞書には載ってない", 0, "The government changed its foreign {}.", "政府は外交政策を変えた。", "policy"],
+        ["conflict", "n", "争い、対立", "v. conflict＝争う・相いれない・矛盾する", 1, "The {} between the two countries grew.", "二国間の対立が深まった。", "conflict"],
+        ["significant", "adj", "重要な、かなりの", "", 1, "It was a {} event in history.", "それは歴史上重要な出来事だった。", "significant"],
+        ["settlement", "n", "解決、合意", "peace settlement＝和約", 0, "They reached a peace {}.", "彼らは和平の合意に達した。", "settlement"],
+        ["impress", "v", "感銘を与える、印象づける", "n. impression", 0, "The U.S. wanted to {} the Soviet Union.", "アメリカはソ連に強い印象を与えたかった。", "impress"],
+        ["diplomatic", "adj", "外交的な、外交の", "n. diplomat＝外交官。もよく出るので覚えよう", 1, "They solved the problem through {} talks.", "彼らは外交交渉で問題を解決した。", "diplomatic"],
+        ["dictate", "v", "決定する、左右する、命令する", "物が主語でも使う。The weather will dictate our vacation plans.", 1, "The weather will {} our vacation plans.", "天気が休暇の予定を左右するだろう。", "dictate"],
+        ["consideration", "n", "考慮、思いやり", "v. consider", 0, "Cost was an important {}.", "費用は重要な考慮事項だった。", "consideration"],
+        ["Secretary of ~", "表現", "〜長官、〜大臣", "secretary は「秘書」のほか「大臣」「長官」の意味もある幅広い単語", 0, "Henry Stimson was the Secretary {} War.", "ヘンリー・スティムソンは陸軍長官だった。", "of"],
+        ["Kyoto be erased from ~", "文法", "（命令・要求の that 節で）should が省略され動詞の原形になる", "Henry ordered that the city of Kyoto (should) be erased from the list.＝「京都はリストから除外すべきだ」と命じた", 1, "Henry ordered that the city of Kyoto {} erased from the list.", "ヘンリーは京都市をリストから除外するよう命じた。", "be"],
+        ["prove to be A", "idi", "Aであるとわかる", "The test proved to be too difficult.＝試験が難しすぎることが分かった", 1, "The test {} to be too difficult.", "その試験は難しすぎることがわかった。", "proved"],
+        ["dealings", "n", "取引、関係", "", 0, "The U.S. had difficult {} with the Soviet Union.", "アメリカはソ連と難しい関係にあった。", "dealings"]
+      ]
+    }
+  ]
+}
