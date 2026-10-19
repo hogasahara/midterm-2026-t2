@@ -172,7 +172,7 @@ function el(tag, attrs, ...kids) {
     else if (v === true) e.setAttribute(k, "");
     else if (v !== false && v != null) e.setAttribute(k, v);
   }
-  for (const c of kids.flat()) if (c != null && c !== false) e.append(c);
+  for (const c of kids.flat(Infinity)) if (c != null && c !== false) e.append(c);
   return e;
 }
 const count = (list, v) => list.filter(it => v === "todo" ? !marks[it.n] : marks[it.n] === v).length;
