@@ -261,22 +261,22 @@ function home() {
       meter(items)),
     el("div", { class: "modes" + (VOCAB.length ? " vocab" : "") },
       mode("単元別", `${DRILL.sections.length}単元から選ぶ`, units, { primary: true }),
-      mode("ランダム", "10問・20問・全部", randomPick),
+      mode("通しで", `全${items.length}問を1番から順に`, () => start("通しで（全問）", items)),
       VOCAB.length
         ? mode("間違えた単語集", wrongWords().length ? `${wrongWords().length}語・×をつけた単語をまとめて復習` : "まだありません（×をつけた単語がここにたまる）", wrongList, { disabled: !wrongWords().length, wide: true, cls: "wrong" })
         : mode("間違えた問題", ng ? `× が ${ng}問` : "まだありません",
             () => start("間違えた問題の復習", shuffle(items.filter(it => marks[it.n] === "ng"))), { disabled: !ng }),
-      mode("★ 重要問題", `${stars.length}問`, () => start("★ 重要問題", stars)),
+      mode("★ 重要問題", `${stars.length}問`, () => start("★ 重要問題", shuffle(stars))),
       mode("未回答だけ", todo ? `残り ${todo}問` : "全部解きました",
-        () => start("まだ解いていない問題", items.filter(it => !marks[it.n])), { disabled: !todo }),
+        () => start("まだ解いていない問題", shuffle(items.filter(it => !marks[it.n]))), { disabled: !todo }),
       mode("まとめ一覧", "答えつきで見直す", sheet),
       groups.map(g => {
         const list = items.filter(it => it.group === g);
-        return mode(g, `${list.length}問${groupNote(g) ? "・" + groupNote(g) : ""}`, () => start(g, list), { wide: true });
+        return mode(g, `${list.length}問${groupNote(g) ? "・" + groupNote(g) : ""}`, () => start(g, shuffle(list)), { wide: true });
       })),
     el("div", { class: "under" },
       el("details", null, el("summary", null, "使い方"),
-        el("p", null, "1問ずつ問題が出ます。答えを考えてから「答えを見る」を押し、合っていたら ○、まちがえたら × を押すと次へ進みます。×をつけた問題は「間違えた問題」でまとめて解き直せます。○×の記録はこの端末のブラウザにだけ残ります。")),
+        el("p", null, "1問ずつ、ランダムな順番で問題が出ます（1番から順に解きたいときは「通しで」）。答えを考えてから「答えを見る」を押し、合っていたら ○、まちがえたら × を押すと次へ進みます。×をつけた問題は「間違えた問題」でまとめて解き直せます。○×の記録はこの端末のブラウザにだけ残ります。")),
       confirmReset
         ? el("div", { class: "confirm" }, "○×の記録をすべて消しますか？",
             el("button", { class: "chip", type: "button", onclick: () => { marks = {}; save(); confirmReset = false; home(); } }, "消す"),
@@ -286,9 +286,9 @@ function home() {
 }
 
 /* ── 単元を選ぶ ─────────────────────────── */
-// 単元別の出題順（順番／ランダム）は、この端末に覚えておく
-let unitRandom = false;
-try { unitRandom = localStorage.getItem(KEY + ":random") === "1"; } catch (e) {}
+// 単元別の出題順はランダムが標準。「順番に出す」を選んだらこの端末に覚えておく
+let unitRandom = true;
+try { unitRandom = localStorage.getItem(KEY + ":random") !== "0"; } catch (e) {}
 function setUnitRandom(v) {
   unitRandom = v;
   try { localStorage.setItem(KEY + ":random", v ? "1" : "0"); } catch (e) {}
@@ -297,28 +297,18 @@ function setUnitRandom(v) {
 function units() {
   show(backBar(), el("h2", null, "単元を選ぶ"),
     el("div", { class: "filters", role: "group", "aria-label": "出題順" },
-      el("button", { class: "chip", type: "button", "aria-pressed": String(!unitRandom), onclick: () => setUnitRandom(false) }, "順番に出す"),
-      el("button", { class: "chip", type: "button", "aria-pressed": String(unitRandom), onclick: () => setUnitRandom(true) }, "ランダムに出す")),
+      el("button", { class: "chip", type: "button", "aria-pressed": String(unitRandom), onclick: () => setUnitRandom(true) }, "ランダムに出す"),
+      el("button", { class: "chip", type: "button", "aria-pressed": String(!unitRandom), onclick: () => setUnitRandom(false) }, "順番に出す")),
     el("div", { class: "choices" }, DRILL.sections.map((s, si) => {
       const list = items.filter(it => it.si === si);
       const head = s.group && s.group !== (DRILL.sections[si - 1] || {}).group
         ? el("h3", { class: "ghead" }, s.group) : null;
       return [head, el("button", { class: "choice", type: "button",
-        onclick: () => unitRandom ? start(`${s.title}（ランダム）`, shuffle(list)) : start(s.title, list) },
+        onclick: () => unitRandom ? start(s.title, shuffle(list)) : start(`${s.title}（順番）`, list) },
         el("span", { class: "c-title" }, s.title),
         el("span", { class: "c-meta" }, `○ ${count(list, "ok")} / ${list.length}問`),
         meter(list))];
     })));
-}
-
-/* ── ランダムの問題数 ───────────────────── */
-function randomPick() {
-  const opts = [[10, "10問"], [20, "20問"], [items.length, `全部（${items.length}問）`]];
-  show(backBar(), el("h2", null, "ランダムで何問？"),
-    el("div", { class: "choices" }, opts.map(([n, label]) =>
-      el("button", { class: "choice", type: "button", onclick: () => start(`ランダム ${label}`, shuffle(items).slice(0, n)) },
-        el("span", { class: "c-title" }, label),
-        el("span", { class: "c-meta" }, "全単元からまぜて出題")))));
 }
 
 /* ── 1問ずつ解く ────────────────────────── */
