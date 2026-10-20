@@ -18,18 +18,16 @@
   --ok-bg:#e3f3ea;
   --ng:#b3361f;
   --ng-bg:#fbe7e2;
-  --near:#9a6a00;
-  --near-bg:#fbf1d9;
   --f-display:"Shippori Mincho B1","Hiragino Mincho ProN","Yu Mincho",serif;
   --f-body:"BIZ UDPGothic","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
   --f-type:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --accent:#8fb3f0;--accent-ink:#0e1420;--accent-soft:#1c2636;--bg:#11151c;--paper:#1a1f28;--ink:#e5e9f0;--muted:#99a3b3;--line:#2c3441;
-  --ok:#6fd19c;--ok-bg:#183326;--ng:#ff9a85;--ng-bg:#3a1f19;--near:#f2c14e;--near-bg:#3a3019;color-scheme:dark}}
+  --ok:#6fd19c;--ok-bg:#183326;--ng:#ff9a85;--ng-bg:#3a1f19;color-scheme:dark}}
 :root[data-theme="dark"]{
   --accent:#8fb3f0;--accent-ink:#0e1420;--accent-soft:#1c2636;--bg:#11151c;--paper:#1a1f28;--ink:#e5e9f0;--muted:#99a3b3;--line:#2c3441;
-  --ok:#6fd19c;--ok-bg:#183326;--ng:#ff9a85;--ng-bg:#3a1f19;--near:#f2c14e;--near-bg:#3a3019;color-scheme:dark}
+  --ok:#6fd19c;--ok-bg:#183326;--ng:#ff9a85;--ng-bg:#3a1f19;color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6}
 .wrap{max-width:640px;margin:0 auto;padding-block:20px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:16px}
@@ -68,16 +66,12 @@ h1{font-family:var(--f-display);font-weight:800;font-size:clamp(26px,6.4vw,34px)
 .type.ok{border-color:var(--ok);background:var(--ok-bg)}
 .type.ng{border-color:var(--ng);background:var(--ng-bg)}
 .mask{font-family:var(--f-type);font-size:18px;letter-spacing:.18em;color:var(--accent);overflow-wrap:anywhere}
-.verdict{border-radius:10px;padding:12px 14px;display:grid;gap:6px}
+.verdict{border-radius:10px;padding:12px 14px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 14px;align-items:center}
+.verdict .answer{font-family:var(--f-type);font-size:22px;font-weight:600;color:var(--ink);overflow-wrap:anywhere}
+.verdict .memo{grid-column:1/-1}
 .verdict.ok{background:var(--ok-bg);color:var(--ok)}
 .verdict.ng{background:var(--ng-bg);color:var(--ng)}
-.verdict.near{background:var(--near-bg);color:var(--near)}
-.verdict .head{font-weight:700;font-size:17px}
-.cmp{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;align-items:baseline;color:var(--ink)}
-.cmp span:nth-child(odd){font-size:12px;color:var(--muted)}
-.mono{font-family:var(--f-type);font-size:18px;overflow-wrap:anywhere}
-.mono .x{color:var(--ng);text-decoration:line-through;text-decoration-thickness:2px}
-.mono .m{background:var(--near-bg);color:var(--near);border-bottom:2px solid var(--near);font-weight:600}
+.verdict .head{font-weight:700;font-size:34px;line-height:1}
 .memo{font-size:13px;color:var(--muted)}
 .link{background:none;border:0;padding:0;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:13px;justify-self:start}
 .keys{font-size:12px;color:var(--muted);text-align:center}
@@ -134,25 +128,11 @@ function grade(input, w) {
   for (const [a, t] of accs) if (t === n) return { ok: true, target: a };
   // 冠詞の有無は大目に見る（ただし the like → like のように1語になってしまうものは除く）
   for (const [a, t] of accs) if (noArticle(t).includes(" ") && noArticle(t) === noArticle(n)) return { ok: true, target: a, note: "冠詞（a / the）の有無は区別していません" };
+  // ×のときに見せる正解は、打った答えにいちばん近い言い方
   let best = accs[0], bd = Infinity;
   for (const x of accs) { const v = dist(n, x[1]); if (v < bd) { bd = v; best = x; } }
-  return { ok: false, target: best[0], near: bd <= 2 && best[1].length >= 4, d: bd };
+  return { ok: false, target: best[0] };
 }
-// 打った答えと正解を1文字ずつ見比べ、余計な文字・足りない文字に印を付ける（LCS）
-function diff(you, ans) {
-  const a = you.toLowerCase(), b = ans.toLowerCase();
-  const L = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
-  for (let i = a.length - 1; i >= 0; i--) for (let j = b.length - 1; j >= 0; j--)
-    L[i][j] = a[i] === b[j] ? L[i + 1][j + 1] + 1 : Math.max(L[i + 1][j], L[i][j + 1]);
-  const ka = new Set(), kb = new Set();
-  for (let i = 0, j = 0; i < a.length && j < b.length;) {
-    if (a[i] === b[j]) { ka.add(i); kb.add(j); i++; j++; }
-    else if (L[i + 1][j] >= L[i][j + 1]) i++; else j++;
-  }
-  const mark = (s, keep, cls) => [...s].map((c, i) => keep.has(i) || c === " " ? c : el("span", { class: cls }, c));
-  return { you: mark(you, ka, "x"), ans: mark(ans, kb, "m") };
-}
-
 /* ── 設定 ───────────────────────────────── */
 const opt = { unit: "all", count: 10, star: false, wrong: false };
 function pool() {
@@ -166,7 +146,7 @@ function setup() {
     el("header", null,
       el("div", { class: "eyebrow" }, "二学期中間テスト（高1）・English A"),
       el("h1", null, "日英タイピング", el("span", { class: "demo" }, "デモ")),
-      el("p", { class: "lead" }, "日本語と品詞を見て、英語をキーボードで打ちます。答え合わせは自動。まちがえた文字に色が付きます。")),
+      el("p", { class: "lead" }, "日本語と品詞を見て、英語をキーボードで打ちます。答え合わせは自動で、○か×が出ます。")),
     el("div", { class: "panel" },
       el("div", { class: "label" }, "単元"),
       el("div", { class: "chips" },
@@ -222,18 +202,11 @@ function card() {
       el("button", { class: "btn", type: "button", onclick: () => { q.typed = input.value; giveUp(); } }, "わからない")));
   } else {
     const r = q.last;
-    const v = el("div", { class: "verdict " + (r.ok ? "ok" : r.near ? "near" : "ng") });
-    if (r.ok) {
-      v.append(el("div", { class: "head" }, "○ 正解"), el("div", { class: "mono" }, w.en));
-      if (r.note) v.append(el("div", { class: "memo" }, r.note));
-    } else {
-      const dd = diff(q.typed || "", r.target);
-      v.append(el("div", { class: "head" }, r.giveUp ? "答え" : r.near ? "△ 惜しい！つづりを確認" : "× ちがいます"),
-        el("div", { class: "cmp" },
-          r.giveUp ? null : [el("span", null, "あなた"), el("span", { class: "mono" }, dd.you)],
-          el("span", null, "正解"), el("span", { class: "mono" }, r.giveUp ? r.target : dd.ans)));
-      if (w.en !== r.target) v.append(el("div", { class: "memo" }, `単語集の表記：${w.en}`));
-    }
+    const v = el("div", { class: "verdict " + (r.ok ? "ok" : "ng") },
+      el("div", { class: "head" }, r.ok ? "○" : "×"),
+      el("div", { class: "answer" }, r.ok ? w.en : r.target));
+    if (r.ok && r.note) v.append(el("div", { class: "memo" }, r.note));
+    if (!r.ok && w.en !== r.target) v.append(el("div", { class: "memo" }, `単語集の表記：${w.en}`));
     body.push(v);
     if (w.note) body.push(el("div", { class: "memo" }, `メモ：${w.note}`));
     body.push(el("button", { class: "btn main", type: "button", id: "next", onclick: next }, q.i + 1 < q.list.length ? "次へ" : "結果を見る"));
