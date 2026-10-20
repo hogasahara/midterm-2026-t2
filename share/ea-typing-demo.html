@@ -1,0 +1,305 @@
+<title>EA日英タイピング デモ</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=IBM+Plex+Mono:wght@500;600&family=Shippori+Mincho+B1:wght@800&display=swap">
+<style>
+/* Layout: 1列。設定 → 1問ずつ「日本語を見て英語を打つ」→ 結果。打った英字は等幅で、まちがえた文字だけ色を変える */
+:root{
+  --accent:#2d5aa8;
+  --accent-ink:#ffffff;
+  --accent-soft:#eaf0f8;
+  --bg:#f5f7fa;
+  --paper:#ffffff;
+  --ink:#1b2029;
+  --muted:#5d6676;
+  --line:#dce2ea;
+  --ok:#1f7a4d;
+  --ok-bg:#e3f3ea;
+  --ng:#b3361f;
+  --ng-bg:#fbe7e2;
+  --near:#9a6a00;
+  --near-bg:#fbf1d9;
+  --f-display:"Shippori Mincho B1","Hiragino Mincho ProN","Yu Mincho",serif;
+  --f-body:"BIZ UDPGothic","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
+  --f-type:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --accent:#8fb3f0;--accent-ink:#0e1420;--accent-soft:#1c2636;--bg:#11151c;--paper:#1a1f28;--ink:#e5e9f0;--muted:#99a3b3;--line:#2c3441;
+  --ok:#6fd19c;--ok-bg:#183326;--ng:#ff9a85;--ng-bg:#3a1f19;--near:#f2c14e;--near-bg:#3a3019;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --accent:#8fb3f0;--accent-ink:#0e1420;--accent-soft:#1c2636;--bg:#11151c;--paper:#1a1f28;--ink:#e5e9f0;--muted:#99a3b3;--line:#2c3441;
+  --ok:#6fd19c;--ok-bg:#183326;--ng:#ff9a85;--ng-bg:#3a1f19;--near:#f2c14e;--near-bg:#3a3019;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6}
+.wrap{max-width:640px;margin:0 auto;padding-block:20px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:16px}
+button,input{font:inherit;color:inherit}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+header{display:grid;gap:4px}
+.eyebrow{font-size:13px;letter-spacing:.08em;color:var(--muted)}
+.demo{display:inline-block;font-size:12px;font-weight:700;border:1px solid var(--accent);color:var(--accent);border-radius:4px;padding:0 6px;margin-left:6px;vertical-align:2px;letter-spacing:0}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(26px,6.4vw,34px);line-height:1.25;margin:0;text-wrap:balance}
+.lead{margin:0;color:var(--muted);font-size:14px}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;gap:12px}
+.label{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.04em}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:13px;border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:5px 12px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.btn{border-radius:10px;padding:12px 14px;font-weight:700;cursor:pointer;border:1px solid var(--line);background:var(--paper)}
+.btn.main{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.row .btn{flex:1 1 auto}
+.note{font-size:13px;color:var(--muted);margin:0}
+.rules{font-size:13px;color:var(--muted);margin:0;padding-left:1.2em;display:grid;gap:2px}
+.stat{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.stat b{color:var(--ink)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.back{border:1px solid var(--line);border-radius:999px;padding:4px 12px;cursor:pointer;font-size:14px;background:var(--paper)}
+.count{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.bar{height:4px;background:var(--line);border-radius:2px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent)}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px 16px;display:grid;gap:14px}
+.meta{display:flex;flex-wrap:wrap;gap:6px 10px;font-size:13px;color:var(--muted)}
+.ja{font-size:22px;font-weight:700;line-height:1.5;overflow-wrap:anywhere}
+.ja small{font-size:15px;font-weight:400;color:var(--muted);margin-left:4px}
+.type{width:100%;font-family:var(--f-type);font-size:22px;font-weight:500;padding:12px 14px;border:2px solid var(--line);border-radius:10px;background:var(--bg);letter-spacing:.02em}
+.type:focus{border-color:var(--accent);outline:none}
+.type.ok{border-color:var(--ok);background:var(--ok-bg)}
+.type.ng{border-color:var(--ng);background:var(--ng-bg)}
+.mask{font-family:var(--f-type);font-size:18px;letter-spacing:.18em;color:var(--accent);overflow-wrap:anywhere}
+.verdict{border-radius:10px;padding:12px 14px;display:grid;gap:6px}
+.verdict.ok{background:var(--ok-bg);color:var(--ok)}
+.verdict.ng{background:var(--ng-bg);color:var(--ng)}
+.verdict.near{background:var(--near-bg);color:var(--near)}
+.verdict .head{font-weight:700;font-size:17px}
+.cmp{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;align-items:baseline;color:var(--ink)}
+.cmp span:nth-child(odd){font-size:12px;color:var(--muted)}
+.mono{font-family:var(--f-type);font-size:18px;overflow-wrap:anywhere}
+.mono .x{color:var(--ng);text-decoration:line-through;text-decoration-thickness:2px}
+.mono .m{background:var(--near-bg);color:var(--near);border-bottom:2px solid var(--near);font-weight:600}
+.memo{font-size:13px;color:var(--muted)}
+.link{background:none;border:0;padding:0;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:13px;justify-self:start}
+.keys{font-size:12px;color:var(--muted);text-align:center}
+@media (hover:none){.keys{display:none}}
+.big{font-family:var(--f-display);font-size:44px;font-weight:800;text-align:center;font-variant-numeric:tabular-nums}
+.list{list-style:none;margin:0;padding:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--paper)}
+.list li{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:4px 12px;padding:9px 12px;border-top:1px solid var(--line)}
+.list li:first-child{border-top:0}
+.list .en{font-family:var(--f-type);font-weight:600;overflow-wrap:anywhere}
+.list .ja2{overflow-wrap:anywhere}
+@media (prefers-reduced-motion:no-preference){.verdict{animation:pop .16s ease-out}@keyframes pop{from{opacity:.4;transform:translateY(2px)}to{opacity:1;transform:none}}}
+</style>
+
+<div class="wrap" id="app"></div>
+
+<script>
+const DATA = {"words": [{"en": "invasion", "pos": "n", "ja": "侵略、侵攻", "note": "v. invade", "star": 1, "unit": "① Singapore", "accept": ["invasion"]}, {"en": "subsequent", "pos": "adj", "ja": "その後の", "note": "adv. subsequently", "star": 0, "unit": "① Singapore", "accept": ["subsequent"]}, {"en": "horrific", "pos": "adj", "ja": "恐ろしい", "note": "n. horror", "star": 0, "unit": "① Singapore", "accept": ["horrific"]}, {"en": "commit a crime", "pos": "v-n", "ja": "罪を犯す", "note": "", "star": 0, "unit": "① Singapore", "accept": ["commit a crime"]}, {"en": "surrender", "pos": "v/n", "ja": "降伏する／降伏", "note": "", "star": 1, "unit": "① Singapore", "accept": ["surrender"]}, {"en": "unconditionally", "pos": "adv", "ja": "無条件に", "note": "adj. unconditional", "star": 1, "unit": "① Singapore", "accept": ["unconditionally"]}, {"en": "crown", "pos": "n", "ja": "王冠、王位", "note": "", "star": 0, "unit": "① Singapore", "accept": ["crown"]}, {"en": "colony", "pos": "n", "ja": "植民地", "note": "be colonized＝植民地化される", "star": 1, "unit": "① Singapore", "accept": ["colony"]}, {"en": "if it were not for ~ / if it had not been for ~", "pos": "文法", "ja": "もし〜がなければ／もし〜がなかったら", "note": "仮定法", "star": 1, "unit": "① Singapore", "accept": ["if it were not for", "if it had not been for"]}, {"en": "dozen", "pos": "adj/n", "ja": "12個の、ダース、たくさんの", "note": "発音注意！", "star": 1, "unit": "① Singapore", "accept": ["dozen"]}, {"en": "occupation", "pos": "n", "ja": "占領", "note": "", "star": 1, "unit": "① Indonesia", "accept": ["occupation"]}, {"en": "proclaim", "pos": "v", "ja": "宣言する", "note": "", "star": 1, "unit": "① Indonesia", "accept": ["proclaim"]}, {"en": "independence", "pos": "n", "ja": "独立", "note": "", "star": 0, "unit": "① Indonesia", "accept": ["independence"]}, {"en": "nationalist", "pos": "adj/n", "ja": "国家主義の・民族主義の／国家主義者", "note": "自分の nation（国）が一番大事、ということ", "star": 0, "unit": "① Indonesia", "accept": ["nationalist"]}, {"en": "recall", "pos": "v", "ja": "思い出す、呼び戻す", "note": "remember（覚えている）とは少し違う", "star": 1, "unit": "① Indonesia", "accept": ["recall"]}, {"en": "negotiation", "pos": "n", "ja": "交渉", "note": "v. negotiate", "star": 1, "unit": "① Indonesia", "accept": ["negotiation"]}, {"en": "dialogue", "pos": "n", "ja": "対話", "note": "", "star": 0, "unit": "① Indonesia", "accept": ["dialogue"]}, {"en": "full-fledged A", "pos": "adj", "ja": "本格的なA", "note": "「完成した」の意味で -ed が基本", "star": 0, "unit": "① Indonesia", "accept": ["full-fledged"]}, {"en": "revolution", "pos": "n", "ja": "革命", "note": "evolution＝進化", "star": 1, "unit": "① Indonesia", "accept": ["revolution"]}, {"en": "opportunity", "pos": "n", "ja": "機会", "note": "", "star": 0, "unit": "① Indonesia", "accept": ["opportunity"]}, {"en": "Long story short, ~", "pos": "idi", "ja": "要するに", "note": "口語で使われる", "star": 0, "unit": "① Indonesia", "accept": ["Long story short"]}, {"en": "coerce", "pos": "v", "ja": "強制する", "note": "force の類語", "star": 1, "unit": "① Indonesia", "accept": ["coerce"]}, {"en": "proclamation", "pos": "n", "ja": "宣言", "note": "proclaim の名詞", "star": 0, "unit": "① Indonesia", "accept": ["proclamation"]}, {"en": "stepping stone", "pos": "n", "ja": "踏み石、手段、きっかけ", "note": "何かに届くために必要な踏み台", "star": 0, "unit": "① Indonesia", "accept": ["stepping stone"]}, {"en": "eventually", "pos": "adv", "ja": "結局は、最終的に", "note": "", "star": 1, "unit": "① Indonesia", "accept": ["eventually"]}, {"en": "give emphasis on ~", "pos": "n", "ja": "〜を強調する", "note": "v. emphasize ~", "star": 0, "unit": "① Indonesia", "accept": ["give emphasis on"]}, {"en": "suffering", "pos": "n", "ja": "苦しみ", "note": "v. suffer", "star": 0, "unit": "① Indonesia", "accept": ["suffering"]}, {"en": "consistent (with ~)", "pos": "adj", "ja": "（〜と）一致して", "note": "", "star": 1, "unit": "① Indonesia", "accept": ["consistent with", "consistent"]}, {"en": "portrayal", "pos": "n", "ja": "描写", "note": "v. portray", "star": 0, "unit": "① Indonesia", "accept": ["portrayal"]}, {"en": "cruel", "pos": "adj", "ja": "残酷な", "note": "n. cruelty", "star": 1, "unit": "① Indonesia", "accept": ["cruel"]}, {"en": "invader", "pos": "n", "ja": "侵略者", "note": "インベーダーゲームも宇宙からの侵略者", "star": 0, "unit": "① Indonesia", "accept": ["invader"]}, {"en": "conquer", "pos": "v", "ja": "征服する", "note": "", "star": 1, "unit": "① Guam", "accept": ["conquer"]}, {"en": "mercilessly", "pos": "adv", "ja": "無慈悲に", "note": "n. mercy＝慈悲", "star": 1, "unit": "① Guam", "accept": ["mercilessly"]}, {"en": "labor", "pos": "n", "ja": "労働", "note": "", "star": 0, "unit": "① Guam", "accept": ["labor"]}, {"en": "rape", "pos": "n/v", "ja": "性的暴行（を加える）", "note": "", "star": 0, "unit": "① Guam", "accept": ["rape"]}, {"en": "comfort", "pos": "n", "ja": "慰め、快適さ", "note": "", "star": 0, "unit": "① Guam", "accept": ["comfort"]}, {"en": "a comfort woman", "pos": "n", "ja": "慰安婦", "note": "直截（ちょくせつ）的に sex slave と書く場合も", "star": 0, "unit": "① Guam", "accept": ["a comfort woman"]}, {"en": "torture", "pos": "v/n", "ja": "拷問する／拷問", "note": "", "star": 1, "unit": "① Guam", "accept": ["torture"]}, {"en": "whistle", "pos": "v/n", "ja": "口笛を吹く／口笛", "note": "スペル注意！", "star": 1, "unit": "① Guam", "accept": ["whistle"]}, {"en": "bow", "pos": "v/n", "ja": "お辞儀する／お辞儀", "note": "発音注意。同じつづりで「弓」にもなるが発音が異なる", "star": 1, "unit": "① Guam", "accept": ["bow"]}, {"en": "pass by", "pos": "idi", "ja": "通り過ぎる、（時が）経つ", "note": "adv. by：そばを", "star": 0, "unit": "① Guam", "accept": ["pass by"]}, {"en": "shed a tear / tears", "pos": "v-n", "ja": "涙を流す", "note": "shed – shed – shed", "star": 1, "unit": "① Guam", "accept": ["shed a tear", "shed tears"]}, {"en": "atrocity", "pos": "n", "ja": "残虐行為", "note": "", "star": 1, "unit": "① Germany", "accept": ["atrocity"]}, {"en": "regarding", "pos": "前置詞", "ja": "〜に関して", "note": "", "star": 1, "unit": "① Germany", "accept": ["regarding"]}, {"en": "psychology", "pos": "n", "ja": "心理学", "note": "", "star": 0, "unit": "① Germany", "accept": ["psychology"]}, {"en": "group pressure", "pos": "n", "ja": "集団圧力", "note": "cf. peer pressure がより一般的", "star": 0, "unit": "① Germany", "accept": ["group pressure"]}, {"en": "fascism", "pos": "n", "ja": "ファシズム", "note": "", "star": 0, "unit": "① Germany", "accept": ["fascism"]}, {"en": "involvement", "pos": "n", "ja": "関与、巻き込むこと", "note": "v. involve", "star": 0, "unit": "① Germany", "accept": ["involvement"]}, {"en": "topple", "pos": "v", "ja": "倒す、崩壊させる", "note": "大きくそびえたっていた物がバタンと倒れるイメージ。建物や権力に使う", "star": 1, "unit": "① Germany", "accept": ["topple"]}, {"en": "democratic", "pos": "adj", "ja": "民主的な", "note": "n. democracy", "star": 0, "unit": "① Germany", "accept": ["democratic"]}, {"en": "cover", "pos": "v", "ja": "扱う", "note": "「覆う」が普通だが、cover a topic など文脈で判断", "star": 0, "unit": "① Germany", "accept": ["cover"]}, {"en": "context", "pos": "n", "ja": "文脈", "note": "context matters＝文脈は重要である", "star": 1, "unit": "① Germany", "accept": ["context"]}, {"en": "In this/that context", "pos": "idi", "ja": "この（その）文脈では", "note": "on ではない", "star": 0, "unit": "① Germany", "accept": ["In this context", "In that context"]}, {"en": "in general", "pos": "idi", "ja": "一般的に", "note": "in generally にしないこと", "star": 0, "unit": "① Germany", "accept": ["in general"]}, {"en": "subject", "pos": "n", "ja": "主題、テーマ", "note": "ここでは「主題」", "star": 0, "unit": "① Germany", "accept": ["subject"]}, {"en": "technically", "pos": "adv", "ja": "厳密に言えば、専門的に", "note": "口語では大半が「厳密にいえば」。technically speaking が由来", "star": 1, "unit": "① Extra Reading: USA", "accept": ["technically"]}, {"en": "radiation", "pos": "n", "ja": "放射線", "note": "", "star": 0, "unit": "① Extra Reading: USA", "accept": ["radiation"]}, {"en": "necessary evil", "pos": "表現", "ja": "必要悪", "note": "", "star": 0, "unit": "① Extra Reading: USA", "accept": ["necessary evil"]}, {"en": "decade", "pos": "n", "ja": "10年間", "note": "100年、世紀＝century", "star": 0, "unit": "② Introduction", "accept": ["decade"]}, {"en": "controversy", "pos": "n", "ja": "議論、論争", "note": "adj. controversial", "star": 1, "unit": "② Introduction", "accept": ["controversy"]}, {"en": "misinformation", "pos": "n", "ja": "誤情報", "note": "", "star": 0, "unit": "② Introduction", "accept": ["misinformation"]}, {"en": "anniversary", "pos": "n", "ja": "周年、記念日", "note": "めでたくないものにも使う", "star": 0, "unit": "② Introduction", "accept": ["anniversary"]}, {"en": "present", "pos": "v", "ja": "提示する、贈る、発表する", "note": "名詞だけじゃないぞ", "star": 0, "unit": "② Introduction", "accept": ["present"]}, {"en": "opportunity", "pos": "n", "ja": "機会", "note": "opportunity to A の形でよく使う", "star": 0, "unit": "② Introduction", "accept": ["opportunity"]}, {"en": "myth", "pos": "n", "ja": "神話、作り話", "note": "発音注意！Greek myth＝ギリシャ神話", "star": 1, "unit": "② Introduction", "accept": ["myth"]}, {"en": "surrender", "pos": "n", "ja": "降伏", "note": "前回の文章では動詞で登場。名詞も動詞も形・発音は同じ", "star": 0, "unit": "② Myth 1: The bomb ended the war.", "accept": ["surrender"]}, {"en": "virtually", "pos": "adv", "ja": "実質的に、ほとんど", "note": "「仮想の」の意味もあるが、virtual＝「電子的」のイメージだけで覚えるのは危険", "star": 1, "unit": "② Myth 1: The bomb ended the war.", "accept": ["virtually"]}, {"en": "default", "pos": "n", "ja": "普通、初期設定、デフォルト", "note": "the default understanding＝共通認識（基本認識）", "star": 1, "unit": "② Myth 1: The bomb ended the war.", "accept": ["default"]}, {"en": "conclude", "pos": "v", "ja": "結論づける", "note": "n. conclusion", "star": 1, "unit": "② Myth 1: The bomb ended the war.", "accept": ["conclude"]}, {"en": "unexpected", "pos": "adj", "ja": "予期しない", "note": "expect＝期待する・予期する", "star": 0, "unit": "② Myth 1: The bomb ended the war.", "accept": ["unexpected"]}, {"en": "entry", "pos": "n", "ja": "参加、入場", "note": "v. enter", "star": 0, "unit": "② Myth 1: The bomb ended the war.", "accept": ["entry"]}, {"en": "previously", "pos": "adv", "ja": "以前に", "note": "adj. previous", "star": 1, "unit": "② Myth 1: The bomb ended the war.", "accept": ["previously"]}, {"en": "nonaggression", "pos": "n", "ja": "不可侵", "note": "aggression＝侵略・攻撃", "star": 0, "unit": "② Myth 1: The bomb ended the war.", "accept": ["nonaggression"]}, {"en": "pact", "pos": "n", "ja": "条約", "note": "nonaggression pact＝不可侵条約", "star": 1, "unit": "② Myth 1: The bomb ended the war.", "accept": ["pact"]}, {"en": "negotiate", "pos": "v", "ja": "交渉する", "note": "n. negotiation", "star": 0, "unit": "② Myth 1: The bomb ended the war.", "accept": ["negotiate"]}, {"en": "post-", "pos": "接頭辞", "ja": "〜の後の、〜以後の", "note": "", "star": 0, "unit": "② Myth 2: The bomb saved half a million American lives.", "accept": ["post-", "post"]}, {"en": "postwar", "pos": "adj", "ja": "戦後の", "note": "", "star": 0, "unit": "② Myth 2: The bomb saved half a million American lives.", "accept": ["postwar"]}, {"en": "former", "pos": "adj", "ja": "前の、かつての、前者の", "note": "former ⇔ latter", "star": 1, "unit": "② Myth 2: The bomb saved half a million American lives.", "accept": ["former"]}, {"en": "military", "pos": "n/adj", "ja": "軍／軍事的な", "note": "カタカナで「ミリタリー」と言うとファッション用語になる", "star": 0, "unit": "② Myth 2: The bomb saved half a million American lives.", "accept": ["military"]}, {"en": "invasion", "pos": "n", "ja": "侵略", "note": "invader＝侵略者", "star": 0, "unit": "② Myth 2: The bomb saved half a million American lives.", "accept": ["invasion"]}, {"en": "figure", "pos": "n", "ja": "数字、人物、容姿", "note": "図・姿など、様々な意味がある単語", "star": 0, "unit": "② Myth 2: The bomb saved half a million American lives.", "accept": ["figure"]}, {"en": "canonical", "pos": "adj", "ja": "規範的な、正典の", "note": "canon＝正典", "star": 0, "unit": "② Myth 2: The bomb saved half a million American lives.", "accept": ["canonical"]}, {"en": "seek", "pos": "v", "ja": "探し求める", "note": "手を伸ばしながら追いかけるイメージ", "star": 0, "unit": "② Myth 2: The bomb saved half a million American lives.", "accept": ["seek"]}, {"en": "justify", "pos": "v", "ja": "正当化する", "note": "justice＝正義", "star": 1, "unit": "② Myth 2: The bomb saved half a million American lives.", "accept": ["justify"]}, {"en": "be supported by A", "pos": "語法", "ja": "Aによって支持される（裏づけられる）", "note": "be supported by data", "star": 0, "unit": "② Myth 2: The bomb saved half a million American lives.", "accept": ["be supported by"]}, {"en": "estimate", "pos": "n", "ja": "見積もり、評価", "note": "", "star": 0, "unit": "② Myth 2: The bomb saved half a million American lives.", "accept": ["estimate"]}, {"en": "note", "pos": "v", "ja": "注意する、気付く、記す", "note": "", "star": 0, "unit": "② Myth 2: The bomb saved half a million American lives.", "accept": ["note"]}, {"en": "committee", "pos": "n", "ja": "委員会", "note": "", "star": 0, "unit": "② Myth 2: The bomb saved half a million American lives.", "accept": ["committee"]}, {"en": "set", "pos": "v", "ja": "設置する、配置する、決める", "note": "The invasion was set to begin Nov. 1.＝侵略は11月1日に行われることが決まった", "star": 0, "unit": "② Myth 2: The bomb saved half a million American lives.", "accept": ["set"]}, {"en": "result in A", "pos": "語法", "ja": "結果としてAになる", "note": "", "star": 1, "unit": "② Myth 2: The bomb saved half a million American lives.", "accept": ["result in"]}, {"en": "casualty", "pos": "n", "ja": "死傷者、犠牲者", "note": "複数形 casualties", "star": 1, "unit": "② Myth 2: The bomb saved half a million American lives.", "accept": ["casualty"]}, {"en": "GI", "pos": "n", "ja": "米兵", "note": "Government Issue の略だが「米兵」の俗称", "star": 0, "unit": "② Myth 2: The bomb saved half a million American lives.", "accept": ["GI", "G.I."]}, {"en": "face", "pos": "v", "ja": "直面する", "note": "", "star": 0, "unit": "② Myth 2: The bomb saved half a million American lives.", "accept": ["face"]}, {"en": "wrath", "pos": "n", "ja": "激怒、怒り", "note": "The Seven Deadly Sins（7つの大罪）：pride, greed, lust, envy, gluttony, wrath, sloth", "star": 0, "unit": "② Myth 2: The bomb saved half a million American lives.", "accept": ["wrath"]}, {"en": "alternative", "pos": "n", "ja": "代替案、代わりの選択肢", "note": "The alternative to A is B.＝Aの代案はBである", "star": 1, "unit": "② Myth 3: The only alternative to the bomb was an invasion of Japan.", "accept": ["alternative"]}, {"en": "decision", "pos": "n", "ja": "決定、決心", "note": "v. decide", "star": 0, "unit": "② Myth 3: The only alternative to the bomb was an invasion of Japan.", "accept": ["decision"]}, {"en": "either-or / either/or", "pos": "表現", "ja": "二者択一（の）", "note": "口語ではよく使うが、文面ではあまり使わない", "star": 0, "unit": "② Myth 3: The only alternative to the bomb was an invasion of Japan.", "accept": ["either-or", "either/or"]}, {"en": "beyond", "pos": "前置詞", "ja": "〜を超えて、〜の向こうに", "note": "To infinity and beyond!＝無限の更に向こうへ", "star": 1, "unit": "② Myth 3: The only alternative to the bomb was an invasion of Japan.", "accept": ["beyond"]}, {"en": "naval", "pos": "adj", "ja": "海軍の", "note": "n. navy＝海軍", "star": 0, "unit": "② Myth 3: The only alternative to the bomb was an invasion of Japan.", "accept": ["naval"]}, {"en": "blockade", "pos": "n", "ja": "封鎖、閉鎖", "note": "block 由来の単語", "star": 0, "unit": "② Myth 3: The only alternative to the bomb was an invasion of Japan.", "accept": ["blockade"]}, {"en": "demonstration", "pos": "n", "ja": "デモ、実演、意思表示", "note": "抗議活動の「デモ」という意味もある", "star": 0, "unit": "② Myth 3: The only alternative to the bomb was an invasion of Japan.", "accept": ["demonstration"]}, {"en": "explode", "pos": "v", "ja": "爆発する", "note": "感情が爆発する時も使える。His anger exploded.", "star": 0, "unit": "② Myth 3: The only alternative to the bomb was an invasion of Japan.", "accept": ["explode"]}, {"en": "desert", "pos": "adj", "ja": "人の住まない、見捨てられた", "note": "発音注意。名詞だと砂漠だが、desert island は「砂漠島」ではなく「無人島」", "star": 1, "unit": "② Myth 3: The only alternative to the bomb was an invasion of Japan.", "accept": ["desert"]}, {"en": "observer", "pos": "n", "ja": "観察者", "note": "v. observe", "star": 0, "unit": "② Myth 3: The only alternative to the bomb was an invasion of Japan.", "accept": ["observer"]}, {"en": "option", "pos": "n", "ja": "選択肢、オプション", "note": "もとは「付けなくてもいい選択肢」という意味", "star": 0, "unit": "② Myth 3: The only alternative to the bomb was an invasion of Japan.", "accept": ["option"]}, {"en": "reject", "pos": "v", "ja": "拒絶する", "note": "refuse よりも強く・冷たい", "star": 1, "unit": "② Myth 3: The only alternative to the bomb was an invasion of Japan.", "accept": ["reject"]}, {"en": "available", "pos": "adj", "ja": "手に入る、利用可能な", "note": "色々な文脈で使う", "star": 1, "unit": "② Myth 3: The only alternative to the bomb was an invasion of Japan.", "accept": ["available"]}, {"en": "dud", "pos": "n", "ja": "不発弾", "note": "湿気た花火に対して使ったりも", "star": 0, "unit": "② Myth 3: The only alternative to the bomb was an invasion of Japan.", "accept": ["dud"]}, {"en": "accept", "pos": "v", "ja": "受け入れる", "note": "", "star": 0, "unit": "② Myth 3: The only alternative to the bomb was an invasion of Japan.", "accept": ["accept"]}, {"en": "conditional", "pos": "adj", "ja": "条件つきの", "note": "⇔ unconditional", "star": 1, "unit": "② Myth 3: The only alternative to the bomb was an invasion of Japan.", "accept": ["conditional"]}, {"en": "be concerned about A", "pos": "表現", "ja": "Aについて心配している", "note": "", "star": 0, "unit": "② Myth 3: The only alternative to the bomb was an invasion of Japan.", "accept": ["be concerned about"]}, {"en": "war criminal", "pos": "n", "ja": "戦争犯罪者", "note": "", "star": 0, "unit": "② Myth 3: The only alternative to the bomb was an invasion of Japan.", "accept": ["war criminal"]}, {"en": "ultimately", "pos": "adv", "ja": "最終的に", "note": "ultimate＝最後の・最終の・最高の", "star": 1, "unit": "② Myth 3: The only alternative to the bomb was an invasion of Japan.", "accept": ["ultimately"]}, {"en": "clause", "pos": "n", "ja": "条項、節", "note": "天皇の処遇に関する条項は日本の意向が尊重された、という文", "star": 0, "unit": "② Myth 3: The only alternative to the bomb was an invasion of Japan.", "accept": ["clause"]}, {"en": "grant", "pos": "v", "ja": "与える、認める", "note": "give よりも上下関係が明確。上から「与えてもらっている」", "star": 0, "unit": "② Myth 3: The only alternative to the bomb was an invasion of Japan.", "accept": ["grant"]}, {"en": "warn", "pos": "v", "ja": "警告する", "note": "n. warning", "star": 1, "unit": "② Myth 4: The Japanese were warned before the bomb was dropped.", "accept": ["warn"]}, {"en": "demand", "pos": "v", "ja": "要求する", "note": "want よりもかなり強め", "star": 0, "unit": "② Myth 4: The Japanese were warned before the bomb was dropped.", "accept": ["demand"]}, {"en": "leaflet", "pos": "n", "ja": "ちらし、リーフレット", "note": "冊子になると pamphlet", "star": 0, "unit": "② Myth 4: The Japanese were warned before the bomb was dropped.", "accept": ["leaflet"]}, {"en": "prompt", "pos": "adj", "ja": "迅速な、即座の", "note": "", "star": 1, "unit": "② Myth 4: The Japanese were warned before the bomb was dropped.", "accept": ["prompt"]}, {"en": "utter", "pos": "adj", "ja": "完全な、まったくの", "note": "utter chaos＝全くの大混乱、utter failure＝完全な敗北", "star": 1, "unit": "② Myth 4: The Japanese were warned before the bomb was dropped.", "accept": ["utter"]}, {"en": "address", "pos": "n", "ja": "住所、演説", "note": "動詞もあり、幅広い意味のある単語なので注意", "star": 0, "unit": "② Myth 4: The Japanese were warned before the bomb was dropped.", "accept": ["address"]}, {"en": "coming", "pos": "adj", "ja": "来るべき、次の、今度の", "note": "the coming A / this coming A の形で使われるのが一般的", "star": 0, "unit": "② Myth 4: The Japanese were warned before the bomb was dropped.", "accept": ["coming"]}, {"en": "ruin", "pos": "n", "ja": "破滅、廃墟", "note": "v. ruin＝台無しにする", "star": 0, "unit": "② Myth 4: The Japanese were warned before the bomb was dropped.", "accept": ["ruin"]}, {"en": "the like", "pos": "n", "ja": "同類のもの", "note": "like は「類似の」「様な」「好き」など様々な意味があるので注意", "star": 0, "unit": "② Myth 4: The Japanese were warned before the bomb was dropped.", "accept": ["the like"]}, {"en": "the like of ~", "pos": "語法", "ja": "〜のようなもの", "note": "", "star": 0, "unit": "② Myth 4: The Japanese were warned before the bomb was dropped.", "accept": ["the like of"]}, {"en": "civilian", "pos": "n", "ja": "一般市民、民間人", "note": "軍人や軍の物と比較して使う", "star": 1, "unit": "② Myth 4: The Japanese were warned before the bomb was dropped.", "accept": ["civilian"]}, {"en": "meaningfully", "pos": "adv", "ja": "有意義に、意味深く", "note": "「意味のある（ちゃんとした）忠告をしたぞ」という文脈", "star": 0, "unit": "② Myth 4: The Japanese were warned before the bomb was dropped.", "accept": ["meaningfully"]}, {"en": "specific", "pos": "adj", "ja": "特定の、具体的な", "note": "v. specify＝明確にする", "star": 1, "unit": "② Myth 4: The Japanese were warned before the bomb was dropped.", "accept": ["specific"]}, {"en": "forewarn", "pos": "v", "ja": "前もって警告する", "note": "warn（警告する）に fore-（前方の）が付いたもの", "star": 0, "unit": "② Myth 4: The Japanese were warned before the bomb was dropped.", "accept": ["forewarn"]}, {"en": "incendiary", "pos": "n/adj", "ja": "焼夷弾／焼夷性の", "note": "incendiary が bomb にかかる形容詞と考えることもできる", "star": 0, "unit": "② Myth 4: The Japanese were warned before the bomb was dropped.", "accept": ["incendiary"]}, {"en": "on a regular basis", "pos": "idi", "ja": "定期的に、日常的に", "note": "よく使う！", "star": 1, "unit": "② Myth 4: The Japanese were warned before the bomb was dropped.", "accept": ["on a regular basis"]}, {"en": "notice", "pos": "n", "ja": "通知、掲示、注意", "note": "v. notice＝気づく", "star": 0, "unit": "② Myth 4: The Japanese were warned before the bomb was dropped.", "accept": ["notice"]}, {"en": "time", "pos": "v", "ja": "タイミングを合わせる、時間を計る", "note": "名詞としっかり見分けよう", "star": 0, "unit": "② Myth 5: The bomb was timed to gain a diplomatic advantage over Russia.", "accept": ["time"]}, {"en": "historiography", "pos": "n", "ja": "歴史記述、歴史学", "note": "単に history でOKの場合もある", "star": 0, "unit": "② Myth 5: The bomb was timed to gain a diplomatic advantage over Russia.", "accept": ["historiography"]}, {"en": "policy", "pos": "n", "ja": "政策、方針", "note": "カタカナだと「主義」のように使う人もいるが、その訳は辞書には載ってない", "star": 0, "unit": "② Myth 5: The bomb was timed to gain a diplomatic advantage over Russia.", "accept": ["policy"]}, {"en": "conflict", "pos": "n", "ja": "争い、対立", "note": "v. conflict＝争う・相いれない・矛盾する", "star": 1, "unit": "② Myth 5: The bomb was timed to gain a diplomatic advantage over Russia.", "accept": ["conflict"]}, {"en": "significant", "pos": "adj", "ja": "重要な、かなりの", "note": "", "star": 1, "unit": "② Myth 5: The bomb was timed to gain a diplomatic advantage over Russia.", "accept": ["significant"]}, {"en": "settlement", "pos": "n", "ja": "解決、合意", "note": "peace settlement＝和約", "star": 0, "unit": "② Myth 5: The bomb was timed to gain a diplomatic advantage over Russia.", "accept": ["settlement"]}, {"en": "impress", "pos": "v", "ja": "感銘を与える、印象づける", "note": "n. impression", "star": 0, "unit": "② Myth 5: The bomb was timed to gain a diplomatic advantage over Russia.", "accept": ["impress"]}, {"en": "diplomatic", "pos": "adj", "ja": "外交的な、外交の", "note": "n. diplomat＝外交官。もよく出るので覚えよう", "star": 1, "unit": "② Myth 5: The bomb was timed to gain a diplomatic advantage over Russia.", "accept": ["diplomatic"]}, {"en": "dictate", "pos": "v", "ja": "決定する、左右する、命令する", "note": "物が主語でも使う。The weather will dictate our vacation plans.", "star": 1, "unit": "② Myth 5: The bomb was timed to gain a diplomatic advantage over Russia.", "accept": ["dictate"]}, {"en": "consideration", "pos": "n", "ja": "考慮、思いやり", "note": "v. consider", "star": 0, "unit": "② Myth 5: The bomb was timed to gain a diplomatic advantage over Russia.", "accept": ["consideration"]}, {"en": "Secretary of ~", "pos": "表現", "ja": "〜長官、〜大臣", "note": "secretary は「秘書」のほか「大臣」「長官」の意味もある幅広い単語", "star": 0, "unit": "② Myth 5: The bomb was timed to gain a diplomatic advantage over Russia.", "accept": ["Secretary of"]}, {"en": "prove to be A", "pos": "idi", "ja": "Aであるとわかる", "note": "The test proved to be too difficult.＝試験が難しすぎることが分かった", "star": 1, "unit": "② Myth 5: The bomb was timed to gain a diplomatic advantage over Russia.", "accept": ["prove to be"]}, {"en": "dealings", "pos": "n", "ja": "取引、関係", "note": "", "star": 0, "unit": "② Myth 5: The bomb was timed to gain a diplomatic advantage over Russia.", "accept": ["dealings"]}], "units": ["① Singapore", "① Indonesia", "① Guam", "① Germany", "① Extra Reading: USA", "② Introduction", "② Myth 1: The bomb ended the war.", "② Myth 2: The bomb saved half a million American lives.", "② Myth 3: The only alternative to the bomb was an invasion of Japan.", "② Myth 4: The Japanese were warned before the bomb was dropped.", "② Myth 5: The bomb was timed to gain a diplomatic advantage over Russia."]};
+const KEY = "ea-typing-demo";
+const app = document.getElementById("app");
+
+let rec = {};                 // en → "ok" / "ng"（この端末だけ）
+try { rec = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { rec = {}; }
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(rec)); } catch (e) {} };
+
+function el(tag, attrs, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (k === "class") e.className = v;
+    else if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
+    else if (v === true) e.setAttribute(k, "");
+    else if (v !== false && v != null) e.setAttribute(k, v);
+  }
+  for (const c of kids.flat(Infinity)) if (c != null && c !== false) e.append(c);
+  return e;
+}
+const show = (...n) => { app.replaceChildren(...n); window.scrollTo(0, 0); };
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+/* ── 採点 ───────────────────────────────── */
+// 大文字小文字・句読点は無視、ハイフンとスラッシュは空白と同じ
+const norm = s => s.toLowerCase().replace(/[‐‑–—−]/g, "-").replace(/[-/]/g, " ")
+  .replace(/[~〜….,!?'"’“”()]/g, "").replace(/\s+/g, " ").trim();
+const noArticle = s => s.replace(/\b(a|an|the)\b/g, " ").replace(/\s+/g, " ").trim();
+function dist(a, b) {
+  const d = Array.from({ length: a.length + 1 }, (_, i) => [i, ...Array(b.length).fill(0)]);
+  for (let j = 1; j <= b.length; j++) d[0][j] = j;
+  for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++)
+    d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+  return d[a.length][b.length];
+}
+function grade(input, w) {
+  const n = norm(input);
+  const accs = w.accept.map(a => [a, norm(a)]);
+  for (const [a, t] of accs) if (t === n) return { ok: true, target: a };
+  // 冠詞の有無は大目に見る（ただし the like → like のように1語になってしまうものは除く）
+  for (const [a, t] of accs) if (noArticle(t).includes(" ") && noArticle(t) === noArticle(n)) return { ok: true, target: a, note: "冠詞（a / the）の有無は区別していません" };
+  let best = accs[0], bd = Infinity;
+  for (const x of accs) { const v = dist(n, x[1]); if (v < bd) { bd = v; best = x; } }
+  return { ok: false, target: best[0], near: bd <= 2 && best[1].length >= 4, d: bd };
+}
+// 打った答えと正解を1文字ずつ見比べ、余計な文字・足りない文字に印を付ける（LCS）
+function diff(you, ans) {
+  const a = you.toLowerCase(), b = ans.toLowerCase();
+  const L = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
+  for (let i = a.length - 1; i >= 0; i--) for (let j = b.length - 1; j >= 0; j--)
+    L[i][j] = a[i] === b[j] ? L[i + 1][j + 1] + 1 : Math.max(L[i + 1][j], L[i][j + 1]);
+  const ka = new Set(), kb = new Set();
+  for (let i = 0, j = 0; i < a.length && j < b.length;) {
+    if (a[i] === b[j]) { ka.add(i); kb.add(j); i++; j++; }
+    else if (L[i + 1][j] >= L[i][j + 1]) i++; else j++;
+  }
+  const mark = (s, keep, cls) => [...s].map((c, i) => keep.has(i) || c === " " ? c : el("span", { class: cls }, c));
+  return { you: mark(you, ka, "x"), ans: mark(ans, kb, "m") };
+}
+
+/* ── 設定 ───────────────────────────────── */
+const opt = { unit: "all", count: 10, star: false, wrong: false };
+function pool() {
+  return DATA.words.filter(w => (opt.unit === "all" || w.unit === opt.unit) && (!opt.star || w.star) && (!opt.wrong || rec[w.en] === "ng"));
+}
+function setup() {
+  const chip = (label, on, fn) => el("button", { class: "chip", type: "button", "aria-pressed": String(on), onclick: () => { fn(); setup(); } }, label);
+  const ok = Object.values(rec).filter(v => v === "ok").length, ng = Object.values(rec).filter(v => v === "ng").length;
+  const n = pool().length;
+  show(
+    el("header", null,
+      el("div", { class: "eyebrow" }, "二学期中間テスト（高1）・English A"),
+      el("h1", null, "日英タイピング", el("span", { class: "demo" }, "デモ")),
+      el("p", { class: "lead" }, "日本語と品詞を見て、英語をキーボードで打ちます。答え合わせは自動。まちがえた文字に色が付きます。")),
+    el("div", { class: "panel" },
+      el("div", { class: "label" }, "単元"),
+      el("div", { class: "chips" },
+        chip("全単元", opt.unit === "all", () => opt.unit = "all"),
+        DATA.units.map(u => chip(u.replace(/^(①|②) /, "$1").replace(/: .*/, ""), opt.unit === u, () => opt.unit = u))),
+      el("div", { class: "label" }, "問題数"),
+      el("div", { class: "chips" },
+        [10, 20, 0].map(c => chip(c ? `${c}問` : "全部", opt.count === c, () => opt.count = c))),
+      el("div", { class: "label" }, "しぼりこみ"),
+      el("div", { class: "chips" },
+        chip("★重要だけ", opt.star, () => opt.star = !opt.star),
+        chip(`×の単語だけ（${ng}語）`, opt.wrong, () => opt.wrong = !opt.wrong)),
+      el("div", { class: "stat" }, "出題できる単語 ", el("b", null, n), " 語　これまで ○ ", el("b", null, ok), "　× ", el("b", null, ng)),
+      el("button", { class: "btn main", type: "button", disabled: !n, onclick: () => start(shuffle(pool()).slice(0, opt.count || undefined)) }, "スタート")),
+    el("ul", { class: "rules" },
+      el("li", null, "大文字・小文字、最後のピリオド、ハイフンの有無は区別しません。"),
+      el("li", null, "「~」「A」「...」のような記号の部分は打たなくてOK（例：result in A → result in）。"),
+      el("li", null, "「/」で並んでいる言い方は、どれを打っても正解（例：in this context / in that context）。"),
+      el("li", null, "スマホは英字キーボードに切り替えて使ってください。予測変換がじゃまなときはオフに。"),
+      el("li", null, "このデモの記録は、本番のEAページの○×とは別に、この端末だけに残ります。")),
+    ok + ng ? el("button", { class: "link", type: "button", onclick: () => { rec = {}; save(); setup(); } }, "このデモの記録を消す") : null);
+}
+
+/* ── 出題 ───────────────────────────────── */
+let q = null;
+function start(list) {
+  q = { list, i: 0, state: "input", hint: 0, hints: 0, res: [], last: null };
+  card();
+}
+function masked(ans, k) {
+  let shown = 0;
+  return [...ans].map(c => /[a-z]/i.test(c) ? (shown++ < k ? c : "＿") : c).join("");
+}
+function card() {
+  const w = q.list[q.i], first = w.accept[0];
+  const letters = first.replace(/[^a-z]/gi, "").length;
+  const input = el("input", { class: "type" + (q.state === "done" ? (q.last.ok ? " ok" : " ng") : ""), id: "answer", type: "text",
+    autocomplete: "off", autocapitalize: "none", autocorrect: "off", spellcheck: "false", lang: "en", enterkeyhint: "done",
+    "aria-label": "英語で答える", placeholder: "英語で入力", disabled: q.state === "done" });
+  if (q.typed) input.value = q.typed;
+  const body = [
+    el("div", { class: "meta" }, el("span", null, w.unit), w.star ? el("span", null, "★重要") : null,
+      q.state !== "input" ? null : rec[w.en] === "ng" ? el("span", null, "前回 ×") : rec[w.en] === "ok" ? el("span", null, "前回 ○") : null),
+    el("div", { class: "ja" }, w.ja, el("small", null, `（${w.pos}）`)),
+    input,
+  ];
+  if (q.state === "input") {
+    if (q.hint) body.push(el("div", { class: "mask", "aria-label": "ヒント" }, masked(first, q.hint)));
+    body.push(el("div", { class: "row" },
+      el("button", { class: "btn main", type: "button", onclick: submit }, "答え合わせ"),
+      el("button", { class: "btn", type: "button", disabled: q.hint >= letters, onclick: () => { q.typed = input.value; q.hint++; if (q.hint === 1) q.hints++; card(); } },
+        q.hint ? "もう1文字" : "ヒント"),
+      el("button", { class: "btn", type: "button", onclick: () => { q.typed = input.value; giveUp(); } }, "わからない")));
+  } else {
+    const r = q.last;
+    const v = el("div", { class: "verdict " + (r.ok ? "ok" : r.near ? "near" : "ng") });
+    if (r.ok) {
+      v.append(el("div", { class: "head" }, "○ 正解"), el("div", { class: "mono" }, w.en));
+      if (r.note) v.append(el("div", { class: "memo" }, r.note));
+    } else {
+      const dd = diff(q.typed || "", r.target);
+      v.append(el("div", { class: "head" }, r.giveUp ? "答え" : r.near ? "△ 惜しい！つづりを確認" : "× ちがいます"),
+        el("div", { class: "cmp" },
+          r.giveUp ? null : [el("span", null, "あなた"), el("span", { class: "mono" }, dd.you)],
+          el("span", null, "正解"), el("span", { class: "mono" }, r.giveUp ? r.target : dd.ans)));
+      if (w.en !== r.target) v.append(el("div", { class: "memo" }, `単語集の表記：${w.en}`));
+    }
+    body.push(v);
+    if (w.note) body.push(el("div", { class: "memo" }, `メモ：${w.note}`));
+    body.push(el("button", { class: "btn main", type: "button", id: "next", onclick: next }, q.i + 1 < q.list.length ? "次へ" : "結果を見る"));
+    if (!r.ok && !r.giveUp) body.push(el("button", { class: "link", type: "button", onclick: override }, "これも正解にする（自分で判定）"));
+  }
+  show(
+    el("div", { class: "top" },
+      el("button", { class: "back", type: "button", onclick: () => { q = null; setup(); } }, "← 設定"),
+      el("span", { class: "count" }, `${q.i + 1} / ${q.list.length}`)),
+    el("div", { class: "bar", "aria-hidden": "true" }, el("i", { style: `width:${q.i / q.list.length * 100}%` })),
+    el("div", { class: "card" }, body),
+    el("div", { class: "keys" }, q.state === "input" ? "Enter＝答え合わせ" : "Enter＝次へ"));
+  if (q.state === "input") { input.focus({ preventScroll: true }); input.setSelectionRange(input.value.length, input.value.length); }
+}
+function record(ok) {
+  const w = q.list[q.i];
+  rec[w.en] = ok ? "ok" : "ng"; save();
+  q.res[q.i] = { w, ok, hinted: q.hint > 0 };
+}
+function submit() {
+  const v = document.getElementById("answer").value;
+  if (!norm(v)) return;
+  q.typed = v;
+  q.last = grade(v, q.list[q.i]);
+  q.state = "done";
+  record(q.last.ok);
+  card();
+}
+function giveUp() {
+  q.last = { ok: false, giveUp: true, target: q.list[q.i].accept[0] };
+  q.state = "done";
+  record(false);
+  card();
+}
+function override() {
+  q.last = { ok: true, note: "自分で正解にしました" };
+  record(true);
+  card();
+}
+function next() {
+  q.i++; q.state = "input"; q.hint = 0; q.typed = ""; q.last = null;
+  if (q.i >= q.list.length) return result();
+  card();
+}
+document.addEventListener("keydown", e => {
+  if (!q || e.key !== "Enter" || e.isComposing) return;
+  e.preventDefault();
+  if (q.state === "input" && e.target.id === "answer") submit();
+  else if (q.state === "done") next();
+});
+
+/* ── 結果 ───────────────────────────────── */
+function result() {
+  const res = q.res, ok = res.filter(r => r.ok).length, wrong = res.filter(r => !r.ok).map(r => r.w);
+  const hinted = res.filter(r => r.hinted).length;
+  q = null;
+  show(
+    el("div", { class: "top" }, el("button", { class: "back", type: "button", onclick: setup }, "← 設定"), el("span", null)),
+    el("div", { class: "panel" },
+      el("div", { class: "big" }, `${ok} / ${res.length}`),
+      el("div", { class: "stat", style: "text-align:center" }, `ヒントを使った問題 ${hinted}`),
+      wrong.length ? el("button", { class: "btn main", type: "button", onclick: () => start(shuffle(wrong)) }, `まちがえた ${wrong.length}語をもう一度`) : null,
+      el("button", { class: wrong.length ? "btn" : "btn main", type: "button", onclick: setup }, "設定に戻る")),
+    wrong.length ? el("div", { class: "label" }, "まちがえた単語") : null,
+    wrong.length ? el("ul", { class: "list" }, wrong.map(w => el("li", null, el("span", { class: "ja2" }, w.ja), el("span", { class: "en" }, w.en)))) : null);
+}
+
+setup();
+</script>

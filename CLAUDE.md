@@ -74,6 +74,8 @@
 | 古文 | https://claude.ai/artifact/1s6zmcm1JivHFLvxzV1Fzj |
 | EA | https://claude.ai/artifact/MzPrcQJPLkEKqTse7HPzWT |
 
+デモ（本番とは別ページ）: EA 日英タイピング https://claude.ai/artifact/Ti2jb3P979n2LGvvtxKTT5 … `python3 tools/build_typing_demo.py` で `share/typing_demo_template.html` から `share/ea-typing-demo.html` を生成（採点ルールはスクリプト冒頭のコメント）
+
 ## 教材の受け取り
 
 - チャットに添付された教材（写真・PDF）は `materials/<教科>/` に保存してコミットする。ファイル名は `YYYYMMDD-内容.拡張子`（例: `20261016-kobun-honbun-1.jpg`）
