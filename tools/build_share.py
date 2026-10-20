@@ -14,6 +14,7 @@ section に "group" があると、ページのメニューにグループごと
 import json
 import pathlib
 
+import figures
 import vocab
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -68,6 +69,10 @@ def main():
         main = [d for d in drills if d.get("kind") != "jiji"] or drills
         jiji = [d for d in drills if d.get("kind") == "jiji"]
         sections = [s for d in main for s in d["sections"]]
+        # 図つきの選択問題（辞書の問題）は SVG を作って持たせる
+        sections = [{**s, "items": [{**it, "svg": figures.render(it)} if isinstance(it, dict) else it
+                                    for it in s["items"]]} for s in sections]
+        has_map = any(isinstance(it, dict) and "map" in it.get("fig", {}) for s in sections for it in s["items"])
         sections += [{**s, "group": "時事問題"} for d in jiji for s in d["sections"]]
         group_notes = {k: v for d in main for k, v in d.get("group_notes", {}).items()}
         if jiji:
@@ -90,6 +95,7 @@ def main():
                    .replace("__ACCENT_SOFT_DARK__", mix(dark, "#1a201d", 0.16))
                    .replace("__ACCENT_LIGHT__", light)
                    .replace("__ACCENT_DARK__", dark)
+                   .replace("<!--__FIG_DEFS__-->", figures.defs() if has_map else "")
                    .replace("/*__DRILL__*/null", json.dumps(data, ensure_ascii=False)))
         out = ROOT / "share" / f"{folder}.html"
         out.write_text(page, encoding="utf-8")

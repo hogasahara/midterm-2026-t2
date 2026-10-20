@@ -63,6 +63,7 @@
 - ○×の記録は閲覧者ごとのブラウザ（localStorage）に保存。共有DBは使わない
 - section に "group" を付けるとメニューにグループのボタンが出る（古文は「単語・文学的知識」「文法」、時事は自動で「時事問題」）。補足は JSON の group_notes
 - 単語集は `"kind": "vocab"` の JSON（units → words）で書く。`tools/vocab.py` が英日・日英・空欄補充の3グループに展開し、ページには「間違えた単語集」（×をつけた単語の一覧と解き直し）が出る
+- 図つきの選択問題（雨温図・世界地図）は items に辞書で書く（`{"q","choices","a","note","star","fig"}`）。図は `tools/figures.py` が SVG にする。雨温図のデータは `data/climate_normals.json`（学習用の概数）、地図は `data/world_land_110m.path`（Natural Earth 110m の陸地）
 - ★（重要問題）は items の3番目を 1 にする。地理はノートで強調された所と頻出の仕組み、歴史はプリントの穴埋め空欄を★にした
 - 公開はデフォルト非公開。クラスに見せるには、ページの共有メニューからリンク共有をオンにしてもらう
 

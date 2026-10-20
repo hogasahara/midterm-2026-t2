@@ -18,6 +18,7 @@ import pathlib
 import subprocess
 import sys
 
+import figures
 import vocab
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -45,13 +46,44 @@ td.q { width: 52%; white-space: pre-line; }
 td.a { border-left: 0.6px dotted #999; }
 .kaitou td.a { font-weight: bold; }
 .kaitou td.q { color: #444; }
+td.mc { white-space: normal; }
+.mcq { margin-bottom: 3px; }
+.figbox { display: flex; gap: 10px; align-items: flex-start; }
+.figbox svg { display: block; height: auto; }
+.figbox .fig-climo { width: 72mm; }
+.figbox .fig-map { width: 100%; height: auto; }
+.figbox .fig-map.fig-tall { width: 62%; }
+.ch { margin: 0; padding: 0; list-style: none; font-size: 9.5pt; line-height: 1.6; }
+.ans { margin-top: 3px; font-weight: bold; }
+.ans .nt { font-weight: normal; color: #333; }
+.fig-sea { fill: #e3eef5; } .fig-land { fill: #f4f0e6; stroke: #555; }
+.fig-eq { stroke: #777; fill: none; }
+.fig-mk { fill: #c0392b; stroke: #fff; } .fig-mkl { fill: #111; stroke: #fff; paint-order: stroke; font-weight: 700; }
+.fig-grid { stroke: #ccc; stroke-width: 1; } .fig-zero { stroke: #777; }
+.fig-bar { fill: #4a78b5; } .fig-line { fill: none; stroke: #c0392b; stroke-width: 2; } .fig-dot { fill: #c0392b; }
+.fig-ax { fill: #444; font-size: 10px; } .fig-cap { fill: #111; font-size: 10.5px; }
 """
+
+
+def mc_row(n, it, answers):
+    """図つき選択問題の行。図の横に選択肢、解答編では正解と解説を付ける。"""
+    star = "<span class='star'>★</span>" if it.get("star") else ""
+    # 地図の A〜D は図に書いてあるので選択肢の一覧は出さない
+    letters = all(len(c) == 1 for c in it["choices"])
+    choices = "" if letters else "".join(f"<li>{k + 1}. {html.escape(c)}</li>" for k, c in enumerate(it["choices"]))
+    ans = (f"<div class='ans'>正解：{html.escape(it['a'])}　<span class='nt'>{html.escape(it.get('note', ''))}</span></div>"
+           if answers else "<div class='ans'>答え（　　　　）</div>")
+    return (f"<tr><td class='no'>{star}{n}</td><td class='chk'>□□</td><td class='q mc' colspan='2'>"
+            f"<div class='mcq'>{html.escape(it['q'])}</div>"
+            f"<div class='figbox'>{figures.render(it)}<ol class='ch'>{choices}</ol></div>{ans}</td></tr>")
 
 
 def render(data, answers):
     edition = "解答編" if answers else "問題編"
     out = [f"<!doctype html><html lang='ja'><head><meta charset='utf-8'><style>{CSS}</style></head>"]
     out.append(f"<body class='{'kaitou' if answers else 'mondai'}'>")
+    if any(isinstance(it, dict) and "map" in it.get("fig", {}) for s in data["sections"] for it in s["items"]):
+        out.append(figures.defs())
     out.append("<header><div>")
     out.append(f"<h1>{html.escape(data['title'])}【{edition}】</h1></div>")
     out.append("<div class='meta'>")
@@ -71,8 +103,12 @@ def render(data, answers):
             group = sec["group"]
             out.append(f"<div class='group'>{html.escape(group)}</div>")
         out.append(f"<h2>{html.escape(sec['title'])}</h2><table>")
-        for q, a, *flag in sec["items"]:
+        for item in sec["items"]:
             n += 1
+            if isinstance(item, dict):          # 図つきの選択問題
+                out.append(mc_row(n, item, answers))
+                continue
+            q, a, *flag = item
             ans = html.escape(a) if answers else ""
             star = "<span class='star'>★</span>" if flag and flag[0] else ""
             out.append(

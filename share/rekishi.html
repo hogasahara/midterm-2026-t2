@@ -19,15 +19,18 @@
   --ng:#b3361f;
   --ng-bg:#fbe7e2;
   --star:#9a6a00;
+  --sea:#d6e6f0;
+  --land:#f1ece0;
+  --coast:#8a9389;
   --f-display:"Shippori Mincho B1","Hiragino Mincho ProN","Yu Mincho",serif;
   --f-body:"BIZ UDPGothic","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --accent:#e3a590;--accent-ink:#0f1412;--accent-soft:#3a352f;--bg:#121614;--paper:#1a201d;--ink:#e6ebe8;--muted:#9aa49f;--line:#2c3430;
-  --ok:#6fd19c;--ok-bg:#183326;--ng:#ff9a85;--ng-bg:#3a1f19;--star:#f2c14e;color-scheme:dark}}
+  --ok:#6fd19c;--ok-bg:#183326;--ng:#ff9a85;--ng-bg:#3a1f19;--star:#f2c14e;--sea:#18303b;--land:#3b4038;--coast:#7d877f;color-scheme:dark}}
 :root[data-theme="dark"]{
   --accent:#e3a590;--accent-ink:#0f1412;--accent-soft:#3a352f;--bg:#121614;--paper:#1a201d;--ink:#e6ebe8;--muted:#9aa49f;--line:#2c3430;
-  --ok:#6fd19c;--ok-bg:#183326;--ng:#ff9a85;--ng-bg:#3a1f19;--star:#f2c14e;color-scheme:dark}
+  --ok:#6fd19c;--ok-bg:#183326;--ng:#ff9a85;--ng-bg:#3a1f19;--star:#f2c14e;--sea:#18303b;--land:#3b4038;--coast:#7d877f;color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6}
 .wrap{max-width:720px;margin:0 auto;padding-block:20px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:18px}
@@ -102,6 +105,30 @@ h2{font-size:18px;margin:0;text-wrap:balance}
 .reveal{border:2px dashed var(--accent);color:var(--accent);background:var(--accent-soft);border-radius:10px;padding:14px;font-weight:700;cursor:pointer;font-size:16px}
 .hintbtn{justify-self:start;border:1px solid var(--line);background:var(--paper);color:var(--muted);border-radius:999px;padding:4px 14px;font-size:14px;cursor:pointer}
 .hint{justify-self:start;font-weight:700;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:4px 14px;font-size:15px}
+.fig{border-radius:8px;overflow:hidden;background:var(--paper)}
+.fig svg{display:block;width:100%;height:auto}
+.fig svg.fig-tall{max-width:420px;margin:0 auto}
+.fig-sea{fill:var(--sea)}
+.fig-land{fill:var(--land);stroke:var(--coast)}
+.fig-eq{stroke:var(--coast);fill:none}
+.fig-mk{fill:var(--ng);stroke:var(--paper)}
+.fig-mkl{fill:var(--ink);stroke:var(--paper);paint-order:stroke;font-weight:700;font-family:var(--f-body)}
+.fig-grid{stroke:var(--line);stroke-width:1}
+.fig-zero{stroke:var(--muted)}
+.fig-bar{fill:var(--accent);opacity:.75}
+.fig-line{fill:none;stroke:var(--ng);stroke-width:2}
+.fig-dot{fill:var(--ng)}
+.fig-ax{fill:var(--muted);font-size:10px;font-family:var(--f-body)}
+.fig-cap{fill:var(--ink);font-size:10.5px;font-family:var(--f-body)}
+.rows .fig{margin:4px 0;max-width:420px}
+.opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.opts:has(.opt:nth-child(4)):not(:has(.opt:nth-child(5))) .opt{min-height:44px}
+.opt{text-align:left;border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:10px 12px;font-size:15px;cursor:pointer;overflow-wrap:anywhere}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt:disabled{cursor:default}
+.opt.right{background:var(--ok-bg);border-color:var(--ok);color:var(--ok);font-weight:700}
+.opt.wrong{background:var(--ng-bg);border-color:var(--ng);color:var(--ng);font-weight:700}
+.note{font-size:14px;color:var(--muted);line-height:1.6}
 .answer{font-size:19px;font-weight:700;background:var(--accent-soft);border-radius:10px;padding:12px 14px;overflow-wrap:anywhere}
 .judge{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .judge button{border-radius:10px;padding:14px 8px;font-weight:700;font-size:16px;cursor:pointer;border:2px solid}
@@ -144,6 +171,7 @@ footer{font-size:12px;color:var(--muted);display:grid;gap:2px}
 @media (prefers-reduced-motion:no-preference){.answer{animation:fade .18s ease-out}@keyframes fade{from{opacity:.5}to{opacity:1}}}
 </style>
 
+
 <div class="wrap" id="app"></div>
 
 <script>
@@ -156,14 +184,25 @@ try { marks = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) {
 function save() { try { localStorage.setItem(KEY, JSON.stringify(marks)); } catch (e) {} }
 
 const items = [];
-DRILL.sections.forEach((s, si) => s.items.forEach(([q, a, imp, w, hint]) =>
-  items.push({ n: items.length + 1, si, q, a, star: !!imp, group: s.group || "", w: w ?? null, hint: hint || "" })));
+// 一問一答は配列 [問題, 答え, 重要, 単語番号, ヒント]、図つきの選択問題は辞書 {q, a, choices, svg, note, star}
+DRILL.sections.forEach((s, si) => s.items.forEach(x => {
+  const mc = !Array.isArray(x);
+  const [q, a, imp, w, hint] = mc ? [x.q, x.a, x.star] : x;
+  items.push({ n: items.length + 1, si, q, a, star: !!imp, group: s.group || "", w: w ?? null, hint: hint || "",
+    choices: mc ? x.choices : null, svg: mc ? x.svg || "" : "", note: mc ? x.note || "" : "" });
+}));
 // 単語集のページ（vocab あり）は、×をつけた問題を単語ごとにまとめて「間違えた単語集」にする
 const VOCAB = DRILL.vocab || [];
 const wrongWords = () => [...new Set(items.filter(it => it.w !== null && marks[it.n] === "ng").map(it => it.w))].sort((a, b) => a - b);
 const groups = [...new Set(DRILL.sections.map(s => s.group).filter(Boolean))];
 const groupNote = g => (DRILL.group_notes || {})[g] || "";
 
+function fig(svg) {                 // svg はビルド時に作った図（外部入力ではない）
+  const d = document.createElement("div");
+  d.className = "fig";
+  d.innerHTML = svg;
+  return d;
+}
 function el(tag, attrs, ...kids) {
   const e = document.createElement(tag);
   for (const [k, v] of Object.entries(attrs || {})) {
@@ -272,7 +311,7 @@ function randomPick() {
 let quiz = null;
 function start(name, list) {
   if (!list.length) return home();
-  quiz = { name, list, i: 0, open: false, got: {} };
+  quiz = { name, list, i: 0, open: false, got: {}, order: {}, picked: null };
   card();
 }
 function card() {
@@ -281,11 +320,23 @@ function card() {
     el("div", { class: "meta" },
       el("span", null, `No.${it.n}`),
       it.star ? el("span", { class: "badge b-star" }, "★重要") : null,
-      mk === "ng" ? el("span", { class: "badge b-ng" }, "前回 ×") : mk === "ok" ? el("span", { class: "badge b-ok" }, "前回 ○") : null,
+      quiz.picked ? null : mk === "ng" ? el("span", { class: "badge b-ng" }, "前回 ×") : mk === "ok" ? el("span", { class: "badge b-ok" }, "前回 ○") : null,
       el("span", null, DRILL.sections[it.si].title)),
     el("div", { class: "qtext" }, it.q),
   ];
-  if (quiz.open) {
+  if (it.choices) {
+    // 地図の A〜D はそのままの順、それ以外の選択肢は毎回並べかえる
+    if (!quiz.order[i]) quiz.order[i] = it.choices.every(c => c.length === 1) ? it.choices.slice() : shuffle(it.choices);
+    const picked = quiz.picked;
+    body.push(fig(it.svg),
+      el("div", { class: "opts" }, quiz.order[i].map((c, k) =>
+        el("button", { class: "opt" + (picked ? (c === it.a ? " right" : c === picked ? " wrong" : "") : ""),
+          type: "button", disabled: !!picked, onclick: () => pick(c) }, c.length === 1 ? c : `${k + 1}. ${c}`))));
+    if (picked) body.push(
+      el("div", { class: "answer" }, (picked === it.a ? "○ 正解　" : "× 正解は ") + it.a),
+      it.note ? el("div", { class: "note" }, it.note) : null,
+      el("button", { class: "btn main", type: "button", id: "next", onclick: () => go(1) }, i + 1 < list.length ? "次の問題へ" : "結果を見る"));
+  } else if (quiz.open) {
     body.push(el("div", { class: "answer" }, it.a),
       el("div", { class: "judge" },
         el("button", { class: "j-ok", type: "button", onclick: () => judge("ok") }, "○ 合ってた"),
@@ -304,7 +355,14 @@ function card() {
     el("div", { class: "nav" },
       el("button", { type: "button", disabled: i === 0, onclick: () => go(-1) }, "← 前の問題"),
       el("button", { type: "button", onclick: () => go(1) }, i + 1 < list.length ? "とばす →" : "おわる →")),
-    el("div", { class: "keys" }, "キーボード: スペース＝答えを見る　1＝○　2＝×"));
+    el("div", { class: "keys" }, it.choices ? "キーボード: 1〜4＝選ぶ　Enter＝次へ" : "キーボード: スペース＝答えを見る　1＝○　2＝×"));
+}
+function pick(c) {
+  const it = quiz.list[quiz.i];
+  quiz.picked = c;
+  const v = c === it.a ? "ok" : "ng";
+  marks[it.n] = v; quiz.got[it.n] = v; save();
+  card();
 }
 function judge(v) {
   const it = quiz.list[quiz.i];
@@ -312,12 +370,18 @@ function judge(v) {
   go(1);
 }
 function go(d) {
-  quiz.i = Math.max(0, quiz.i + d); quiz.open = false; quiz.hint = false;
+  quiz.i = Math.max(0, quiz.i + d); quiz.open = false; quiz.hint = false; quiz.picked = null;
   if (quiz.i >= quiz.list.length) return result();
   card();
 }
 document.addEventListener("keydown", e => {
   if (!quiz || e.altKey || e.ctrlKey || e.metaKey) return;
+  const cur = quiz.list[quiz.i];
+  if (cur && cur.choices) {           // 選択問題：1〜4で選ぶ、選んだあとは Enter／スペースで次へ
+    if (!quiz.picked && /^[1-9]$/.test(e.key) && quiz.order[quiz.i][+e.key - 1]) pick(quiz.order[quiz.i][+e.key - 1]);
+    else if (quiz.picked && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); go(1); }
+    return;
+  }
   if (e.key === " " && !quiz.open) { e.preventDefault(); quiz.open = true; card(); }
   else if (quiz.open && e.key === "1") judge("ok");
   else if (quiz.open && e.key === "2") judge("ng");
@@ -375,11 +439,11 @@ function sheet() {
     if (!list.length) return null;
     return el("section", null, el("h3", null, s.title),
       el("ol", { class: "rows" }, list.map(it => {
-        const a = el("div", { class: "a" + (view.hide ? " hide" : "") }, it.a);
+        const a = el("div", { class: "a" + (view.hide ? " hide" : "") }, it.choices && it.note ? `${it.a}　${it.note}` : it.a);
         if (view.hide) a.addEventListener("click", () => a.classList.toggle("hide"));
         return el("li", { class: marks[it.n] || "" },
           el("span", { class: "no" }, it.star ? el("span", { class: "st" }, "★") : null, it.n),
-          el("div", { class: "qa" }, el("div", { class: "q" }, it.q), a));
+          el("div", { class: "qa" }, el("div", { class: "q" }, it.q), it.svg ? fig(it.svg) : null, a));
       })));
   }).filter(Boolean);
   const y = window.scrollY;
