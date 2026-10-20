@@ -261,7 +261,7 @@ function home() {
       meter(items)),
     el("div", { class: "modes" + (VOCAB.length ? " vocab" : "") },
       mode("単元別", `${DRILL.sections.length}単元から選ぶ`, units, { primary: true }),
-      mode("通しで", `全${items.length}問を1番から順に`, () => start("通しで（全問）", items)),
+      mode("単元横断ランダム", `全${items.length}問をまぜて出題`, () => start("単元横断ランダム", shuffle(items))),
       VOCAB.length
         ? mode("間違えた単語集", wrongWords().length ? `${wrongWords().length}語・×をつけた単語をまとめて復習` : "まだありません（×をつけた単語がここにたまる）", wrongList, { disabled: !wrongWords().length, wide: true, cls: "wrong" })
         : mode("間違えた問題", ng ? `× が ${ng}問` : "まだありません",
@@ -276,7 +276,7 @@ function home() {
       })),
     el("div", { class: "under" },
       el("details", null, el("summary", null, "使い方"),
-        el("p", null, "1問ずつ、ランダムな順番で問題が出ます（1番から順に解きたいときは「通しで」）。答えを考えてから「答えを見る」を押し、合っていたら ○、まちがえたら × を押すと次へ進みます。×をつけた問題は「間違えた問題」でまとめて解き直せます。○×の記録はこの端末のブラウザにだけ残ります。")),
+        el("p", null, "1問ずつ、ランダムな順番で問題が出ます。「単元横断ランダム」は全単元の問題をまぜて出します（単元ごとに順番どおり解きたいときは「単元別」で「順番に出す」）。答えを考えてから「答えを見る」を押し、合っていたら ○、まちがえたら × を押すと次へ進みます。×をつけた問題は「間違えた問題」でまとめて解き直せます。○×の記録はこの端末のブラウザにだけ残ります。")),
       confirmReset
         ? el("div", { class: "confirm" }, "○×の記録をすべて消しますか？",
             el("button", { class: "chip", type: "button", onclick: () => { marks = {}; save(); confirmReset = false; home(); } }, "消す"),
