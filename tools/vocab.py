@@ -7,16 +7,50 @@ make_drill.py（PDF）と build_share.py（共有ページ）の両方から使�
       "words": [[英語, 品詞, 意味, メモ, 重要(1/0), 例文({}が空欄), 例文の訳, 空欄に入る形], ...]}]}
 
 展開後は「英日」「日英」「空欄補充」の3グループ × 単元のセクションになる。
-各問題は [問題, 答え, 重要, 単語番号, ヒント]。単語番号で「間違えた単語集」をまとめる。
+各問題は [問題, 答え, 重要, 単語番号, ヒント, (日英だけ)タイピングの正解]。単語番号で「間違えた単語集」をまとめる。
+日英はページでタイピングして答え、variants() の言い方のどれかに合えば ○（ページの JS で採点）。
 日英・空欄補充の頭文字はヒントとして別に持ち、ページでは「ヒントを表示」で出す（PDFには載せない）。
 """
+
+import itertools
+import re
 
 MODES = ("英日", "日英", "空欄補充")
 GROUP_NOTES = {
     "英日": "英語 → 日本語",
-    "日英": "日本語 → 英語（頭文字ヒントあり）",
+    "日英": "日本語を見て英語をタイピング（自動で○×）",
     "空欄補充": "例文の（ ）に入る語",
 }
+
+PLACEHOLDERS = {"~", "A", "J", "N", "...", "…"}
+# 文の形を覚える項目はタイピングで答えない（日英でも自己採点のまま）
+TYPING_SKIP = {"The main question raised", "portrayal of J as a ...", "There is N -ing/-en",
+               "Kyoto be erased from ~", "~, for there were ...", "A after A"}
+# 機械的に分けると不自然になるものは手で正解を決める
+OVERRIDES = {
+    "shed a tear / tears": ["shed a tear", "shed tears"],
+    "either-or / either/or": ["either-or", "either/or"],
+    "post-": ["post-", "post"],
+    "GI": ["GI", "G.I."],
+}
+
+
+def variants(en):
+    if en in OVERRIDES:
+        return OVERRIDES[en]
+    out = []
+    for alt in [a.strip() for a in en.split(" / ")]:
+        alt = re.sub(r",\s*~$", "", alt)                          # Long story short, ~
+        opts = {alt}
+        if "(" in alt:                                            # consistent (with ~)
+            opts = {re.sub(r"\s*\(([^)]*)\)", r" \1", alt), re.sub(r"\s*\([^)]*\)", "", alt)}
+        for o in opts:
+            toks = [t for t in o.split() if t not in PLACEHOLDERS]
+            # this/that のような語の中の / を展開する
+            choices = [t.split("/") if "/" in t and len(t) > 1 else [t] for t in toks]
+            for combo in itertools.product(*choices):
+                out.append(" ".join(combo))
+    return list(dict.fromkeys(v for v in out if v))
 
 
 def words(data):
@@ -50,7 +84,9 @@ def expand(data):
                 if mode == "英日":
                     items.append([f"{en}（{pos}）", ja + memo, star, wid])
                 elif mode == "日英":
-                    items.append([f"{ja}（{pos}）", en + memo, star, wid, initial(en)])
+                    # 6番目はタイピングで正解とする言い方（タイピングしない項目は None）
+                    accept = None if en in TYPING_SKIP else variants(en)
+                    items.append([f"{ja}（{pos}）", en + memo, star, wid, initial(en), accept])
                 elif sent:
                     q = sent.replace("{}", BLANK) + "\n" + sent_ja
                     a = ans if ans.lower() == en.lower() else f"{ans}（{en}）"
