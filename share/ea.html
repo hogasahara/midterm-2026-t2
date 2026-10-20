@@ -330,6 +330,8 @@ function start(name, list) {
 }
 function card() {
   const { name, list, i } = quiz, it = list[i], mk = marks[it.n];
+  // 同じ問題を表示し直すとき（選択肢・ヒント・答えを見る）はスクロール位置を保つ
+  const same = quiz.shown === i, y = window.scrollY;
   const body = [
     el("div", { class: "meta" },
       el("span", null, `No.${it.n}`),
@@ -370,6 +372,13 @@ function card() {
       el("button", { type: "button", disabled: i === 0, onclick: () => go(-1) }, "← 前の問題"),
       el("button", { type: "button", onclick: () => go(1) }, i + 1 < list.length ? "とばす →" : "おわる →")),
     el("div", { class: "keys" }, it.choices ? "キーボード: 1〜4＝選ぶ　Enter＝次へ" : "キーボード: スペース＝答えを見る　1＝○　2＝×"));
+  quiz.shown = i;
+  if (same) {
+    window.scrollTo(0, y);
+    // 選んだあとの「次の問題へ」が画面の下に隠れていれば、そこまでだけ動かす
+    const next = document.getElementById("next");
+    if (next) next.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }
 }
 function pick(c) {
   const it = quiz.list[quiz.i];
