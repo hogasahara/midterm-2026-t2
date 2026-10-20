@@ -108,6 +108,8 @@ h2{font-size:18px;margin:0;text-wrap:balance}
 .fig{border-radius:8px;overflow:hidden;background:var(--paper)}
 .fig svg{display:block;width:100%;height:auto}
 .fig svg.fig-tall{max-width:420px;margin:0 auto}
+.figpair{display:grid;gap:6px}
+@media (min-width:640px){.figpair{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);align-items:center}}
 .fig-sea{fill:var(--sea)}
 .fig-land{fill:var(--land);stroke:var(--coast)}
 .fig-eq{stroke:var(--coast);fill:none}
@@ -284,13 +286,25 @@ function home() {
 }
 
 /* ── 単元を選ぶ ─────────────────────────── */
+// 単元別の出題順（順番／ランダム）は、この端末に覚えておく
+let unitRandom = false;
+try { unitRandom = localStorage.getItem(KEY + ":random") === "1"; } catch (e) {}
+function setUnitRandom(v) {
+  unitRandom = v;
+  try { localStorage.setItem(KEY + ":random", v ? "1" : "0"); } catch (e) {}
+  units();
+}
 function units() {
   show(backBar(), el("h2", null, "単元を選ぶ"),
+    el("div", { class: "filters", role: "group", "aria-label": "出題順" },
+      el("button", { class: "chip", type: "button", "aria-pressed": String(!unitRandom), onclick: () => setUnitRandom(false) }, "順番に出す"),
+      el("button", { class: "chip", type: "button", "aria-pressed": String(unitRandom), onclick: () => setUnitRandom(true) }, "ランダムに出す")),
     el("div", { class: "choices" }, DRILL.sections.map((s, si) => {
       const list = items.filter(it => it.si === si);
       const head = s.group && s.group !== (DRILL.sections[si - 1] || {}).group
         ? el("h3", { class: "ghead" }, s.group) : null;
-      return [head, el("button", { class: "choice", type: "button", onclick: () => start(s.title, list) },
+      return [head, el("button", { class: "choice", type: "button",
+        onclick: () => unitRandom ? start(`${s.title}（ランダム）`, shuffle(list)) : start(s.title, list) },
         el("span", { class: "c-title" }, s.title),
         el("span", { class: "c-meta" }, `○ ${count(list, "ok")} / ${list.length}問`),
         meter(list))];

@@ -8,6 +8,7 @@ make_drill.py（PDF）と build_share.py（共有ページ）の両方から使�
      "fig": {"climo": "東京"}}                          … 雨温図（data/climate_normals.json の都市）
      "fig": {"map": [["A", 経度, 緯度], ...], "view": [西経度, 東経度, 南緯度, 北緯度]}
                                                         … 世界地図に A〜D の地点（view で範囲を切り出す）
+     "fig": {"climo": ..., "map": [...]}                 … 雨温図と地図を並べる
 """
 import json
 import pathlib
@@ -82,8 +83,11 @@ def worldmap(points, view=None):
 def render(item):
     """問題の辞書から SVG を作る（図がなければ空文字）。"""
     fig = item.get("fig") or {}
+    parts = []
     if "climo" in fig:
-        return climograph(fig["climo"])
+        parts.append(climograph(fig["climo"]))
     if "map" in fig:
-        return worldmap(fig["map"], fig.get("view"))
-    return ""
+        parts.append(worldmap(fig["map"], fig.get("view")))
+    if len(parts) == 2:                     # 雨温図と地図を並べる総合問題
+        return f'<div class="figpair">{"".join(parts)}</div>'
+    return "".join(parts)

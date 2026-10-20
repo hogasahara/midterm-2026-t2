@@ -50,9 +50,16 @@ td.mc { white-space: normal; }
 .mcq { margin-bottom: 3px; }
 .figbox { display: flex; gap: 10px; align-items: flex-start; }
 .figbox svg { display: block; height: auto; }
+.figbox.solo { display: block; }
+.figbox.solo > .fig-map { width: 88%; }
+.figbox.solo > .fig-map.fig-tall { width: 50%; }
 .figbox .fig-climo { width: 72mm; }
 .figbox .fig-map { width: 100%; height: auto; }
 .figbox .fig-map.fig-tall { width: 62%; }
+.figpair { display: flex; gap: 6px; align-items: flex-start; width: 100%; }
+.figpair .fig-climo { width: 46%; flex: none; }
+.figpair .fig-map { width: 54%; }
+.figpair .fig-map.fig-tall { width: 34%; }
 .ch { margin: 0; padding: 0; list-style: none; font-size: 9.5pt; line-height: 1.6; }
 .ans { margin-top: 3px; font-weight: bold; }
 .ans .nt { font-weight: normal; color: #333; }
@@ -75,7 +82,8 @@ def mc_row(n, it, answers):
            if answers else "<div class='ans'>答え（　　　　）</div>")
     return (f"<tr><td class='no'>{star}{n}</td><td class='chk'>□□</td><td class='q mc' colspan='2'>"
             f"<div class='mcq'>{html.escape(it['q'])}</div>"
-            f"<div class='figbox'>{figures.render(it)}<ol class='ch'>{choices}</ol></div>{ans}</td></tr>")
+            f"<div class='figbox{' solo' if letters else ''}'>{figures.render(it)}"
+            f"{'' if letters else f'<ol class=ch>{choices}</ol>'}</div>{ans}</td></tr>")
 
 
 def render(data, answers):
