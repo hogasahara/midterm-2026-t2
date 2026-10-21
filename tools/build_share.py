@@ -52,40 +52,71 @@ def exam_info(plan, subject):
     raise KeyError(subject)
 
 
-def arrange(raw, wmaps=None):
+def arrange(raw, remap=None):
     """ページに並べる順のセクションを作る。各問題には、版をまたいで同じ問題を指すキーも付ける。
 
     単語集（kind: "vocab"）は英日・日英・空欄補充の問題に展開する。
     時事（kind: "jiji"）は教科のドリルのあとに「時事問題」グループとして並べる。
-    wmaps は {ドリルの番号: 単語番号の付け替え}（古い版のキーを今の版にそろえるときに使う）。
+    remap は {ドリルの番号: キーを次の版のキーに直す関数}（古い版のキーを新しい版にそろえるときに使う）。
     """
     drills = [vocab.expand(d) if d.get("kind") == "vocab" else d for d in raw]
     main = [i for i, d in enumerate(drills) if d.get("kind") != "jiji"] or list(range(len(drills)))
     jiji = [i for i, d in enumerate(drills) if d.get("kind") == "jiji"]
     sections, keys = [], []
     for di, group in [(i, None) for i in main] + [(i, "時事問題") for i in jiji]:
-        wmap = (wmaps or {}).get(di, {})
+        fn = (remap or {}).get(di, lambda k: k)
         for si, s in enumerate(drills[di]["sections"]):
             s = {**s, "group": group} if group else s
             sections.append(s)
             for ii, it in enumerate(s["items"]):
                 if raw[di].get("kind") == "vocab":
-                    keys.append((di, s["group"], wmap.get(it[3], it[3])))
+                    keys.append(fn((di, s["group"], it[3])))
                 else:
-                    keys.append((di, group, si, ii))
+                    keys.append(fn((di, s.get("group"), si, ii)))
     return drills, sections, keys
 
 
-def migrations(raw):
-    """単語を統合したときの、問題の通し番号の付け替え表（版 i → i+1 の {古い番号: 新しい番号}、消えたら null）。"""
-    out = []
-    for di, d in enumerate(raw):
-        if d.get("kind") != "vocab":
-            continue
+def history(d):
+    """ドリルの変更の履歴を古い順に [(前の版, 後の版, キーを後の版に直す関数), ...] で返す。
+
+    単語集は merged（単語の統合）、ほかのドリルは removed（問題の削除。1回の削除が1件）を記録する。
+    """
+    steps = []
+    if d.get("kind") == "vocab":
         vs = vocab.versions(d)
         for i, m in enumerate(d.get("merged", [])):
-            _, _, old = arrange(raw[:di] + [vs[i]] + raw[di + 1:], {di: vocab.wid_map(vs[i], vs[i + 1], m)})
-            _, _, new = arrange(raw[:di] + [vs[i + 1]] + raw[di + 1:])
+            wmap = vocab.wid_map(vs[i], vs[i + 1], m)
+            steps.append((vs[i], vs[i + 1], lambda k, wmap=wmap: (k[0], k[1], wmap[k[2]])))
+        return steps
+    after = d
+    for batch in reversed(d.get("removed", [])):
+        secs = [{**s, "items": list(s["items"])} for s in after["sections"]]
+        titles = [s["title"] for s in secs]
+        gone = {(titles.index(r["section"]), r["index"]) for r in batch["items"]}
+        for r in sorted(batch["items"], key=lambda r: r["index"]):
+            secs[titles.index(r["section"])]["items"].insert(r["index"], r["item"])
+        before = {**after, "sections": secs}
+
+        def fn(k, gone=gone):
+            di, group, si, ii = k
+            if (si, ii) in gone:
+                return ("消した問題",)
+            return (di, group, si, ii - sum(1 for g in gone if g[0] == si and g[1] < ii))
+        steps.insert(0, (before, after, fn))
+        after = before
+    return steps
+
+
+def migrations(raw):
+    """変更の前後の、問題の通し番号の付け替え表（版 i → i+1 の {古い番号: 新しい番号}、消えたら null）。"""
+    hist = [(di, h) for di, d in enumerate(raw) if (h := history(d))]
+    # ページの版は付け替え表の数で数えるので、履歴を持つドリルは1ページに1つまで
+    assert len(hist) <= 1, "履歴（merged・removed）を持つドリルが1ページに2つ以上ある"
+    out = []
+    for di, steps in hist:
+        for before, after, fn in steps:
+            _, _, old = arrange(raw[:di] + [before] + raw[di + 1:], {di: fn})
+            _, _, new = arrange(raw[:di] + [after] + raw[di + 1:])
             pos = {k: n for n, k in enumerate(new, 1)}
             out.append({str(n): pos.get(k) for n, k in enumerate(old, 1) if pos.get(k) != n})
     return out
