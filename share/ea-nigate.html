@@ -1,0 +1,595 @@
+<title>EA 苦手単語</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=IBM+Plex+Mono:wght@500;600&family=Shippori+Mincho+B1:wght@700;800&display=swap">
+<style>
+/* Layout: 開くとメニュー（進み具合＋6つの学習ボタン）だけ。ボタンから「1問ずつ解く画面」か「一覧」に入る。教科ごとにアクセント色だけ変える */
+:root{
+  --accent:#2d5aa8;
+  --accent-ink:#ffffff;
+  --accent-soft:#e6ebf5;
+  --bg:#f6f7f5;
+  --paper:#ffffff;
+  --ink:#1c211f;
+  --muted:#5f6864;
+  --line:#dde2df;
+  --ok:#1f7a4d;
+  --ok-bg:#e3f3ea;
+  --ng:#b3361f;
+  --ng-bg:#fbe7e2;
+  --star:#9a6a00;
+  --sea:#d6e6f0;
+  --land:#f1ece0;
+  --coast:#8a9389;
+  --f-display:"Shippori Mincho B1","Hiragino Mincho ProN","Yu Mincho",serif;
+  --f-body:"BIZ UDPGothic","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
+  --f-type:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --accent:#8fb3f0;--accent-ink:#0f1412;--accent-soft:#2d383f;--bg:#121614;--paper:#1a201d;--ink:#e6ebe8;--muted:#9aa49f;--line:#2c3430;
+  --ok:#6fd19c;--ok-bg:#183326;--ng:#ff9a85;--ng-bg:#3a1f19;--star:#f2c14e;--sea:#18303b;--land:#3b4038;--coast:#7d877f;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --accent:#8fb3f0;--accent-ink:#0f1412;--accent-soft:#2d383f;--bg:#121614;--paper:#1a201d;--ink:#e6ebe8;--muted:#9aa49f;--line:#2c3430;
+  --ok:#6fd19c;--ok-bg:#183326;--ng:#ff9a85;--ng-bg:#3a1f19;--star:#f2c14e;--sea:#18303b;--land:#3b4038;--coast:#7d877f;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6}
+.wrap{max-width:720px;margin:0 auto;padding-block:20px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:18px}
+button{font:inherit;color:inherit}
+button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ヘッダー */
+header{display:grid;gap:6px}
+.eyebrow{font-size:13px;letter-spacing:.08em;color:var(--muted)}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(26px,6.4vw,36px);line-height:1.25;margin:0;text-wrap:balance}
+h1 .seg{display:inline-block}
+.exam{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:14px;color:var(--muted)}
+.exam strong{color:var(--ink)}
+.days{background:var(--accent);color:var(--accent-ink);font-weight:700;border-radius:4px;padding:1px 8px;font-size:13px}
+
+/* 進み具合 */
+.progress{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:grid;gap:8px}
+.stats{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:14px;font-variant-numeric:tabular-nums;align-items:baseline}
+.stats b{font-size:20px}
+.s-ok{color:var(--ok)}.s-ng{color:var(--ng)}.s-todo{color:var(--muted)}
+.meter{height:8px;border-radius:4px;background:var(--line);overflow:hidden;display:flex}
+.meter i{display:block;height:100%}
+.m-ok{background:var(--ok)}.m-ng{background:var(--ng)}
+
+/* メニューのボタン */
+.modes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.mode{display:grid;gap:2px;text-align:left;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px;cursor:pointer;min-height:84px;align-content:start}
+.mode:hover{border-color:var(--accent)}
+.mode .label{font-weight:700;font-size:17px}
+.mode .sub{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.mode.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.mode.primary .sub{color:inherit;opacity:.85}
+.mode:disabled{cursor:default;opacity:.5}
+.mode.wide{grid-column:1/-1;min-height:0}
+.modes.vocab .wide{order:-2}
+.modes.vocab .wide.wrong{order:-1}
+.mode:disabled:hover{border-color:var(--line)}
+.under{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:8px;font-size:13px;color:var(--muted)}
+details summary{cursor:pointer}
+details p{margin:6px 0 0;max-width:36em}
+.link{background:none;border:0;padding:0;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:13px}
+.card .link{justify-self:start}
+.link:disabled{opacity:.4;cursor:default}
+.confirm{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:14px}
+
+/* 画面上部（戻る） */
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.back{border:1px solid var(--line);border-radius:999px;padding:4px 12px;cursor:pointer;font-size:14px;background:var(--paper)}
+.where{font-weight:700}
+.count{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+h2{font-size:18px;margin:0;text-wrap:balance}
+
+/* 単元・問題数の選択 */
+.choices{display:grid;gap:8px}
+.choice{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;align-items:center;text-align:left;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 14px;cursor:pointer}
+.choice:hover{border-color:var(--accent)}
+.choice .c-title{font-weight:700}
+.choice .c-meta{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.choice .meter{grid-column:1/-1;height:5px}
+.ghead{font-size:14px;color:var(--muted);margin:10px 0 0;letter-spacing:.04em}
+.ghead:first-child{margin-top:0}
+
+/* 1問ずつ解く画面 */
+.bar{height:4px;background:var(--line);border-radius:2px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent)}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px 16px;display:grid;gap:14px;min-height:240px;align-content:start}
+.card .meta{display:flex;flex-wrap:wrap;gap:6px 10px;font-size:13px;color:var(--muted);align-items:center}
+.badge{border-radius:4px;padding:0 6px;font-size:12px;font-weight:700}
+.b-star{color:var(--star);border:1px solid var(--star)}
+.b-ng{color:var(--ng);border:1px solid var(--ng)}
+.b-ok{color:var(--ok);border:1px solid var(--ok)}
+.qtext{font-size:19px;line-height:1.65;overflow-wrap:anywhere;white-space:pre-line}
+.reveal{border:2px dashed var(--accent);color:var(--accent);background:var(--accent-soft);border-radius:10px;padding:14px;font-weight:700;cursor:pointer;font-size:16px}
+.hintbtn{justify-self:start;border:1px solid var(--line);background:var(--paper);color:var(--muted);border-radius:999px;padding:4px 14px;font-size:14px;cursor:pointer}
+.hint{justify-self:start;font-weight:700;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:4px 14px;font-size:15px}
+.fig{border-radius:8px;overflow:hidden;background:var(--paper)}
+.fig svg{display:block;width:100%;height:auto}
+.fig svg.fig-tall{max-width:420px;margin:0 auto}
+.figpair{display:grid;gap:6px}
+@media (min-width:640px){.figpair{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);align-items:center}}
+.fig-sea{fill:var(--sea)}
+.fig-land{fill:var(--land);stroke:var(--coast)}
+.fig-eq{stroke:var(--coast);fill:none}
+.fig-mk{fill:var(--ng);stroke:var(--paper)}
+.fig-mkl{fill:var(--ink);stroke:var(--paper);paint-order:stroke;font-weight:700;font-family:var(--f-body)}
+.fig-grid{stroke:var(--line);stroke-width:1}
+.fig-zero{stroke:var(--muted)}
+.fig-bar{fill:var(--accent);opacity:.75}
+.fig-line{fill:none;stroke:var(--ng);stroke-width:2}
+.fig-dot{fill:var(--ng)}
+.fig-ax{fill:var(--muted);font-size:10px;font-family:var(--f-body)}
+.fig-cap{fill:var(--ink);font-size:10.5px;font-family:var(--f-body)}
+.rows .fig{margin:4px 0;max-width:420px}
+.opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.opts:has(.opt:nth-child(4)):not(:has(.opt:nth-child(5))) .opt{min-height:44px}
+.opt{text-align:left;border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:10px 12px;font-size:15px;cursor:pointer;overflow-wrap:anywhere}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt:disabled{cursor:default}
+.opt.right{background:var(--ok-bg);border-color:var(--ok);color:var(--ok);font-weight:700}
+.opt.wrong{background:var(--ng-bg);border-color:var(--ng);color:var(--ng);font-weight:700}
+.note{font-size:14px;color:var(--muted);line-height:1.6}
+.type{width:100%;font-family:var(--f-type);font-size:22px;font-weight:500;padding:12px 14px;border:2px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+.type:focus{border-color:var(--accent);outline:none}
+.type.ok{border-color:var(--ok);background:var(--ok-bg)}
+.type.ng{border-color:var(--ng);background:var(--ng-bg)}
+.typebtns{display:grid;grid-template-columns:2fr 1fr;gap:8px}
+.verdict{border-radius:10px;padding:12px 14px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center}
+.verdict.ok{background:var(--ok-bg);color:var(--ok)}
+.verdict.ng{background:var(--ng-bg);color:var(--ng)}
+.vmark{font-weight:700;font-size:34px;line-height:1}
+.vword{font-family:var(--f-type);font-size:22px;font-weight:600;color:var(--ink);overflow-wrap:anywhere}
+.answer{font-size:19px;font-weight:700;background:var(--accent-soft);border-radius:10px;padding:12px 14px;overflow-wrap:anywhere}
+.judge{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.judge button{border-radius:10px;padding:14px 8px;font-weight:700;font-size:16px;cursor:pointer;border:2px solid}
+.j-ok{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+.j-ng{background:var(--ng-bg);border-color:var(--ng);color:var(--ng)}
+.nav{display:flex;justify-content:space-between;gap:8px}
+.nav button{background:none;border:0;color:var(--muted);cursor:pointer;font-size:14px;padding:4px 0}
+.nav button:disabled{opacity:.35;cursor:default}
+.keys{font-size:12px;color:var(--muted);text-align:center}
+@media (hover:none){.keys{display:none}}
+
+/* 結果 */
+.result{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:20px 16px;display:grid;gap:12px;text-align:center}
+.result .big{font-family:var(--f-display);font-size:40px;font-weight:800;font-variant-numeric:tabular-nums}
+.result .stats{justify-content:center}
+.actions{display:grid;gap:8px}
+.btn{border-radius:10px;padding:12px;font-weight:700;cursor:pointer;border:1px solid var(--line);background:var(--paper)}
+.btn.main{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+
+/* まとめ一覧 */
+.filters{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:13px;border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:4px 11px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.sheet{display:grid;gap:16px}
+.sheet h3{font-size:15px;margin:0 0 6px;color:var(--muted);text-wrap:balance}
+.rows{list-style:none;margin:0;padding:0;background:var(--paper);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.rows li{display:grid;grid-template-columns:3.2em minmax(0,1fr);gap:2px 8px;padding:9px 12px;border-top:1px solid var(--line)}
+.rows li:first-child{border-top:0}
+.rows .no{font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.rows .st{color:var(--star)}
+.rows .qa{display:grid;gap:2px}
+.rows .q{overflow-wrap:anywhere;white-space:pre-line}
+.rows .a{font-weight:700;overflow-wrap:anywhere}
+.rows .a.hide{color:transparent;background:var(--line);border-radius:4px;cursor:pointer;user-select:none}
+.rows li.ok{box-shadow:inset 3px 0 0 var(--ok)}
+.rows li.ng{box-shadow:inset 3px 0 0 var(--ng)}
+.empty{color:var(--muted);text-align:center;padding:24px 0}
+footer{font-size:12px;color:var(--muted);display:grid;gap:2px}
+@media (max-width:340px){.modes{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:no-preference){.answer{animation:fade .18s ease-out}@keyframes fade{from{opacity:.5}to{opacity:1}}}
+</style>
+
+
+<div class="wrap" id="app"></div>
+
+<script>
+const DRILL = {"id": "ea-nigate", "course": "二学期中間テスト（高1）・English A・リスニング", "title": "EA苦手単語まとめ", "exam": "10/22（木）①8:45", "exam_date": "2026-10-22", "source": "授業の単語集（Term 2）から苦手な単語を抜き出し", "updated": "2026-10-21", "group_notes": {"英日": "英語 → 日本語", "日英": "日本語を見て英語をタイピング（自動で○×）", "空欄補充": "例文の（ ）に入る語"}, "vocab": [{"en": "coerce", "pos": "v", "ja": "強制する"}, {"en": "portrayal", "pos": "n", "ja": "描写"}, {"en": "portrayal of J as a ...", "pos": "文法", "ja": "Jを〜として描写すること"}, {"en": "conquer", "pos": "v", "ja": "征服する"}, {"en": "torture", "pos": "v/n", "ja": "拷問する／拷問"}, {"en": "atrocity", "pos": "n", "ja": "残虐行為"}, {"en": "previously", "pos": "adv", "ja": "以前に"}, {"en": "canonical", "pos": "adj", "ja": "規範的な、正典の"}, {"en": "result in A", "pos": "語法", "ja": "結果としてAになる"}, {"en": "casualty", "pos": "n", "ja": "死傷者、犠牲者"}, {"en": "decision", "pos": "n", "ja": "決定、決心"}, {"en": "conditional", "pos": "adj", "ja": "条件つきの"}, {"en": "be concerned about A", "pos": "表現", "ja": "Aについて心配している"}, {"en": "grant", "pos": "v", "ja": "与える、認める"}, {"en": "utter", "pos": "adj", "ja": "完全な、まったくの"}, {"en": "incendiary", "pos": "n/adj", "ja": "焼夷弾／焼夷性の"}, {"en": "consideration", "pos": "n", "ja": "考慮、思いやり"}], "sections": [{"title": "英日｜① Indonesia", "group": "英日", "items": [["coerce（v）", "強制する　［force の類語］", 1, 0], ["portrayal（n）", "描写　［v. portray］", 0, 1], ["portrayal of J as a ...（文法）", "Jを〜として描写すること　［→ see A as B］", 0, 2]]}, {"title": "英日｜① Guam", "group": "英日", "items": [["conquer（v）", "征服する", 1, 3], ["torture（v/n）", "拷問する／拷問", 1, 4]]}, {"title": "英日｜① Germany", "group": "英日", "items": [["atrocity（n）", "残虐行為", 1, 5]]}, {"title": "英日｜② Myth 1: The bomb ended the war.", "group": "英日", "items": [["previously（adv）", "以前に　［adj. previous］", 1, 6]]}, {"title": "英日｜② Myth 2: The bomb saved half a million American lives.", "group": "英日", "items": [["canonical（adj）", "規範的な、正典の　［canon＝正典］", 0, 7], ["result in A（語法）", "結果としてAになる", 1, 8], ["casualty（n）", "死傷者、犠牲者　［複数形 casualties］", 1, 9]]}, {"title": "英日｜② Myth 3: The only alternative to the bomb was an invasion of Japan.", "group": "英日", "items": [["decision（n）", "決定、決心　［v. decide］", 0, 10], ["conditional（adj）", "条件つきの　［⇔ unconditional］", 1, 11], ["be concerned about A（表現）", "Aについて心配している", 0, 12], ["grant（v）", "与える、認める　［give よりも上下関係が明確。上から「与えてもらっている」］", 0, 13]]}, {"title": "英日｜② Myth 4: The Japanese were warned before the bomb was dropped.", "group": "英日", "items": [["utter（adj）", "完全な、まったくの　［utter chaos＝全くの大混乱、utter failure＝完全な敗北］", 1, 14], ["incendiary（n/adj）", "焼夷弾／焼夷性の　［incendiary が bomb にかかる形容詞と考えることもできる］", 0, 15]]}, {"title": "英日｜② Myth 5: The bomb was timed to gain a diplomatic advantage over Russia.", "group": "英日", "items": [["consideration（n）", "考慮、思いやり　［v. consider］", 0, 16]]}, {"title": "日英｜① Indonesia", "group": "日英", "items": [["強制する（v）", "coerce　［force の類語］", 1, 0, "頭文字：c", ["coerce"]], ["描写（n）", "portrayal　［v. portray］", 0, 1, "頭文字：p", ["portrayal"]], ["Jを〜として描写すること（文法）", "portrayal of J as a ...　［→ see A as B］", 0, 2, "頭文字：p", null]]}, {"title": "日英｜① Guam", "group": "日英", "items": [["征服する（v）", "conquer", 1, 3, "頭文字：c", ["conquer"]], ["拷問する／拷問（v/n）", "torture", 1, 4, "頭文字：t", ["torture"]]]}, {"title": "日英｜① Germany", "group": "日英", "items": [["残虐行為（n）", "atrocity", 1, 5, "頭文字：a", ["atrocity"]]]}, {"title": "日英｜② Myth 1: The bomb ended the war.", "group": "日英", "items": [["以前に（adv）", "previously　［adj. previous］", 1, 6, "頭文字：p", ["previously"]]]}, {"title": "日英｜② Myth 2: The bomb saved half a million American lives.", "group": "日英", "items": [["規範的な、正典の（adj）", "canonical　［canon＝正典］", 0, 7, "頭文字：c", ["canonical"]], ["結果としてAになる（語法）", "result in A", 1, 8, "頭文字：r", ["result in"]], ["死傷者、犠牲者（n）", "casualty　［複数形 casualties］", 1, 9, "頭文字：c", ["casualty"]]]}, {"title": "日英｜② Myth 3: The only alternative to the bomb was an invasion of Japan.", "group": "日英", "items": [["決定、決心（n）", "decision　［v. decide］", 0, 10, "頭文字：d", ["decision"]], ["条件つきの（adj）", "conditional　［⇔ unconditional］", 1, 11, "頭文字：c", ["conditional"]], ["Aについて心配している（表現）", "be concerned about A", 0, 12, "頭文字：b", ["be concerned about"]], ["与える、認める（v）", "grant　［give よりも上下関係が明確。上から「与えてもらっている」］", 0, 13, "頭文字：g", ["grant"]]]}, {"title": "日英｜② Myth 4: The Japanese were warned before the bomb was dropped.", "group": "日英", "items": [["完全な、まったくの（adj）", "utter　［utter chaos＝全くの大混乱、utter failure＝完全な敗北］", 1, 14, "頭文字：u", ["utter"]], ["焼夷弾／焼夷性の（n/adj）", "incendiary　［incendiary が bomb にかかる形容詞と考えることもできる］", 0, 15, "頭文字：i", ["incendiary"]]]}, {"title": "日英｜② Myth 5: The bomb was timed to gain a diplomatic advantage over Russia.", "group": "日英", "items": [["考慮、思いやり（n）", "consideration　［v. consider］", 0, 16, "頭文字：c", ["consideration"]]]}, {"title": "空欄補充｜① Indonesia", "group": "空欄補充", "items": [["People were ( ＿＿＿＿ ) into working for the army.\n人々は軍のために働くよう強制された。", "coerced（coerce）", 1, 0, "頭文字：c"], ["The movie's ( ＿＿＿＿ ) of the war was realistic.\nその映画の戦争の描写は現実的だった。", "portrayal", 0, 1, "頭文字：p"], ["The book's portrayal of Japan ( ＿＿＿＿ ) a liberator is controversial.\nその本が日本を解放者として描いていることには議論がある。", "as（portrayal of J as a ...）", 0, 2, "頭文字：a"]]}, {"title": "空欄補充｜① Guam", "group": "空欄補充", "items": [["The army ( ＿＿＿＿ ) the island in a few days.\n軍は数日でその島を征服した。", "conquered（conquer）", 1, 3, "頭文字：c"], ["Some prisoners were ( ＿＿＿＿ ).\n何人かの捕虜は拷問を受けた。", "tortured（torture）", 1, 4, "頭文字：t"]]}, {"title": "空欄補充｜① Germany", "group": "空欄補充", "items": [["The ( ＿＿＿＿ ) of the war must not be forgotten.\n戦争の残虐行為は忘れられてはならない。", "atrocities（atrocity）", 1, 5, "頭文字：a"]]}, {"title": "空欄補充｜② Myth 1: The bomb ended the war.", "group": "空欄補充", "items": [["Japan had ( ＿＿＿＿ ) signed a pact with the Soviet Union.\n日本は以前にソ連と条約を結んでいた。", "previously", 1, 6, "頭文字：p"]]}, {"title": "空欄補充｜② Myth 2: The bomb saved half a million American lives.", "group": "空欄補充", "items": [["This became the ( ＿＿＿＿ ) explanation of the bombing.\nこれが原爆投下の定番の説明になった。", "canonical", 0, 7, "頭文字：c"], ["The invasion would ( ＿＿＿＿ ) in many deaths.\nその侵攻は多くの死者を出す結果になっただろう。", "result（result in A）", 1, 8, "頭文字：r"], ["The battle caused heavy ( ＿＿＿＿ ).\nその戦いで多くの死傷者が出た。", "casualties（casualty）", 1, 9, "頭文字：c"]]}, {"title": "空欄補充｜② Myth 3: The only alternative to the bomb was an invasion of Japan.", "group": "空欄補充", "items": [["It was a difficult ( ＿＿＿＿ ).\nそれは難しい決断だった。", "decision", 0, 10, "頭文字：d"], ["Japan wanted a ( ＿＿＿＿ ) surrender.\n日本は条件つきの降伏を望んだ。", "conditional", 1, 11, "頭文字：c"], ["Japan was ( ＿＿＿＿ ) about the emperor.\n日本は天皇のことを心配していた。", "concerned（be concerned about A）", 0, 12, "頭文字：c"], ["The government ( ＿＿＿＿ ) them permission.\n政府は彼らに許可を与えた。", "granted（grant）", 0, 13, "頭文字：g"]]}, {"title": "空欄補充｜② Myth 4: The Japanese were warned before the bomb was dropped.", "group": "空欄補充", "items": [["The city was in ( ＿＿＿＿ ) chaos.\nその都市は全くの大混乱だった。", "utter", 1, 14, "頭文字：u"], ["Tokyo was attacked with ( ＿＿＿＿ ) bombs.\n東京は焼夷弾で攻撃された。", "incendiary", 0, 15, "頭文字：i"]]}, {"title": "空欄補充｜② Myth 5: The bomb was timed to gain a diplomatic advantage over Russia.", "group": "空欄補充", "items": [["Cost was an important ( ＿＿＿＿ ).\n費用は重要な考慮事項だった。", "consideration", 0, 16, "頭文字：c"]]}], "migrations": []};
+const KEY = "drill:" + DRILL.id;
+const app = document.getElementById("app");
+
+let marks = {};                     // 問題番号 → いまの ○×（"ok" / "ng"）
+try { marks = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { marks = {}; }
+// 一度でも×をつけた問題（○に直しても消えない）。「間違えた問題」「間違えた単語集」はこれで集める
+let ever = {};
+try { ever = JSON.parse(localStorage.getItem(KEY + ":ever") || "{}") || {}; } catch (e) { ever = {}; }
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify(marks)); localStorage.setItem(KEY + ":ever", JSON.stringify(ever)); } catch (e) {}
+}
+// 単語を統合して問題番号が変わったら、前の記録を新しい番号に付け替える（migrations[i] は版 i → i+1、null は消えた問題）
+{
+  const MIG = DRILL.migrations || [];
+  let ver = null;
+  try { ver = localStorage.getItem(KEY + ":ver"); } catch (e) {}
+  // 版の記録がないのは、付け替えを入れる前から使っている人（記録あり）か、はじめての人（記録なし）
+  ver = ver === null ? (Object.keys(marks).length || Object.keys(ever).length ? 0 : MIG.length) : Number(ver);
+  const moved = ver < MIG.length;
+  for (; ver < MIG.length; ver++) {
+    const map = MIG[ver], m2 = {}, e2 = {};
+    for (const [n, v] of Object.entries(marks)) {
+      const t = n in map ? map[n] : n;
+      if (t !== null) m2[t] = m2[t] === "ng" ? "ng" : v;
+    }
+    for (const n of Object.keys(ever)) {
+      const t = n in map ? map[n] : n;
+      if (t !== null) e2[t] = 1;
+    }
+    marks = m2; ever = e2;
+  }
+  if (moved) save();
+  try { localStorage.setItem(KEY + ":ver", String(MIG.length)); } catch (e) {}
+}
+// 以前の記録で×になっている問題も「一度でも×」に引き継いで保存しておく
+if (Object.entries(marks).some(([n, v]) => v === "ng" && !ever[n])) {
+  for (const [n, v] of Object.entries(marks)) if (v === "ng") ever[n] = 1;
+  save();
+}
+function setMark(it, v) {            // ○×を記録する。×なら「一度でも×」にも入れる（今回はじめて入れたかを返す）
+  const added = v === "ng" && !ever[it.n];
+  marks[it.n] = v; quiz.got[it.n] = v;
+  if (v === "ng") ever[it.n] = 1;
+  save();
+  return added;
+}
+const everWrong = it => !!ever[it.n];
+
+const items = [];
+// 一問一答は配列 [問題, 答え, 重要, 単語番号, ヒント]、図つきの選択問題は辞書 {q, a, choices, svg, note, star}
+DRILL.sections.forEach((s, si) => s.items.forEach(x => {
+  const mc = !Array.isArray(x);
+  const [q, a, imp, w, hint, acc] = mc ? [x.q, x.a, x.star] : x;
+  items.push({ n: items.length + 1, si, q, a, star: !!imp, group: s.group || "", w: w ?? null, hint: hint || "",
+    choices: mc ? x.choices : null, svg: mc ? x.svg || "" : "", note: mc ? x.note || "" : "",
+    accept: mc ? null : acc || null });   // accept があればタイピングで答える（EA の日英）
+}));
+// 単語集のページ（vocab あり）は、×をつけた問題を単語ごとにまとめて「間違えた単語集」にする
+const VOCAB = DRILL.vocab || [];
+const wrongWords = () => [...new Set(items.filter(it => it.w !== null && everWrong(it)).map(it => it.w))].sort((a, b) => a - b);
+const groups = [...new Set(DRILL.sections.map(s => s.group).filter(Boolean))];
+const groupNote = g => (DRILL.group_notes || {})[g] || "";
+
+function fig(svg) {                 // svg はビルド時に作った図（外部入力ではない）
+  const d = document.createElement("div");
+  d.className = "fig";
+  d.innerHTML = svg;
+  return d;
+}
+function el(tag, attrs, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (k === "class") e.className = v;
+    else if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
+    else if (v === true) e.setAttribute(k, "");
+    else if (v !== false && v != null) e.setAttribute(k, v);
+  }
+  for (const c of kids.flat(Infinity)) if (c != null && c !== false) e.append(c);
+  return e;
+}
+const count = (list, v) => list.filter(it => v === "todo" ? !marks[it.n] : marks[it.n] === v).length;
+/* タイピングの採点：大文字小文字・句読点・「~」は無視、ハイフンとスラッシュは空白と同じ */
+const norm = s => s.toLowerCase().replace(/[‐‑–—−]/g, "-").replace(/[-/]/g, " ")
+  .replace(/[~〜….,!?'"’“”()]/g, "").replace(/\s+/g, " ").trim();
+const noArticle = s => s.replace(/\b(a|an|the)\b/g, " ").replace(/\s+/g, " ").trim();
+function grade(input, it) {
+  const n = norm(input), accs = it.accept.map(norm);
+  if (accs.includes(n)) return { ok: true };
+  // 冠詞の有無は大目に見る（ただし the like → like のように1語になってしまうものは除く）
+  if (accs.some(t => noArticle(t).includes(" ") && noArticle(t) === noArticle(n))) return { ok: true };
+  return { ok: false };
+}
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function meter(list) {
+  const ok = count(list, "ok") / list.length * 100, ng = count(list, "ng") / list.length * 100;
+  return el("div", { class: "meter", "aria-hidden": "true" },
+    el("i", { class: "m-ok", style: `width:${ok}%` }), el("i", { class: "m-ng", style: `width:${ng}%` }));
+}
+function daysLeft() {
+  const now = new Date(Date.now() + 9 * 3600e3);              // 日本時間
+  const today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+  const [y, m, d] = DRILL.exam_date.split("-").map(Number);
+  return Math.round((Date.UTC(y, m - 1, d) - today) / 864e5);
+}
+const backBar = extra => el("div", { class: "top" },
+  el("button", { class: "back", type: "button", onclick: home }, "← メニュー"), extra || null);
+function show(...nodes) { app.replaceChildren(...nodes); window.scrollTo(0, 0); }
+
+/* ── メニュー ───────────────────────────── */
+let confirmReset = false;
+function home() {
+  quiz = null;
+  const ok = count(items, "ok"), ng = count(items, "ng"), todo = count(items, "todo");
+  const everNg = items.filter(everWrong).length;
+  const stars = items.filter(it => it.star);
+  const dl = daysLeft();
+  const title = el("h1", null);
+  DRILL.title.split(/\s+/).forEach((p, i) => { if (i) title.append(" "); title.append(el("span", { class: "seg" }, p)); });
+  const mode = (label, sub, onclick, opts = {}) =>
+    el("button", { class: "mode" + (opts.primary ? " primary" : "") + (opts.wide ? " wide" : "") + (opts.cls ? " " + opts.cls : ""), type: "button", disabled: !!opts.disabled, onclick },
+      el("span", { class: "label" }, label), el("span", { class: "sub" }, sub));
+
+  show(
+    el("header", null,
+      el("div", { class: "eyebrow" }, DRILL.course), title,
+      el("div", { class: "exam" },
+        el("span", null, "試験 ", el("strong", null, DRILL.exam)),
+        el("span", { class: "days" }, dl > 0 ? `あと${dl}日` : dl === 0 ? "今日が試験" : "試験は終了"),
+        el("span", null, `全${items.length}問`))),
+    el("div", { class: "progress" },
+      el("div", { class: "stats" },
+        el("span", { class: "s-ok" }, "○ ", el("b", null, ok)),
+        el("span", { class: "s-ng" }, "× ", el("b", null, ng)),
+        el("span", { class: "s-todo" }, "未回答 ", el("b", null, todo))),
+      meter(items)),
+    el("div", { class: "modes" + (VOCAB.length ? " vocab" : "") },
+      mode("単元別", `${DRILL.sections.length}単元から選ぶ`, units, { primary: true }),
+      mode("単元横断ランダム", `全${items.length}問をまぜて出題`, () => start("単元横断ランダム", shuffle(items))),
+      VOCAB.length
+        ? mode("間違えた単語集", wrongWords().length ? `${wrongWords().length}語・一度でも×をつけた単語` : "まだありません（一度でも×をつけた単語がここにたまる）", wrongList, { disabled: !wrongWords().length, wide: true, cls: "wrong" })
+        : mode("間違えた問題", everNg ? `一度でも×をつけた ${everNg}問` : "まだありません",
+            () => start("間違えた問題の復習", shuffle(items.filter(everWrong))), { disabled: !everNg }),
+      mode("★ 重要問題", `${stars.length}問`, () => start("★ 重要問題", shuffle(stars))),
+      mode("未回答だけ", todo ? `残り ${todo}問` : "全部解きました",
+        () => start("まだ解いていない問題", shuffle(items.filter(it => !marks[it.n]))), { disabled: !todo }),
+      mode("まとめ一覧", "答えつきで見直す", sheet),
+      groups.map(g => {
+        const list = items.filter(it => it.group === g);
+        return mode(g, `${list.length}問${groupNote(g) ? "・" + groupNote(g) : ""}`, () => start(g, shuffle(list)), { wide: true });
+      })),
+    el("div", { class: "under" },
+      el("details", null, el("summary", null, "使い方"),
+        el("p", null, "1問ずつ、ランダムな順番で問題が出ます。「単元横断ランダム」は全単元の問題をまぜて出します（単元ごとに順番どおり解きたいときは「単元別」で「順番に出す」）。答えを考えてから「答えを見る」を押し、合っていたら ○、まちがえたら × を押すと次へ進みます。一度でも×をつけた問題は「間違えた問題」にたまり、あとで○になっても残ります。○×の記録はこの端末のブラウザにだけ残ります。")),
+      confirmReset
+        ? el("div", { class: "confirm" }, "○×の記録をすべて消しますか？",
+            el("button", { class: "chip", type: "button", onclick: () => { marks = {}; ever = {}; save(); confirmReset = false; home(); } }, "消す"),
+            el("button", { class: "chip", type: "button", onclick: () => { confirmReset = false; home(); } }, "やめる"))
+        : el("button", { class: "link", type: "button", disabled: ok + ng === 0, onclick: () => { confirmReset = true; home(); } }, "記録を消す")),
+    el("footer", null, el("div", null, `出典: ${DRILL.source}`), el("div", null, `更新: ${DRILL.updated}`)));
+}
+
+/* ── 単元を選ぶ ─────────────────────────── */
+// 単元別の出題順はランダムが標準。「順番に出す」を選んだらこの端末に覚えておく
+let unitRandom = true;
+try { unitRandom = localStorage.getItem(KEY + ":random") !== "0"; } catch (e) {}
+function setUnitRandom(v) {
+  unitRandom = v;
+  try { localStorage.setItem(KEY + ":random", v ? "1" : "0"); } catch (e) {}
+  units();
+}
+function units() {
+  show(backBar(), el("h2", null, "単元を選ぶ"),
+    el("div", { class: "filters", role: "group", "aria-label": "出題順" },
+      el("button", { class: "chip", type: "button", "aria-pressed": String(unitRandom), onclick: () => setUnitRandom(true) }, "ランダムに出す"),
+      el("button", { class: "chip", type: "button", "aria-pressed": String(!unitRandom), onclick: () => setUnitRandom(false) }, "順番に出す")),
+    el("div", { class: "choices" }, DRILL.sections.map((s, si) => {
+      const list = items.filter(it => it.si === si);
+      const head = s.group && s.group !== (DRILL.sections[si - 1] || {}).group
+        ? el("h3", { class: "ghead" }, s.group) : null;
+      return [head, el("button", { class: "choice", type: "button",
+        onclick: () => unitRandom ? start(s.title, shuffle(list)) : start(`${s.title}（順番）`, list) },
+        el("span", { class: "c-title" }, s.title),
+        el("span", { class: "c-meta" }, `○ ${count(list, "ok")} / ${list.length}問`),
+        meter(list))];
+    })));
+}
+
+/* ── 1問ずつ解く ────────────────────────── */
+let quiz = null;
+function start(name, list) {
+  if (!list.length) return home();
+  quiz = { name, list, i: 0, open: false, got: {}, order: {}, picked: null };
+  card();
+}
+function card() {
+  const { name, list, i } = quiz, it = list[i], mk = marks[it.n];
+  // 同じ問題を表示し直すとき（選択肢・ヒント・答えを見る）はスクロール位置を保つ
+  const same = quiz.shown === i, y = window.scrollY;
+  const body = [
+    el("div", { class: "meta" },
+      el("span", null, `No.${it.n}`),
+      it.star ? el("span", { class: "badge b-star" }, "★重要") : null,
+      quiz.picked || quiz.typed ? null : mk === "ng" ? el("span", { class: "badge b-ng" }, "前回 ×") : mk === "ok" ? el("span", { class: "badge b-ok" }, "前回 ○") : null,
+      el("span", null, DRILL.sections[it.si].title)),
+    el("div", { class: "qtext" }, it.q),
+  ];
+  if (it.choices) {
+    // 地図の A〜D はそのままの順、それ以外の選択肢は毎回並べかえる
+    if (!quiz.order[i]) quiz.order[i] = it.choices.every(c => c.length === 1) ? it.choices.slice() : shuffle(it.choices);
+    const picked = quiz.picked, letters = it.choices.every(c => c.length === 1);   // 地図の A〜D には番号を付けない
+    body.push(fig(it.svg),
+      el("div", { class: "opts" }, quiz.order[i].map((c, k) =>
+        el("button", { class: "opt" + (picked ? (c === it.a ? " right" : c === picked ? " wrong" : "") : ""),
+          type: "button", disabled: !!picked, onclick: () => pick(c) }, letters ? c : `${k + 1}. ${c}`))));
+    if (picked) body.push(
+      el("div", { class: "answer" }, (picked === it.a ? "○ 正解　" : "× 正解は ") + it.a),
+      it.note ? el("div", { class: "note" }, it.note) : null,
+      el("button", { class: "btn main", type: "button", id: "next", onclick: () => go(1) }, i + 1 < list.length ? "次の問題へ" : "結果を見る"));
+  } else if (it.accept) {
+    // 日英のタイピング：入力して「答え合わせ」→ ○か×と、単語集の表記を表示
+    const t = quiz.typed, [word, memo] = it.a.split("　［");
+    const input = el("input", { class: "type" + (t ? (t.ok ? " ok" : " ng") : ""), id: "answer", type: "text",
+      autocomplete: "off", autocapitalize: "none", autocorrect: "off", spellcheck: "false", lang: "en", enterkeyhint: "done",
+      "aria-label": "英語で答える", placeholder: "英語で入力", disabled: !!t });
+    input.value = t ? t.value : quiz.draft || "";
+    body.push(input);
+    if (!t) {
+      if (it.hint) body.push(quiz.hint
+        ? el("div", { class: "hint" }, it.hint)
+        : el("button", { class: "hintbtn", type: "button", onclick: () => { quiz.draft = input.value; quiz.hint = true; card(); } }, "ヒントを表示"));
+      body.push(el("div", { class: "typebtns" },
+        el("button", { class: "btn main", type: "button", onclick: () => typeCheck(false) }, "答え合わせ"),
+        el("button", { class: "btn", type: "button", onclick: () => typeCheck(true) }, "わからない")));
+    } else {
+      body.push(el("div", { class: "verdict " + (t.ok ? "ok" : "ng") },
+          el("div", { class: "vmark" }, t.ok ? "○" : "×"), el("div", { class: "vword" }, word)),
+        memo ? el("div", { class: "note" }, memo.replace(/］$/, "")) : null,
+        el("button", { class: "btn main", type: "button", id: "next", onclick: () => go(1) }, i + 1 < list.length ? "次の問題へ" : "結果を見る"),
+        !t.ok && !t.giveUp ? el("button", { class: "link", type: "button", onclick: typeOverride }, "これも正解にする（自分で判定）") : null);
+    }
+  } else if (quiz.open) {
+    body.push(el("div", { class: "answer" }, it.a),
+      el("div", { class: "judge" },
+        el("button", { class: "j-ok", type: "button", onclick: () => judge("ok") }, "○ 合ってた"),
+        el("button", { class: "j-ng", type: "button", onclick: () => judge("ng") }, "× まちがえた")));
+  } else {
+    if (it.hint) body.push(quiz.hint
+      ? el("div", { class: "hint" }, it.hint)
+      : el("button", { class: "hintbtn", type: "button", onclick: () => { quiz.hint = true; card(); } }, "ヒントを表示"));
+    body.push(el("button", { class: "reveal", type: "button", id: "reveal", onclick: () => { quiz.open = true; card(); } }, "答えを見る"));
+  }
+  show(
+    backBar(el("span", { class: "count" }, `${i + 1} / ${list.length}`)),
+    el("div", { class: "bar", "aria-hidden": "true" }, el("i", { style: `width:${(i / list.length) * 100}%` })),
+    el("div", { class: "where" }, name),
+    el("div", { class: "card" }, body),
+    el("div", { class: "nav" },
+      el("button", { type: "button", disabled: i === 0, onclick: () => go(-1) }, "← 前の問題"),
+      el("button", { type: "button", onclick: () => go(1) }, i + 1 < list.length ? "とばす →" : "おわる →")),
+    el("div", { class: "keys" }, it.choices ? "キーボード: 1〜4＝選ぶ　Enter＝次へ"
+      : it.accept ? "キーボード: Enter＝答え合わせ／次へ" : "キーボード: スペース＝答えを見る　1＝○　2＝×"));
+  if (it.accept && !quiz.typed) {
+    const inp = document.getElementById("answer");
+    inp.focus({ preventScroll: true });
+    inp.setSelectionRange(inp.value.length, inp.value.length);
+  }
+  quiz.shown = i;
+  if (same) {
+    window.scrollTo(0, y);
+    // 選んだあとの「次の問題へ」が画面の下に隠れていれば、そこまでだけ動かす
+    const next = document.getElementById("next");
+    if (next) next.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }
+}
+function typeCheck(giveUp) {
+  const it = quiz.list[quiz.i], value = document.getElementById("answer").value;
+  if (!giveUp && !norm(value)) return;
+  const r = giveUp ? { ok: false, giveUp: true } : grade(value, it);
+  quiz.typed = { value, ...r };
+  quiz.typed.added = setMark(it, r.ok ? "ok" : "ng");
+  card();
+}
+function typeOverride() {
+  const it = quiz.list[quiz.i];
+  quiz.typed.ok = true;
+  // 自分で正解にしたときは、この答えで入った「一度でも×」を取り消す
+  if (quiz.typed.added) delete ever[it.n];
+  setMark(it, "ok");
+  card();
+}
+function pick(c) {
+  const it = quiz.list[quiz.i];
+  quiz.picked = c;
+  setMark(it, c === it.a ? "ok" : "ng");
+  card();
+}
+function judge(v) {
+  setMark(quiz.list[quiz.i], v);
+  go(1);
+}
+function go(d) {
+  quiz.i = Math.max(0, quiz.i + d); quiz.open = false; quiz.hint = false; quiz.picked = null; quiz.typed = null; quiz.draft = "";
+  if (quiz.i >= quiz.list.length) return result();
+  card();
+}
+document.addEventListener("keydown", e => {
+  if (!quiz || e.altKey || e.ctrlKey || e.metaKey) return;
+  const cur = quiz.list[quiz.i];
+  if (cur && cur.accept) {            // タイピング：Enter で答え合わせ、答えたあとは Enter で次へ
+    if (e.key !== "Enter" || e.isComposing) return;
+    e.preventDefault();
+    if (!quiz.typed) { if (e.target.id === "answer") typeCheck(false); }
+    else go(1);
+    return;
+  }
+  if (cur && cur.choices) {           // 選択問題：1〜4で選ぶ、選んだあとは Enter／スペースで次へ
+    if (!quiz.picked && /^[1-9]$/.test(e.key) && quiz.order[quiz.i][+e.key - 1]) pick(quiz.order[quiz.i][+e.key - 1]);
+    else if (quiz.picked && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); go(1); }
+    return;
+  }
+  if (e.key === " " && !quiz.open) { e.preventDefault(); quiz.open = true; card(); }
+  else if (quiz.open && e.key === "1") judge("ok");
+  else if (quiz.open && e.key === "2") judge("ng");
+});
+
+/* ── 結果 ──────────────────────────────── */
+function result() {
+  const { name, list, got } = quiz;
+  quiz = null;
+  const ok = list.filter(it => got[it.n] === "ok").length;
+  const wrong = list.filter(it => got[it.n] === "ng");
+  const skipped = list.length - ok - wrong.length;
+  show(backBar(),
+    el("div", { class: "result" },
+      el("div", null, name),
+      el("div", { class: "big" }, `${ok} / ${list.length}`),
+      el("div", { class: "stats" },
+        el("span", { class: "s-ok" }, "○ ", el("b", null, ok)),
+        el("span", { class: "s-ng" }, "× ", el("b", null, wrong.length)),
+        skipped ? el("span", { class: "s-todo" }, "とばした ", el("b", null, skipped)) : null),
+      el("div", { class: "actions" },
+        wrong.length ? el("button", { class: "btn main", type: "button", onclick: () => start(`${name}（×の解き直し）`, wrong) }, `× の ${wrong.length}問をもう一度`) : null,
+        el("button", { class: wrong.length ? "btn" : "btn main", type: "button", onclick: () => start(name, list) }, "同じ問題をもう一度"),
+        el("button", { class: "btn", type: "button", onclick: home }, "メニューに戻る"))));
+}
+
+/* ── 間違えた単語集（単語集のページだけ） ── */
+function wrongList() {
+  const ids = wrongWords();
+  if (!ids.length) return home();
+  const inWrong = it => it.w !== null && ids.includes(it.w);
+  const drill = g => items.filter(it => it.group === g && inWrong(it));
+  show(backBar(el("span", { class: "count" }, `${ids.length}語`)),
+    el("h2", null, "間違えた単語集"),
+    el("p", { class: "count", style: "margin:0" }, "どこかのモードで一度でも×をつけた単語です。あとで○になっても、このリストに残ります（「今は○」の印が付きます）。"),
+    el("div", { class: "actions" },
+      groups.filter(g => drill(g).length).map((g, i) =>
+        el("button", { class: i ? "btn" : "btn main", type: "button", onclick: () => start(`間違えた単語（${g}）`, shuffle(drill(g))) },
+          `${g}で解き直す（${drill(g).length}問）`))),
+    el("ol", { class: "rows" }, ids.map(id => {
+      const v = VOCAB[id];
+      const still = items.some(it => it.w === id && marks[it.n] === "ng");
+      return el("li", { class: still ? "ng" : "ok" },
+        el("span", { class: "no" }, `${id + 1}`),
+        el("div", { class: "qa" },
+          el("div", { class: "q" }, `${v.en}（${v.pos}）`, still ? null : el("span", { class: "badge b-ok", style: "margin-left:8px" }, "今は○")),
+          el("div", { class: "a" }, v.ja)));
+    })));
+}
+
+/* ── まとめ一覧 ─────────────────────────── */
+const view = { unit: -1, hide: false, star: false, ng: false };
+function sheet() {
+  const chip = (label, on, fn) => el("button", { class: "chip", type: "button", "aria-pressed": String(on), onclick: () => { fn(); sheet(); } }, label);
+  const groups = DRILL.sections.map((s, si) => {
+    if (view.unit !== -1 && view.unit !== si) return null;
+    const list = items.filter(it => it.si === si && (!view.star || it.star) && (!view.ng || everWrong(it)));
+    if (!list.length) return null;
+    return el("section", null, el("h3", null, s.title),
+      el("ol", { class: "rows" }, list.map(it => {
+        const a = el("div", { class: "a" + (view.hide ? " hide" : "") }, it.choices && it.note ? `${it.a}　${it.note}` : it.a);
+        if (view.hide) a.addEventListener("click", () => a.classList.toggle("hide"));
+        return el("li", { class: marks[it.n] || "" },
+          el("span", { class: "no" }, it.star ? el("span", { class: "st" }, "★") : null, it.n),
+          el("div", { class: "qa" }, el("div", { class: "q" }, it.q), it.svg ? fig(it.svg) : null, a));
+      })));
+  }).filter(Boolean);
+  const y = window.scrollY;
+  show(backBar(), el("h2", null, "まとめ一覧"),
+    el("div", { class: "filters" },
+      chip("全単元", view.unit === -1, () => view.unit = -1),
+      DRILL.sections.map((s, si) => chip(`単元${si + 1}`, view.unit === si, () => view.unit = si))),
+    el("div", { class: "filters" },
+      chip("★だけ", view.star, () => view.star = !view.star),
+      chip("一度でも×", view.ng, () => view.ng = !view.ng),
+      chip("答えをかくす", view.hide, () => view.hide = !view.hide)),
+    view.hide ? el("p", { class: "count", style: "margin:0" }, "かくした答えは、タップすると表示されます。") : null,
+    groups.length ? el("div", { class: "sheet" }, groups) : el("p", { class: "empty" }, "あてはまる問題はありません。"));
+  window.scrollTo(0, y);
+}
+
+home();
+</script>

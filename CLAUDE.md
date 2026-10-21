@@ -76,6 +76,12 @@
 | 古文 | https://claude.ai/artifact/1s6zmcm1JivHFLvxzV1Fzj |
 | EA | https://claude.ai/artifact/MzPrcQJPLkEKqTse7HPzWT |
 
+個人用ページ（クラスには共有しない・非公開のまま）: `drills/<教科>/private/*.json` を build_share.py が1ファイル1ページで `share/<page_id>.html` にする。単語集の一部を抜き出すときは units の代わりに `"from"`（元の単語集）と `"pick"`（英語の見出しの一覧）を書く
+
+| ページ | URL |
+|---|---|
+| EA 苦手単語まとめ（`ea-nigate`） | https://claude.ai/artifact/HxAZuBSZaarRJsqJ867w6g |
+
 デモ（本番とは別ページ）: EA 日英タイピング https://claude.ai/artifact/Ti2jb3P979n2LGvvtxKTT5 … `python3 tools/build_typing_demo.py` で `share/typing_demo_template.html` から `share/ea-typing-demo.html` を生成（採点ルールはスクリプト冒頭のコメント）
 
 ## 教材の受け取り

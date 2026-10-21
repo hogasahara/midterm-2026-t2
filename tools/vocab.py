@@ -13,10 +13,17 @@ make_drill.py（PDF）と build_share.py（共有ページ）の両方から使�
 
 単語を別の単語に統合して消したときは "merged" に記録する（{"unit", "index": 統合前の単元内の位置, "into": 統合先の英語, "row": 消した行}）。
 共有ページの○×は問題の通し番号で保存されているので、versions() と wid_map() で古い番号を新しい番号に付け替える。
+
+一部の単語だけを抜き出した単語集は {"kind": "vocab", "from": 元の単語集のパス, "pick": [英語, ...]} と書く（units の代わり）。
+単語の中身は元の単語集から取るので、元を直せば抜き出し側にも反映される。
 """
 
 import itertools
+import json
+import pathlib
 import re
+
+ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 MODES = ("英日", "日英", "空欄補充")
 GROUP_NOTES = {
@@ -56,6 +63,19 @@ def variants(en):
     return list(dict.fromkeys(v for v in out if v))
 
 
+def resolve(data):
+    """pick の単語集は、元の単語集から選んだ単語を単元ごとに集めて units を作る（元の並び順のまま）。"""
+    if "pick" not in data:
+        return data
+    src = json.loads((ROOT / data["from"]).read_text(encoding="utf-8"))
+    pick = set(data["pick"])
+    units = [{**u, "words": [w for w in u["words"] if w[0] in pick]} for u in src["units"]]
+    found = {w[0] for u in units for w in u["words"]}
+    if pick - found:
+        raise SystemExit(f"元の単語集にない単語: {sorted(pick - found)}")
+    return {**{k: v for k, v in data.items() if k not in ("from", "pick")}, "units": [u for u in units if u["words"]]}
+
+
 def words(data):
     """単語の通し番号つき一覧 [(番号, 単元, 単語の行), ...]。"""
     out = []
@@ -75,6 +95,7 @@ def initial(text):
 
 def expand(data):
     """単語集を、sections を持つ一問一答ドリルに変換する。"""
+    data = resolve(data)
     ws = words(data)
     sections = []
     for mode in MODES:

@@ -98,46 +98,51 @@ def main():
 
     for folder, subject in by_folder.items():
         files = sorted((ROOT / "drills" / folder).glob("*.json"))
-        if not files:
-            continue
-        raw = [json.loads(f.read_text(encoding="utf-8")) for f in files]
-        drills, sections, _ = arrange(raw)
-        main = [d for d in drills if d.get("kind") != "jiji"] or drills
-        jiji = [d for d in drills if d.get("kind") == "jiji"]
-        exam, exam_date, course = exam_info(plan, subject)
-        # 図つきの選択問題（辞書の問題）は SVG を作って持たせる
-        sections = [{**s, "items": [{**it, "svg": figures.render(it)} if isinstance(it, dict) else it
-                                    for it in s["items"]]} for s in sections]
-        has_map = any(isinstance(it, dict) and "map" in it.get("fig", {}) for s in sections for it in s["items"])
-        group_notes = {k: v for d in main for k, v in d.get("group_notes", {}).items()}
-        if jiji:
-            group_notes["時事問題"] = jiji[0].get("range", "")
-        data = {
-            "id": folder,
-            "course": f"二学期中間テスト（高1）・{course}",
-            "title": " ／ ".join(d["title"] for d in main),
-            "exam": exam,
-            "exam_date": exam_date,
-            "source": "、".join(d.get("share_source", "授業ノート") for d in drills),
-            "updated": max(d["date"] for d in drills),
-            "group_notes": group_notes,
-            "vocab": [w for d in main for w in d.get("vocab", [])],
-            "sections": sections,
-            "migrations": migrations(raw),
-        }
-        light, dark = ACCENTS[folder]
-        page = (tpl.replace("__TITLE__", f"{course} 中間ドリル")
-                   .replace("__ACCENT_SOFT_LIGHT__", mix(light, "#ffffff", 0.12))
-                   .replace("__ACCENT_SOFT_DARK__", mix(dark, "#1a201d", 0.16))
-                   .replace("__ACCENT_LIGHT__", light)
-                   .replace("__ACCENT_DARK__", dark)
-                   .replace("<!--__FIG_DEFS__-->", figures.defs() if has_map else "")
-                   .replace("/*__DRILL__*/null", json.dumps(data, ensure_ascii=False)))
-        out = ROOT / "share" / f"{folder}.html"
-        out.write_text(page, encoding="utf-8")
-        n = sum(len(s["items"]) for s in sections)
-        print(f"{out.relative_to(ROOT)}  ({course}・{n}問)")
+        if files:
+            build(tpl, plan, folder, subject, files, folder)
+        # drills/<教科>/private/*.json は1ファイル1ページの個人用（JSON の page_id がページの名前と記録のキー）
+        for f in sorted((ROOT / "drills" / folder / "private").glob("*.json")):
+            build(tpl, plan, folder, subject, [f], json.loads(f.read_text(encoding="utf-8"))["page_id"])
 
+
+def build(tpl, plan, folder, subject, files, page_id):
+    raw = [json.loads(f.read_text(encoding="utf-8")) for f in files]
+    drills, sections, _ = arrange(raw)
+    main = [d for d in drills if d.get("kind") != "jiji"] or drills
+    jiji = [d for d in drills if d.get("kind") == "jiji"]
+    exam, exam_date, course = exam_info(plan, subject)
+    # 図つきの選択問題（辞書の問題）は SVG を作って持たせる
+    sections = [{**s, "items": [{**it, "svg": figures.render(it)} if isinstance(it, dict) else it
+                                for it in s["items"]]} for s in sections]
+    has_map = any(isinstance(it, dict) and "map" in it.get("fig", {}) for s in sections for it in s["items"])
+    group_notes = {k: v for d in main for k, v in d.get("group_notes", {}).items()}
+    if jiji:
+        group_notes["時事問題"] = jiji[0].get("range", "")
+    data = {
+        "id": page_id,
+        "course": f"二学期中間テスト（高1）・{course}",
+        "title": " ／ ".join(d["title"] for d in main),
+        "exam": exam,
+        "exam_date": exam_date,
+        "source": "、".join(d.get("share_source", "授業ノート") for d in drills),
+        "updated": max(d["date"] for d in drills),
+        "group_notes": group_notes,
+        "vocab": [w for d in main for w in d.get("vocab", [])],
+        "sections": sections,
+        "migrations": migrations(raw),
+    }
+    light, dark = ACCENTS[folder]
+    page = (tpl.replace("__TITLE__", raw[0].get("page_title", f"{course} 中間ドリル"))
+               .replace("__ACCENT_SOFT_LIGHT__", mix(light, "#ffffff", 0.12))
+               .replace("__ACCENT_SOFT_DARK__", mix(dark, "#1a201d", 0.16))
+               .replace("__ACCENT_LIGHT__", light)
+               .replace("__ACCENT_DARK__", dark)
+               .replace("<!--__FIG_DEFS__-->", figures.defs() if has_map else "")
+               .replace("/*__DRILL__*/null", json.dumps(data, ensure_ascii=False)))
+    out = ROOT / "share" / f"{page_id}.html"
+    out.write_text(page, encoding="utf-8")
+    n = sum(len(s["items"]) for s in sections)
+    print(f"{out.relative_to(ROOT)}  ({course}・{n}問)")
 
 if __name__ == "__main__":
     main()

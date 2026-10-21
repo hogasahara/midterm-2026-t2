@@ -1,0 +1,18 @@
+{
+  "kind": "vocab",
+  "page_id": "ea-nigate",
+  "page_title": "EA 苦手単語",
+  "title": "EA苦手単語まとめ",
+  "subject": "English A",
+  "exam": "10/22（木）① 8:45",
+  "source": "EA単語ドリル（drills/ea/20261019-ea-vocab.json）から苦手な単語を抜き出したもの",
+  "share_source": "授業の単語集（Term 2）から苦手な単語を抜き出し",
+  "date": "2026-10-21",
+  "note": "個人用（クラスには共有しない）。単語の中身は from の単語集から取る",
+  "from": "drills/ea/20261019-ea-vocab.json",
+  "pick": [
+    "previously", "canonical", "result in A", "casualty", "decision", "conditional",
+    "be concerned about A", "grant", "utter", "incendiary", "consideration", "conquer",
+    "torture", "atrocity", "coerce", "portrayal", "portrayal of J as a ..."
+  ]
+}
