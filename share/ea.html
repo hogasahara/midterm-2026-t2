@@ -376,11 +376,11 @@ function card() {
   if (it.choices) {
     // 地図の A〜D はそのままの順、それ以外の選択肢は毎回並べかえる
     if (!quiz.order[i]) quiz.order[i] = it.choices.every(c => c.length === 1) ? it.choices.slice() : shuffle(it.choices);
-    const picked = quiz.picked;
+    const picked = quiz.picked, letters = it.choices.every(c => c.length === 1);   // 地図の A〜D には番号を付けない
     body.push(fig(it.svg),
       el("div", { class: "opts" }, quiz.order[i].map((c, k) =>
         el("button", { class: "opt" + (picked ? (c === it.a ? " right" : c === picked ? " wrong" : "") : ""),
-          type: "button", disabled: !!picked, onclick: () => pick(c) }, c.length === 1 ? c : `${k + 1}. ${c}`))));
+          type: "button", disabled: !!picked, onclick: () => pick(c) }, letters ? c : `${k + 1}. ${c}`))));
     if (picked) body.push(
       el("div", { class: "answer" }, (picked === it.a ? "○ 正解　" : "× 正解は ") + it.a),
       it.note ? el("div", { class: "note" }, it.note) : null,
