@@ -5,7 +5,12 @@
   "exam": "10/22（木）① 8:45",
   "source": "授業の単語集（単語集① Singapore〜Germany・Extra Reading USA／Term 2 Topic 2 Five Myths About The Atomic Bomb）",
   "share_source": "授業の単語集（Term 2）",
-  "date": "2026-10-19",
+  "date": "2026-10-21",
+  "merged_note": "merged は統合して消した単語の記録（共有ページの○×の記録を付け替えるのに使う。順番を変えない・消さない）。unit・index は統合する前の位置、into は統合先の英語",
+  "merged": [
+    {"unit": "② Myth 4: The Japanese were warned before the bomb was dropped.", "index": 9, "into": "the like / the like of ~",
+     "row": ["the like of ~", "語法", "〜のようなもの", "", 0, "We had never seen the {} of it.", "私たちはそのようなものを見たことがなかった。", "like"]}
+  ],
   "note": "words は [英語, 品詞, 意味, メモ, 重要(1/0), 空欄補充の例文({}が空欄), 例文の訳, 空欄に入る形]。例文は教材にないものを Claude が作った（備考欄の例文はそのまま使用）",
   "units": [
     {
@@ -184,8 +189,7 @@
         ["address", "n", "住所、演説", "動詞もあり、幅広い意味のある単語なので注意", 0, "The president gave a radio {}.", "大統領はラジオ演説を行った。", "address"],
         ["coming", "adj", "来るべき、次の、今度の", "the coming A / this coming A の形で使われるのが一般的", 0, "We have a test this {} Monday.", "今度の月曜日にテストがある。", "coming"],
         ["ruin", "n", "破滅、廃墟", "v. ruin＝台無しにする", 0, "The city lay in {}.", "その都市は廃墟と化していた。", "ruins"],
-        ["the like", "n", "同類のもの", "like は「類似の」「様な」「好き」など様々な意味があるので注意", 0, "They bombed factories, bridges, and the {}.", "彼らは工場や橋などを爆撃した。", "like"],
-        ["the like of ~", "語法", "〜のようなもの", "", 0, "We had never seen the {} of it.", "私たちはそのようなものを見たことがなかった。", "like"],
+        ["the like / the like of ~", "n／語法", "同類のもの／〜のようなもの", "like は「類似の」「様な」「好き」など様々な意味があるので注意。例：We had never seen the like of it.（そのようなものを見たことがなかった）", 0, "They bombed factories, bridges, and the {}.", "彼らは工場や橋などを爆撃した。", "like"],
         ["civilian", "n", "一般市民、民間人", "軍人や軍の物と比較して使う", 1, "Many {} died in the bombing.", "原爆投下で多くの民間人が亡くなった。", "civilians"],
         ["meaningfully", "adv", "有意義に、意味深く", "「意味のある（ちゃんとした）忠告をしたぞ」という文脈", 0, "The people were never {} warned.", "人々は意味のある形で警告されたことはなかった。", "meaningfully"],
         ["specific", "adj", "特定の、具体的な", "v. specify＝明確にする", 1, "Can you give me a {} example?", "具体的な例を挙げてくれますか。", "specific"],

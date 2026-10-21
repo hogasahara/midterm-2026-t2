@@ -10,6 +10,9 @@ make_drill.py（PDF）と build_share.py（共有ページ）の両方から使�
 各問題は [問題, 答え, 重要, 単語番号, ヒント, (日英だけ)タイピングの正解]。単語番号で「間違えた単語集」をまとめる。
 日英はページでタイピングして答え、variants() の言い方のどれかに合えば ○（ページの JS で採点）。
 日英・空欄補充の頭文字はヒントとして別に持ち、ページでは「ヒントを表示」で出す（PDFには載せない）。
+
+単語を別の単語に統合して消したときは "merged" に記録する（{"unit", "index": 統合前の単元内の位置, "into": 統合先の英語, "row": 消した行}）。
+共有ページの○×は問題の通し番号で保存されているので、versions() と wid_map() で古い番号を新しい番号に付け替える。
 """
 
 import itertools
@@ -98,3 +101,23 @@ def expand(data):
     out["group_notes"] = {**GROUP_NOTES, **data.get("group_notes", {})}
     out["vocab"] = [{"en": en, "pos": pos, "ja": ja} for _, _, (en, pos, ja, *_) in ws]
     return out
+
+
+def versions(data):
+    """統合の前後の単語集を古い順に返す。最後が今の単語集（merged が n 件なら n+1 個）。"""
+    out = [data]
+    cur = data
+    for m in reversed(data.get("merged", [])):
+        units = [{**u, "words": list(u["words"])} for u in cur["units"]]
+        next(u for u in units if u["unit"] == m["unit"])["words"].insert(m["index"], m["row"])
+        cur = {**cur, "units": units}
+        out.insert(0, cur)
+    return out
+
+
+def wid_map(before, after, m):
+    """統合 m の前の単語番号 → 後の単語番号。"""
+    old = words(before)
+    gone = next(w for w, unit, row in old if unit == m["unit"] and row is m["row"])
+    into = next(w for w, _, row in words(after) if row[0] == m["into"])
+    return {w: (into if w == gone else w - (w > gone)) for w, _, _ in old}

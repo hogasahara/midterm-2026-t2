@@ -201,6 +201,29 @@ try { ever = JSON.parse(localStorage.getItem(KEY + ":ever") || "{}") || {}; } ca
 function save() {
   try { localStorage.setItem(KEY, JSON.stringify(marks)); localStorage.setItem(KEY + ":ever", JSON.stringify(ever)); } catch (e) {}
 }
+// 単語を統合して問題番号が変わったら、前の記録を新しい番号に付け替える（migrations[i] は版 i → i+1、null は消えた問題）
+{
+  const MIG = DRILL.migrations || [];
+  let ver = null;
+  try { ver = localStorage.getItem(KEY + ":ver"); } catch (e) {}
+  // 版の記録がないのは、付け替えを入れる前から使っている人（記録あり）か、はじめての人（記録なし）
+  ver = ver === null ? (Object.keys(marks).length || Object.keys(ever).length ? 0 : MIG.length) : Number(ver);
+  const moved = ver < MIG.length;
+  for (; ver < MIG.length; ver++) {
+    const map = MIG[ver], m2 = {}, e2 = {};
+    for (const [n, v] of Object.entries(marks)) {
+      const t = n in map ? map[n] : n;
+      if (t !== null) m2[t] = m2[t] === "ng" ? "ng" : v;
+    }
+    for (const n of Object.keys(ever)) {
+      const t = n in map ? map[n] : n;
+      if (t !== null) e2[t] = 1;
+    }
+    marks = m2; ever = e2;
+  }
+  if (moved) save();
+  try { localStorage.setItem(KEY + ":ver", String(MIG.length)); } catch (e) {}
+}
 // 以前の記録で×になっている問題も「一度でも×」に引き継いで保存しておく
 if (Object.entries(marks).some(([n, v]) => v === "ng" && !ever[n])) {
   for (const [n, v] of Object.entries(marks)) if (v === "ng") ever[n] = 1;

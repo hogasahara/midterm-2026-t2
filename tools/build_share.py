@@ -52,6 +52,45 @@ def exam_info(plan, subject):
     raise KeyError(subject)
 
 
+def arrange(raw, wmaps=None):
+    """ページに並べる順のセクションを作る。各問題には、版をまたいで同じ問題を指すキーも付ける。
+
+    単語集（kind: "vocab"）は英日・日英・空欄補充の問題に展開する。
+    時事（kind: "jiji"）は教科のドリルのあとに「時事問題」グループとして並べる。
+    wmaps は {ドリルの番号: 単語番号の付け替え}（古い版のキーを今の版にそろえるときに使う）。
+    """
+    drills = [vocab.expand(d) if d.get("kind") == "vocab" else d for d in raw]
+    main = [i for i, d in enumerate(drills) if d.get("kind") != "jiji"] or list(range(len(drills)))
+    jiji = [i for i, d in enumerate(drills) if d.get("kind") == "jiji"]
+    sections, keys = [], []
+    for di, group in [(i, None) for i in main] + [(i, "時事問題") for i in jiji]:
+        wmap = (wmaps or {}).get(di, {})
+        for si, s in enumerate(drills[di]["sections"]):
+            s = {**s, "group": group} if group else s
+            sections.append(s)
+            for ii, it in enumerate(s["items"]):
+                if raw[di].get("kind") == "vocab":
+                    keys.append((di, s["group"], wmap.get(it[3], it[3])))
+                else:
+                    keys.append((di, group, si, ii))
+    return drills, sections, keys
+
+
+def migrations(raw):
+    """単語を統合したときの、問題の通し番号の付け替え表（版 i → i+1 の {古い番号: 新しい番号}、消えたら null）。"""
+    out = []
+    for di, d in enumerate(raw):
+        if d.get("kind") != "vocab":
+            continue
+        vs = vocab.versions(d)
+        for i, m in enumerate(d.get("merged", [])):
+            _, _, old = arrange(raw[:di] + [vs[i]] + raw[di + 1:], {di: vocab.wid_map(vs[i], vs[i + 1], m)})
+            _, _, new = arrange(raw[:di] + [vs[i + 1]] + raw[di + 1:])
+            pos = {k: n for n, k in enumerate(new, 1)}
+            out.append({str(n): pos.get(k) for n, k in enumerate(old, 1) if pos.get(k) != n})
+    return out
+
+
 def main():
     plan = json.loads((ROOT / "data/plan.json").read_text(encoding="utf-8"))
     tpl = (ROOT / "share/template.html").read_text(encoding="utf-8")
@@ -61,19 +100,15 @@ def main():
         files = sorted((ROOT / "drills" / folder).glob("*.json"))
         if not files:
             continue
-        drills = [json.loads(f.read_text(encoding="utf-8")) for f in files]
-        # 単語集（kind: "vocab"）は英日・日英・空欄補充の問題に展開する
-        drills = [vocab.expand(d) if d.get("kind") == "vocab" else d for d in drills]
-        exam, exam_date, course = exam_info(plan, subject)
-        # 時事（kind: "jiji"）は教科のドリルのあとに「時事問題」グループとして並べる
+        raw = [json.loads(f.read_text(encoding="utf-8")) for f in files]
+        drills, sections, _ = arrange(raw)
         main = [d for d in drills if d.get("kind") != "jiji"] or drills
         jiji = [d for d in drills if d.get("kind") == "jiji"]
-        sections = [s for d in main for s in d["sections"]]
+        exam, exam_date, course = exam_info(plan, subject)
         # 図つきの選択問題（辞書の問題）は SVG を作って持たせる
         sections = [{**s, "items": [{**it, "svg": figures.render(it)} if isinstance(it, dict) else it
                                     for it in s["items"]]} for s in sections]
         has_map = any(isinstance(it, dict) and "map" in it.get("fig", {}) for s in sections for it in s["items"])
-        sections += [{**s, "group": "時事問題"} for d in jiji for s in d["sections"]]
         group_notes = {k: v for d in main for k, v in d.get("group_notes", {}).items()}
         if jiji:
             group_notes["時事問題"] = jiji[0].get("range", "")
@@ -88,6 +123,7 @@ def main():
             "group_notes": group_notes,
             "vocab": [w for d in main for w in d.get("vocab", [])],
             "sections": sections,
+            "migrations": migrations(raw),
         }
         light, dark = ACCENTS[folder]
         page = (tpl.replace("__TITLE__", f"{course} 中間ドリル")
