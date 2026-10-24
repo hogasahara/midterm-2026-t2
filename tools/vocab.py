@@ -51,9 +51,9 @@ def variants(en):
     out = []
     for alt in [a.strip() for a in en.split(" / ")]:
         alt = re.sub(r",\s*~$", "", alt)                          # Long story short, ~
-        opts = {alt}
-        if "(" in alt:                                            # consistent (with ~)
-            opts = {re.sub(r"\s*\(([^)]*)\)", r" \1", alt), re.sub(r"\s*\([^)]*\)", "", alt)}
+        opts = [alt]
+        if "(" in alt:                                            # consistent (with ~)（並びを毎回同じにするため list）
+            opts = [re.sub(r"\s*\(([^)]*)\)", r" \1", alt), re.sub(r"\s*\([^)]*\)", "", alt)]
         for o in opts:
             toks = [t for t in o.split() if t not in PLACEHOLDERS]
             # this/that のような語の中の / を展開する
