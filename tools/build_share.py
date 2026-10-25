@@ -163,6 +163,8 @@ def build(tpl, plan, folder, subject, files, page_id):
         "group_notes": group_notes,
         "vocab": [w for d in main for w in d.get("vocab", [])],
         "sections": sections,
+        # "simple" ならメニューをグループのボタンと「間違えた問題」だけにする
+        "menu": next((d["menu"] for d in raw if d.get("menu")), ""),
         "migrations": migrations(raw),
     }
     light, dark = ACCENTS[folder]

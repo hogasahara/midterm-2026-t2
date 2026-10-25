@@ -68,6 +68,9 @@ h1 .seg{display:inline-block}
 .mode.wide{grid-column:1/-1;min-height:0}
 .modes.vocab .wide{order:-2}
 .modes.vocab .wide.wrong{order:-1}
+.modes.simple{gap:12px}
+.modes.simple .mode{padding:20px 18px;gap:4px}
+.modes.simple .label{font-size:20px}
 .mode:disabled:hover{border-color:var(--line)}
 .under{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:8px;font-size:13px;color:var(--muted)}
 details summary{cursor:pointer}
@@ -325,7 +328,7 @@ function home() {
         el("span", { class: "s-ng" }, "× ", el("b", null, ng)),
         el("span", { class: "s-todo" }, "未回答 ", el("b", null, todo))),
       meter(items)),
-    el("div", { class: "modes" + (VOCAB.length ? " vocab" : "") },
+    DRILL.menu === "simple" ? simpleModes(mode, everNg) : el("div", { class: "modes" + (VOCAB.length ? " vocab" : "") },
       mode("単元別", `${DRILL.sections.length}単元から選ぶ`, units, { primary: true }),
       mode("単元横断ランダム", `全${items.length}問をまぜて出題`, () => start("単元横断ランダム", shuffle(items))),
       VOCAB.length
@@ -342,13 +345,24 @@ function home() {
       })),
     el("div", { class: "under" },
       el("details", null, el("summary", null, "使い方"),
-        el("p", null, "1問ずつ、ランダムな順番で問題が出ます。「単元横断ランダム」は全単元の問題をまぜて出します（単元ごとに順番どおり解きたいときは「単元別」で「順番に出す」）。答えを考えてから「答えを見る」を押し、合っていたら ○、まちがえたら × を押すと次へ進みます。一度でも×をつけた問題は「間違えた問題」にたまり、あとで○になっても残ります。○×の記録はこの端末のブラウザにだけ残ります。")),
+        el("p", null, DRILL.menu === "simple" ? "1問ずつ、ランダムな順番で出ます。4つの中から選ぶと、すぐに○×がつきます。一度でも×になった問題は「間違えた問題」にたまり、あとで○になっても残ります。○×の記録はこの端末のブラウザにだけ残ります。" : "1問ずつ、ランダムな順番で問題が出ます。「単元横断ランダム」は全単元の問題をまぜて出します（単元ごとに順番どおり解きたいときは「単元別」で「順番に出す」）。答えを考えてから「答えを見る」を押し、合っていたら ○、まちがえたら × を押すと次へ進みます。一度でも×をつけた問題は「間違えた問題」にたまり、あとで○になっても残ります。○×の記録はこの端末のブラウザにだけ残ります。")),
       confirmReset
         ? el("div", { class: "confirm" }, "○×の記録をすべて消しますか？",
             el("button", { class: "chip", type: "button", onclick: () => { marks = {}; ever = {}; save(); confirmReset = false; home(); } }, "消す"),
             el("button", { class: "chip", type: "button", onclick: () => { confirmReset = false; home(); } }, "やめる"))
         : el("button", { class: "link", type: "button", disabled: ok + ng === 0, onclick: () => { confirmReset = true; home(); } }, "記録を消す")),
     el("footer", null, el("div", null, `出典: ${DRILL.source}`), el("div", null, `更新: ${DRILL.updated}`)));
+}
+
+// すっきりメニュー（DRILL.menu が "simple"）：グループのボタンと「間違えた問題」だけを大きく並べる
+function simpleModes(mode, everNg) {
+  return el("div", { class: "modes simple" },
+    groups.map(g => {
+      const list = items.filter(it => it.group === g);
+      return mode(g, `${list.length}問${groupNote(g) ? "・" + groupNote(g) : ""}`, () => start(g, shuffle(list)), { wide: true });
+    }),
+    mode("間違えた問題", everNg ? `一度でも×をつけた ${everNg}問` : "まだありません（一度でも×をつけた問題がここにたまる）",
+      () => start("間違えた問題の復習", shuffle(items.filter(everWrong))), { disabled: !everNg, wide: true, cls: "wrong" }));
 }
 
 /* ── 単元を選ぶ ─────────────────────────── */
