@@ -76,6 +76,7 @@
 | 歴史 | https://claude.ai/artifact/2PTLYU9jtFmew82J7Zg7XY |
 | 古文 | https://claude.ai/artifact/1s6zmcm1JivHFLvxzV1Fzj |
 | EA | https://claude.ai/artifact/MzPrcQJPLkEKqTse7HPzWT |
+| 現代文 | https://claude.ai/artifact/2ocQqFM8RZita8x7Gv2xDW |
 
 個人用ページ（クラスには共有しない・非公開のまま）: `drills/<教科>/private/*.json` を build_share.py が1ファイル1ページで `share/<page_id>.html` にする。単語集の一部を抜き出すときは units の代わりに `"from"`（元の単語集）と `"pick"`（英語の見出しの一覧）を書く
 
