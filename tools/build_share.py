@@ -14,10 +14,13 @@ section に "group" があると、ページのメニューにグループごと
 import json
 import pathlib
 
+import cards
 import figures
 import vocab
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
+# 単語集（vocab）・用語カード（cards）は一問一答・選択問題に展開してから使う
+EXPAND = {"vocab": vocab.expand, "cards": cards.expand}
 YEAR = 2026
 
 # 教科ごとのアクセント色（ライト／ダーク）。淡い面の色は背景と混ぜて作る
@@ -55,11 +58,11 @@ def exam_info(plan, subject):
 def arrange(raw, remap=None):
     """ページに並べる順のセクションを作る。各問題には、版をまたいで同じ問題を指すキーも付ける。
 
-    単語集（kind: "vocab"）は英日・日英・空欄補充の問題に展開する。
+    単語集（kind: "vocab"）は英日・日英・空欄補充の問題に、用語カード（kind: "cards"）は4択問題に展開する。
     時事（kind: "jiji"）は教科のドリルのあとに「時事問題」グループとして並べる。
     remap は {ドリルの番号: キーを次の版のキーに直す関数}（古い版のキーを新しい版にそろえるときに使う）。
     """
-    drills = [vocab.expand(d) if d.get("kind") == "vocab" else d for d in raw]
+    drills = [EXPAND[d["kind"]](d) if d.get("kind") in EXPAND else d for d in raw]
     main = [i for i, d in enumerate(drills) if d.get("kind") != "jiji"] or list(range(len(drills)))
     jiji = [i for i, d in enumerate(drills) if d.get("kind") == "jiji"]
     sections, keys = [], []

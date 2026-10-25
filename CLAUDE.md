@@ -63,6 +63,7 @@
 - ○×の記録は閲覧者ごとのブラウザ（localStorage）に保存。共有DBは使わない。キー `drill:<教科>` がいまの○×、`drill:<教科>:ever` が一度でも×をつけた問題（「間違えた問題」「間違えた単語集」はこちらで集め、○にしても消えない）
 - section に "group" を付けるとメニューにグループのボタンが出る（古文は「単語・文学的知識」「文法」、時事は自動で「時事問題」）。補足は JSON の group_notes
 - 単語集は `"kind": "vocab"` の JSON（units → words）で書く。`tools/vocab.py` が英日・日英・空欄補充の3グループに展開し、ページには「間違えた単語集」（×をつけた単語の一覧と解き直し）が出る
+- 用語の4択カードは `"kind": "cards"` の JSON（units → cards `[語, 意味, メモ, 重要]`、まぎらわしい語の組は `confusable`）で書く。`tools/cards.py` が「意味→語」「語→意味」の4択に展開する（誤りの選択肢は confusable の組を優先、語ごとに決まった乱数で毎回同じ）
 - 問題を消すと通し番号がずれるので、消した記録を JSON に残す。単語集は `merged`（統合前の unit・index・消した行・統合先）、ほかのドリルは `removed`（1回の削除ごとに、消す前の section・index・問題）。build_share.py が問題番号の付け替え表を作り、ページは開いたときに閲覧者の○×を新しい番号へ移す（版は `drill:<教科>:ver`）。記録は消さない・並べ替えない
 - 単語集の「日英」はタイピングで答えて自動で○×（正解の言い方は `vocab.variants()`、採点はページの JS の `grade()`）。文の形を覚える項目（`vocab.TYPING_SKIP`）は自己採点のまま
 - 図つきの選択問題（雨温図・世界地図）は items に辞書で書く（`{"q","choices","a","note","star","fig"}`）。図は `tools/figures.py` が SVG にする。雨温図のデータは `data/climate_normals.json`（学習用の概数）、地図は `data/world_land_110m.path`（Natural Earth 110m の陸地）

@@ -18,6 +18,7 @@ import pathlib
 import subprocess
 import sys
 
+import cards
 import figures
 import vocab
 
@@ -158,6 +159,8 @@ def main():
     data = json.loads(src.read_text(encoding="utf-8"))
     if data.get("kind") == "vocab":  # 単語集は英日・日英・空欄補充に展開する
         data = vocab.expand(data)
+    elif data.get("kind") == "cards":  # 用語カードは意味→語・語→意味の4択に展開する
+        data = cards.expand(data)
     stem = src.with_suffix("")
     for answers, suffix in ((False, "mondai"), (True, "kaitou")):
         doc, n = render(data, answers)
